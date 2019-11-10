@@ -1,26 +1,26 @@
 CPLD_Tester_MKL03.elf  :
 section             size        addr
 .interrupts         1040           0
-.text               4144        1040
-.ARM.exidx             8        5184
-.flash                 0        5192
+.text               4344        1040
+.ARM.exidx             8        5384
+.flash                 0        5392
 .mtb                   0   536870400
 .interrupts_ram        0   536870400
 .data                104   536870400
 .noinit                0   536870504
-.bss                  48   536870504
-.heap                512   536870552
-.stack              1384   536871064
+.bss                  56   536870504
+.heap                512   536870560
+.stack              1376   536871072
 .ARM.attributes       40           0
 .comment             117           0
-.debug_info       228919           0
-.debug_abbrev      13589           0
-.debug_aranges      1016           0
-.debug_ranges        864           0
-.debug_macro       14690           0
-.debug_line        21048           0
-.debug_str        217853           0
-.debug_frame        3268           0
-Total             508644
+.debug_info       235527           0
+.debug_abbrev      13692           0
+.debug_aranges      1200           0
+.debug_ranges       1048           0
+.debug_macro       14694           0
+.debug_line        21882           0
+.debug_str        232884           0
+.debug_frame        3948           0
+Total             532472
 
 

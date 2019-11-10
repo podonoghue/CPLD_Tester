@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------------------------
-NCDrill File Report For: CPLDTester.PcbDoc   9/11/2019  6:40:37 PM
+NCDrill File Report For: CPLDTester.PcbDoc   11/11/2019  12:40:22 AM
 ----------------------------------------------------------------------------------------------------------------------------------
 
 Layer Pair : Top Layer to Bottom Layer
@@ -9,13 +9,13 @@ ASCII SlotHoles File : CPLDTester-SlotHoles.TXT
 Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
 ----------------------------------------------------------------------------------------------------------------------------------
 T1      8mil (0.2mm)                                              Round             4         PTH        0.00inch (0.00mm)
-T2      12mil (0.3mm)                                             Round             32        PTH        0.00inch (0.00mm)
+T2      12mil (0.3mm)                                             Round             48        PTH        0.00inch (0.00mm)
 T3      16mil (0.4mm)                                             Round             16        PTH        0.00inch (0.00mm)
 T4      24mil (0.6mm)                                             Round             9         PTH        0.00inch (0.00mm)
 T5      24mil (0.6mm)                                             Slot              4         PTH        0.00inch (0.00mm)
 T6      32mil (0.8mm)                                             Round             40        PTH        0.00inch (0.00mm)
 T7      35mil (0.9mm)                                             Round             4         PTH        0.00inch (0.00mm)
 ----------------------------------------------------------------------------------------------------------------------------------
-Totals                                                                              109
+Totals                                                                              125
 
 Total Processing Time (hh:mm:ss) : 00:00:00

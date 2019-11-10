@@ -7,22 +7,36 @@
 // Allow access to USBDM methods without USBDM:: prefix
 using namespace USBDM;
 
+// Hardware pin mapping
 using Clock        = Tpm1;
 using ClockChannel = Clock::Channel<1>;
 
 using PollTimer    = Tpm0;
 using PollChannel  = PollTimer::Channel<0>;
 
-using TVdd_Enable  = GpioA<5>;
-using Run_Button   = GpioB<4>;
+using TVddEnable   = GpioB<1>;
+using TVddStatus   = GpioA<5>;
+using PowerButton  = GpioB<4>;
 
-static volatile bool toggleRun = 0;
+using Adc          = Adc0;
+using TVddSample   = Adc::Channel<9>;
+
+enum PowerStatus {
+   Off,
+   On,
+   Error,
+};
+
+static PowerStatus powerStatus = Off;
+static unsigned powerChangeSettling = 0;
 
 constexpr unsigned DEBOUNCE_COUNT = 5; // 5 * 5 ms = 25 ms
 
 namespace USBDM {
 /**
  * Polling interrupt handler (Executed every 5 ms)
+ *
+ * Polls power enable button and initiates the power check ADC conversion
  */
 template<>
 void PollTimer::irqHandler() {
@@ -31,7 +45,9 @@ void PollTimer::irqHandler() {
 
    PollChannel::clearInterruptFlag();
 
-   bool currentRunButton = Run_Button::read();
+   TVddSample::startConversion(AdcInterrupt_Enabled);
+
+   bool currentRunButton = PowerButton::read();
    if (currentRunButton != lastRunButton) {
       stableCount   = 0;
       lastRunButton = currentRunButton;
@@ -43,22 +59,40 @@ void PollTimer::irqHandler() {
    }
    // Check for debounce time
    if (stableCount == DEBOUNCE_COUNT) {
-      toggleRun = true;
+      powerChangeSettling = 5;
+      switch (powerStatus) {
+         case Off:
+         case Error:
+            powerStatus = On;
+            TVddEnable::on();
+            break;
+         case On:
+            powerStatus = Off;
+            TVddEnable::off();
+            break;
+      }
    }
 }
-};
 
 /**
- * Check of on/off button pressed
+ * Power check ADC conversion complete interrupt
  *
- * @return true  => button pressed since last polled.
- * @return false => button not pressed since last polled.
+ * Check status of target power.
  */
-bool getRunButton() {
-   bool t = toggleRun;
-   toggleRun = 0;
-   return t;
+template<>
+void Adc0::irqHandler() {
+   bool targetVddPresent = (getConversionResult()>100);
+   if ((powerStatus == On) && (powerChangeSettling == 0) && !targetVddPresent) {
+      powerStatus = Error;
+      TVddEnable::off();
+   }
+   TVddStatus::write(targetVddPresent);
+   if (powerChangeSettling>0) {
+      powerChangeSettling--;
+   }
 }
+
+};
 
 /**
  * Enable clock output
@@ -70,25 +104,19 @@ void enableClock() {
 }
 
 int main() {
-   TVdd_Enable::setOutput(PinDriveStrength_Low, PinDriveMode_PushPull, PinSlewRate_Slow);
-   Run_Button::setInput(PinPull_Up, PinAction_None, PinFilter_Passive);
+   TVddEnable::setOutput(PinDriveStrength_Low, PinDriveMode_PushPull, PinSlewRate_Slow);
+   PowerButton::setInput(PinPull_Up, PinAction_None, PinFilter_Passive);
 
    PollTimer::defaultConfigure();
    PollChannel::configure(TpmChMode_PwmLowTruePulses, TpmChannelAction_Irq);
 
-   bool enabled = false;
+   Adc::defaultConfigure();
+   TVddSample::setInput();
+
+   TVddStatus::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+
    for(;;) {
-      if (getRunButton()) {
-         enabled = !enabled;
-         if (enabled) {
-            TVdd_Enable::on();
-            enableClock();
-         }
-         else {
-            TVdd_Enable::off();
-            Clock::disable();
-         }
-      }
+      __asm__("nop");
    }
    return 0;
 }

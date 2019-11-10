@@ -57,7 +57,7 @@ all: CPLD_Tester_MKL03.elf secondary-outputs
 CPLD_Tester_MKL03.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -g3 -O0 -Wl,--gc-sections -L"C:/Users/podonoghue/Documents/Development/CPLDTester/Software/CPLD_Tester_MKL03/Project_Settings/Linker_Files" --specs=nano.specs -T "Linker-rom.ld" -Xlinker -Map="CPLD_Tester_MKL03.map"  -o "CPLD_Tester_MKL03.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -g3 -O0 -Wl,--gc-sections -L"C:/Users/podonoghue/Documents/Development/CPLD_Tester/Software/CPLD_Tester_MKL03/Project_Settings/Linker_Files" --specs=nano.specs -T "Linker-rom.ld" -Xlinker -Map="CPLD_Tester_MKL03.map"  -o "CPLD_Tester_MKL03.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

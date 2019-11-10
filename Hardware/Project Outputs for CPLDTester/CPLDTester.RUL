@@ -1,4 +1,4 @@
-DRC Rules Export File for PCB: C:\Users\podonoghue\Documents\Development\CPLDTester\Hardware\CPLDTester.PcbDoc
+DRC Rules Export File for PCB: C:\Users\podonoghue\Documents\Development\CPLD_Tester\Hardware\CPLDTester.PcbDoc
 RuleKind=MinimumAnnularRing|RuleName=MinimumAnnularRing|Scope=Board|Minimum=3.50
 RuleKind=ShortCircuit|RuleName=ShortCircuit|Scope=Board|Allowed=0
 RuleKind=Clearance|RuleName=Clearance|Scope=Board|Minimum=6.00

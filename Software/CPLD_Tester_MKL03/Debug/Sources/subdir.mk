@@ -35,7 +35,7 @@ CPP_DEPS += \
 Sources/%.o: ../Sources/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: ARM C++ Compiler'
-	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -g3 -O0 -ffunction-sections -fdata-sections -fno-rtti -Wall -Wextra -DDEBUG_BUILD -DCPU_MKL03Z8VFG4 -I"C:/Users/podonoghue/Documents/Development/CPLDTester/Software/CPLD_Tester_MKL03/Sources" -I"C:/Users/podonoghue/Documents/Development/CPLDTester/Software/CPLD_Tester_MKL03/Project_Headers" -fno-exceptions -std=gnu++17 -c -fmessage-length=0 -MT"$@" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)"  -o "$@" $<
+	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -g3 -O0 -ffunction-sections -fdata-sections -fno-rtti -Wall -Wextra -DDEBUG_BUILD -DCPU_MKL03Z8VFG4 -I"C:/Users/podonoghue/Documents/Development/CPLD_Tester/Software/CPLD_Tester_MKL03/Sources" -I"C:/Users/podonoghue/Documents/Development/CPLD_Tester/Software/CPLD_Tester_MKL03/Project_Headers" -fno-exceptions -std=gnu++17 -c -fmessage-length=0 -MT"$@" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)"  -o "$@" $<
 	@echo 'Finished building: $<'
 	@echo ' '
 

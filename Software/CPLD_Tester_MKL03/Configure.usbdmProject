@@ -18,14 +18,19 @@
    <item key="$signal$PTA3_muxSetting"                     value="mux4" />
    <item key="$signal$PTA4_descriptionSetting"             value="Debug_Rx" />
    <item key="$signal$PTA4_muxSetting"                     value="mux4" />
-   <item key="$signal$PTA5_descriptionSetting"             value="TVdd_Enable" />
+   <item key="$signal$PTA5_descriptionSetting"             value="TVdd_Status" />
    <item key="$signal$PTA5_muxSetting"                     value="mux1" />
-   <item key="$signal$PTA6_muxSetting"                     value="mux2" />
-   <item key="$signal$PTB1_muxSetting"                     value="mux0" />
-   <item key="$signal$PTB4_descriptionSetting"             value="Run_Button" />
+   <item key="$signal$PTB0_descriptionSetting"             value="TVdd_Sample" />
+   <item key="$signal$PTB0_muxSetting"                     value="mux0" />
+   <item key="$signal$PTB1_descriptionSetting"             value="TVdd_Enable" />
+   <item key="$signal$PTB1_muxSetting"                     value="mux1" />
+   <item key="$signal$PTB4_descriptionSetting"             value="Power_Button" />
    <item key="$signal$PTB4_muxSetting"                     value="mux1" />
    <item key="$signal$PTB5_descriptionSetting"             value="Clock" />
    <item key="$signal$PTB5_muxSetting"                     value="mux2" />
+   <item key="/ADC0/adc_cfg1_adiclk"                       value="1" />
+   <item key="/ADC0/adc_cfg1_adiv"                         value="3" />
+   <item key="/ADC0/irqHandlingMethod"                     value="$ClassMethod" />
    <item key="/Console/consoleDevice"                      value="USBDM::Lpuart0" />
    <item key="/Console/consoleEnable"                      value="false" />
    <item key="/FTFA/peripheral_file"                       value="ftfa" />

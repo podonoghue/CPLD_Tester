@@ -17,6 +17,7 @@
 
 /*********** $start(VectorsIncludeFiles) *** Do not edit after this comment ****************/
 #include "tpm.h"
+#include "adc.h"
 /*********** $end(VectorsIncludeFiles)   *** Do not edit above this comment ***************/
 
 /*
@@ -169,7 +170,6 @@ void LLWU_IRQHandler(void)                    WEAK_DEFAULT_HANDLER;
 void I2C0_IRQHandler(void)                    WEAK_DEFAULT_HANDLER;
 void SPI0_IRQHandler(void)                    WEAK_DEFAULT_HANDLER;
 void LPUART0_IRQHandler(void)                 WEAK_DEFAULT_HANDLER;
-void ADC0_IRQHandler(void)                    WEAK_DEFAULT_HANDLER;
 void CMP0_IRQHandler(void)                    WEAK_DEFAULT_HANDLER;
 void TPM1_IRQHandler(void)                    WEAK_DEFAULT_HANDLER;
 void RTC_Alarm_IRQHandler(void)               WEAK_DEFAULT_HANDLER;
@@ -222,7 +222,7 @@ VectorTable const __vector_table = {
       LPUART0_IRQHandler,                      /*   28,   12  Serial Communication Interface                                                   */
       Default_Handler,                         /*   29,   13                                                                                   */
       Default_Handler,                         /*   30,   14                                                                                   */
-      ADC0_IRQHandler,                         /*   31,   15  Analogue to Digital Converter                                                    */
+      USBDM::Adc0::irqHandler,                 /*   31,   15  Analogue to Digital Converter                                                    */
       CMP0_IRQHandler,                         /*   32,   16  High-Speed Comparator                                                            */
       USBDM::Tpm0::irqHandler,                 /*   33,   17  Timer/PWM Module                                                                 */
       TPM1_IRQHandler,                         /*   34,   18  Timer/PWM Module                                                                 */

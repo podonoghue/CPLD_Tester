@@ -874,7 +874,7 @@ public:
    static constexpr uint32_t irqCount  = sizeof(irqNums)/sizeof(irqNums[0]);
 
    //! Class based callback handler has been installed in vector table
-   static constexpr bool irqHandlerInstalled = 0;
+   static constexpr bool irqHandlerInstalled = 1;
 
    //! Default IRQ level
    static constexpr uint32_t irqLevel =  8;
@@ -913,10 +913,10 @@ public:
 
    //! Default value for ADCx_CFG1 register
    static constexpr uint32_t cfg1  = 
-       ADC_CFG1_ADICLK(3)|
+       ADC_CFG1_ADICLK(1)|
        ADC_CFG1_MODE(2)|
        ADC_CFG1_ADLSMP(0)|
-       ADC_CFG1_ADIV(0)|
+       ADC_CFG1_ADIV(3)|
        ADC_CFG1_ADLPC(0);
 
    //! Default value for ADCx_CFG2 register
@@ -977,8 +977,8 @@ public:
          /*   5: --                   = --                             */  { NoPortInfo, 0,         INVALID_PCR,  0 },
          /*   6: --                   = --                             */  { NoPortInfo, 0,         INVALID_PCR,  0 },
          /*   7: --                   = --                             */  { NoPortInfo, 0,         INVALID_PCR,  0 },
-         /*   8: ADC0_SE8             = PTB1 (p9)                      */  { PortBInfo,  GPIOB_BasePtr,  1,       PORT_PCR_MUX(0)|defaultPcrValue  },
-         /*   9: ADC0_SE9             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
+         /*   8: ADC0_SE8             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
+         /*   9: ADC0_SE9             = PTB0 (p8)                      */  { PortBInfo,  GPIOB_BasePtr,  0,       PORT_PCR_MUX(0)|defaultPcrValue  },
          /*  10: --                   = --                             */  { NoPortInfo, 0,         INVALID_PCR,  0 },
          /*  11: --                   = --                             */  { NoPortInfo, 0,         INVALID_PCR,  0 },
          /*  12: --                   = --                             */  { NoPortInfo, 0,         INVALID_PCR,  0 },
@@ -998,7 +998,7 @@ public:
 #else
       enablePortClocks(PORTB_CLOCK_MASK);
 #endif
-      PORTB->GPCLR = pcrValue|PORT_PCR_MUX(0)|PORT_GPCLR_GPWE(0x0002UL);
+      PORTB->GPCLR = pcrValue|PORT_PCR_MUX(0)|PORT_GPCLR_GPWE(0x0001UL);
    }
 
    /**
@@ -1010,7 +1010,7 @@ public:
 #else
       enablePortClocks(PORTB_CLOCK_MASK);
 #endif
-      PORTB->GPCLR = PORT_PCR_MUX(0)|PORT_GPCLR_GPWE(0x2U);
+      PORTB->GPCLR = PORT_PCR_MUX(0)|PORT_GPCLR_GPWE(0x1U);
    }
 
 };
@@ -1136,7 +1136,7 @@ public:
          /*   0: CMP0_IN0             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
          /*   1: CMP0_IN1             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
          /*   2: CMP0_IN2             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
-         /*   3: CMP0_IN3             = PTB1 (p9)                      */  { PortBInfo,  GPIOB_BasePtr,  1,       PORT_PCR_MUX(0)|defaultPcrValue  },
+         /*   3: CMP0_IN3             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
          /*   4: --                   = --                             */  { NoPortInfo, 0,         INVALID_PCR,  0 },
          /*   5: CMP0_IN5             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
          /*   6: --                   = --                             */  { NoPortInfo, 0,         INVALID_PCR,  0 },
@@ -1150,24 +1150,13 @@ public:
     * @param pcrValue PCR value controlling pin options
     */
    static void initPCRs(uint32_t pcrValue=defaultPcrValue) {
-#ifdef PCC_PCCn_CGC_MASK
-      PCC->PCC_PORTB = PCC_PCCn_CGC_MASK;
-#else
-      enablePortClocks(PORTB_CLOCK_MASK);
-#endif
-      PORTB->GPCLR = pcrValue|PORT_PCR_MUX(0)|PORT_GPCLR_GPWE(0x0002UL);
+      (void)pcrValue;
    }
 
    /**
     * Resets pins used by peripheral
     */
    static void clearPCRs() {
-#ifdef PCC_PCCn_CGC_MASK
-      PCC->PCC_PORTB = PCC_PCCn_CGC_MASK;
-#else
-      enablePortClocks(PORTB_CLOCK_MASK);
-#endif
-      PORTB->GPCLR = PORT_PCR_MUX(0)|PORT_GPCLR_GPWE(0x2U);
    }
 
 };
@@ -2420,7 +2409,7 @@ public:
    static constexpr PinInfo  info[] = {
 
          //      Signal                 Pin                                  portInfo    gpioAddress     gpioBit  PCR value
-         /*   0: TPM0_CH0             = PTA6 (p6)                      */  { PortAInfo,  GPIOA_BasePtr,  6,       PORT_PCR_MUX(2)|defaultPcrValue  },
+         /*   0: TPM0_CH0             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
          /*   1: TPM0_CH1             = --                             */  { NoPortInfo, 0,         UNMAPPED_PCR, 0 },
    };
 
@@ -2430,24 +2419,13 @@ public:
     * @param pcrValue PCR value controlling pin options
     */
    static void initPCRs(uint32_t pcrValue=defaultPcrValue) {
-#ifdef PCC_PCCn_CGC_MASK
-      PCC->PCC_PORTA = PCC_PCCn_CGC_MASK;
-#else
-      enablePortClocks(PORTA_CLOCK_MASK);
-#endif
-      PORTA->GPCLR = pcrValue|PORT_PCR_MUX(2)|PORT_GPCLR_GPWE(0x0040UL);
+      (void)pcrValue;
    }
 
    /**
     * Resets pins used by peripheral
     */
    static void clearPCRs() {
-#ifdef PCC_PCCn_CGC_MASK
-      PCC->PCC_PORTA = PCC_PCCn_CGC_MASK;
-#else
-      enablePortClocks(PORTA_CLOCK_MASK);
-#endif
-      PORTA->GPCLR = PORT_PCR_MUX(0)|PORT_GPCLR_GPWE(0x40U);
    }
 
 };
@@ -2715,7 +2693,7 @@ namespace USBDM {
  * @brief Abstraction for Analogue Input
  * @{
  */
-using Adc_p9               = const USBDM::Adc0::Channel<8>;
+using Adc_p8               = const USBDM::Adc0::Channel<9>;
 /** 
  * End group ADC_Group
  * @}
@@ -2726,6 +2704,7 @@ using Adc_p9               = const USBDM::Adc0::Channel<8>;
  * @{
  */
 using Gpio_p5              = const USBDM::GpioA<5>;
+using Gpio_p9              = const USBDM::GpioB<1>;
 using Gpio_p12             = const USBDM::GpioB<4>;
 /** 
  * End group GPIO_Group
@@ -2736,7 +2715,6 @@ using Gpio_p12             = const USBDM::GpioB<4>;
  * @brief Abstraction for PWM, Input capture and Output compare
  * @{
  */
-using Tpm_p6               = const USBDM::Tpm0::Channel<0>;
 using Tpm_p13              = const USBDM::Tpm1::Channel<1>;
 /** 
  * End group TPM_Group
@@ -2762,14 +2740,14 @@ using Tpm_p13              = const USBDM::Tpm1::Channel<1>;
  *  PTA2                     | SWD_DIO                                     | p16                       | SWD_DIO       
  *  PTA3                     | LPUART0_TX                                  | p3                        | Debug_Tx       
  *  PTA4                     | LPUART0_RX                                  | p4                        | Debug_Rx       
- *  PTA5                     | GPIOA_5/RTC_CLKIN                           | p5                        | TVdd_Enable       
- *  PTA6                     | TPM0_CH0                                    | p6                        | -       
+ *  PTA5                     | GPIOA_5/RTC_CLKIN                           | p5                        | TVdd_Status       
+ *  PTA6                     | -                                           | p6                        | -       
  *  PTA7                     | -                                           | p7                        | -       
- *  PTB0                     | -                                           | p8                        | -       
- *  PTB1                     | ADC0_SE8/CMP0_IN3                           | p9                        | -       
+ *  PTB0                     | ADC0_SE9                                    | p8                        | TVdd_Sample       
+ *  PTB1                     | GPIOB_1                                     | p9                        | TVdd_Enable       
  *  PTB2                     | -                                           | p10                       | -       
  *  PTB3                     | -                                           | p11                       | -       
- *  PTB4                     | GPIOB_4                                     | p12                       | Run_Button       
+ *  PTB4                     | GPIOB_4                                     | p12                       | Power_Button       
  *  PTB5                     | TPM1_CH1                                    | p13                       | Clock       
  *  VDD                      | -                                           | p1                        | -       
  *  VSS                      | -                                           | p2                        | -       
@@ -2783,14 +2761,14 @@ using Tpm_p13              = const USBDM::Tpm1::Channel<1>;
  *  VSS                      | -                                           | p2                        | -       
  *  PTA3                     | LPUART0_TX                                  | p3                        | Debug_Tx       
  *  PTA4                     | LPUART0_RX                                  | p4                        | Debug_Rx       
- *  PTA5                     | GPIOA_5/RTC_CLKIN                           | p5                        | TVdd_Enable       
- *  PTA6                     | TPM0_CH0                                    | p6                        | -       
+ *  PTA5                     | GPIOA_5/RTC_CLKIN                           | p5                        | TVdd_Status       
+ *  PTA6                     | -                                           | p6                        | -       
  *  PTA7                     | -                                           | p7                        | -       
- *  PTB0                     | -                                           | p8                        | -       
- *  PTB1                     | ADC0_SE8/CMP0_IN3                           | p9                        | -       
+ *  PTB0                     | ADC0_SE9                                    | p8                        | TVdd_Sample       
+ *  PTB1                     | GPIOB_1                                     | p9                        | TVdd_Enable       
  *  PTB2                     | -                                           | p10                       | -       
  *  PTB3                     | -                                           | p11                       | -       
- *  PTB4                     | GPIOB_4                                     | p12                       | Run_Button       
+ *  PTB4                     | GPIOB_4                                     | p12                       | Power_Button       
  *  PTB5                     | TPM1_CH1                                    | p13                       | Clock       
  *  PTA0                     | SWD_CLK                                     | p14                       | SWD_CLK       
  *  PTA1                     | RESET_b                                     | p15                       | RESET_b       
@@ -2802,15 +2780,15 @@ using Tpm_p13              = const USBDM::Tpm1::Channel<1>;
  *    Pin Name               |   Functions                                 |  Location                 |  Description  
  *  ------------------------ | --------------------------------------------|---------------------------| ------------- 
  *  VSS                      | -                                           | p2                        | -       
- *  PTB1                     | ADC0_SE8/CMP0_IN3                           | p9                        | -       
- *  PTA5                     | GPIOA_5/RTC_CLKIN                           | p5                        | TVdd_Enable       
- *  PTB4                     | GPIOB_4                                     | p12                       | Run_Button       
+ *  PTB0                     | ADC0_SE9                                    | p8                        | TVdd_Sample       
+ *  PTA5                     | GPIOA_5/RTC_CLKIN                           | p5                        | TVdd_Status       
+ *  PTB1                     | GPIOB_1                                     | p9                        | TVdd_Enable       
+ *  PTB4                     | GPIOB_4                                     | p12                       | Power_Button       
  *  PTA4                     | LPUART0_RX                                  | p4                        | Debug_Rx       
  *  PTA3                     | LPUART0_TX                                  | p3                        | Debug_Tx       
  *  PTA1                     | RESET_b                                     | p15                       | RESET_b       
  *  PTA0                     | SWD_CLK                                     | p14                       | SWD_CLK       
  *  PTA2                     | SWD_DIO                                     | p16                       | SWD_DIO       
- *  PTA6                     | TPM0_CH0                                    | p6                        | -       
  *  PTB5                     | TPM1_CH1                                    | p13                       | Clock       
  *
  */
