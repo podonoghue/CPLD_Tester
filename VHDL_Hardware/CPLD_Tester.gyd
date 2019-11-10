@@ -1,0 +1,62 @@
+Pin Freeze File:  version P.49d
+
+2C64A44VQ XC2C64A-7-VQ44
+clock S:PIN1
+leds<0> S:PIN12
+leds<1> S:PIN13
+leds<2> S:PIN14
+leds<3> S:PIN16
+leds<4> S:PIN18
+leds<5> S:PIN19
+leds<6> S:PIN20
+leds<7> S:PIN21
+leds<8> S:PIN22
+leds<9> S:PIN23
+leds<10> S:PIN27
+leds<11> S:PIN28
+leds<12> S:PIN29
+leds<13> S:PIN30
+leds<14> S:PIN31
+leds<15> S:PIN32
+leds<16> S:PIN33
+leds<17> S:PIN34
+leds<18> S:PIN36
+leds<19> S:PIN37
+leds<20> S:PIN38
+leds<21> S:PIN39
+leds<22> S:PIN40
+leds<23> S:PIN41
+leds<24> S:PIN42
+leds<25> S:PIN43
+leds<26> S:PIN44
+leds<27> S:PIN2
+leds<28> S:PIN3
+leds<29> S:PIN5
+leds<30> S:PIN6
+leds<31> S:PIN8
+
+
+;The remaining section of the .gyd file is for documentation purposes only.
+;It shows where your internal equations were placed in the last successful fit.
+
+PARTITION FB1_1 leds<20> leds<19> leds<18> toggle
+		 counter<6> counter<5> counter<4> counter<3>
+		 leds<17> leds<16> leds<15> leds<14>
+		 leds<13> counter<2> counter<1> counter<0>
+		
+PARTITION FB2_1 leds<21> leds<22>
+PARTITION FB2_5 leds<23> leds<24> leds<25> leds<26>
+		 value<25>
+PARTITION FB2_11 value<17> leds<27> leds<28> value<10>
+		 value<0> value<15>
+PARTITION FB3_1 leds<12> leds<11> leds<10>
+PARTITION FB3_6 leds<9>
+PARTITION FB3_10 leds<8> leds<7> leds<6>
+PARTITION FB3_14 leds<5> leds<4>
+
+PARTITION FB4_1 leds<29> leds<30>
+PARTITION FB4_7 leds<31>
+PARTITION FB4_11 leds<0>
+PARTITION FB4_13 leds<1> leds<2> leds<3>
+
+

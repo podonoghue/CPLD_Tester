@@ -1,0 +1,254 @@
+Release 14.4 - xst P.49d (nt64)
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+--> Parameter TMPDIR set to xst/projnav.tmp
+
+
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.10 secs
+ 
+--> Parameter xsthdpdir set to xst
+
+
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.10 secs
+ 
+--> Reading design: CPLD_Tester.prj
+
+TABLE OF CONTENTS
+  1) Synthesis Options Summary
+  2) HDL Compilation
+  3) Design Hierarchy Analysis
+  4) HDL Analysis
+  5) HDL Synthesis
+     5.1) HDL Synthesis Report
+  6) Advanced HDL Synthesis
+     6.1) Advanced HDL Synthesis Report
+  7) Low Level Synthesis
+  8) Partition Report
+  9) Final Report
+
+=========================================================================
+*                      Synthesis Options Summary                        *
+=========================================================================
+---- Source Parameters
+Input File Name                    : "CPLD_Tester.prj"
+Input Format                       : mixed
+Ignore Synthesis Constraint File   : NO
+
+---- Target Parameters
+Output File Name                   : "CPLD_Tester"
+Output Format                      : NGC
+Target Device                      : CoolRunner2 CPLDs
+
+---- Source Options
+Top Module Name                    : CPLD_Tester
+Automatic FSM Extraction           : YES
+FSM Encoding Algorithm             : Auto
+Safe Implementation                : No
+Mux Extraction                     : Yes
+Resource Sharing                   : YES
+
+---- Target Options
+Add IO Buffers                     : YES
+MACRO Preserve                     : YES
+XOR Preserve                       : YES
+Equivalent register Removal        : YES
+
+---- General Options
+Optimization Goal                  : Speed
+Optimization Effort                : 1
+Keep Hierarchy                     : Yes
+Netlist Hierarchy                  : As_Optimized
+RTL Output                         : Yes
+Hierarchy Separator                : /
+Bus Delimiter                      : <>
+Case Specifier                     : Maintain
+Verilog 2001                       : YES
+
+---- Other Options
+Clock Enable                       : YES
+wysiwyg                            : NO
+
+=========================================================================
+
+
+=========================================================================
+*                          HDL Compilation                              *
+=========================================================================
+Compiling vhdl file "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.vhd" in Library work.
+Entity <cpld_tester> compiled.
+Entity <cpld_tester> (Architecture <behavioral>) compiled.
+
+=========================================================================
+*                     Design Hierarchy Analysis                         *
+=========================================================================
+Analyzing hierarchy for entity <CPLD_Tester> in library <work> (architecture <behavioral>).
+
+
+=========================================================================
+*                            HDL Analysis                               *
+=========================================================================
+Analyzing Entity <CPLD_Tester> in library <work> (Architecture <behavioral>).
+WARNING:Xst:819 - "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.vhd" line 25: One or more signals are missing in the process sensitivity list. To enable synthesis of FPGA/CPLD hardware, XST will assume that all necessary signals are present in the sensitivity list. Please note that the result of the synthesis may differ from the initial design specification. The missing signals are:
+   <toggle>
+Entity <CPLD_Tester> analyzed. Unit <CPLD_Tester> generated.
+
+
+=========================================================================
+*                           HDL Synthesis                               *
+=========================================================================
+
+Performing bidirectional port resolution...
+
+Synthesizing Unit <CPLD_Tester>.
+    Related source file is "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.vhd".
+    Register <value<1>> equivalent to <value<0>> has been removed
+    Register <value<2>> equivalent to <value<0>> has been removed
+    Register <value<3>> equivalent to <value<0>> has been removed
+    Register <value<4>> equivalent to <value<0>> has been removed
+    Register <value<5>> equivalent to <value<0>> has been removed
+    Register <value<6>> equivalent to <value<0>> has been removed
+    Register <value<7>> equivalent to <value<0>> has been removed
+    Register <value<8>> equivalent to <value<0>> has been removed
+    Register <value<11>> equivalent to <value<10>> has been removed
+    Register <value<12>> equivalent to <value<10>> has been removed
+    Register <value<13>> equivalent to <value<10>> has been removed
+    Register <value<14>> equivalent to <value<10>> has been removed
+    Register <value<9>> equivalent to <value<10>> has been removed
+    Register <value<18>> equivalent to <value<17>> has been removed
+    Register <value<19>> equivalent to <value<17>> has been removed
+    Register <value<20>> equivalent to <value<17>> has been removed
+    Register <value<21>> equivalent to <value<17>> has been removed
+    Register <value<22>> equivalent to <value<17>> has been removed
+    Register <value<23>> equivalent to <value<17>> has been removed
+    Register <value<24>> equivalent to <value<17>> has been removed
+    Register <value<26>> equivalent to <value<25>> has been removed
+    Register <value<27>> equivalent to <value<25>> has been removed
+    Register <value<28>> equivalent to <value<25>> has been removed
+    Register <value<29>> equivalent to <value<25>> has been removed
+    Register <value<30>> equivalent to <value<25>> has been removed
+    Register <value<31>> equivalent to <value<25>> has been removed
+WARNING:Xst:737 - Found 1-bit latch for signal <value_10>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <value_17>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <value_25>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <value_0>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <value_15>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+INFO:Xst:2371 - HDL ADVISOR - Logic functions respectively driving the data and gate enable inputs of this latch share common terms. This situation will potentially lead to setup/hold violations and, as a result, to simulation problems. This situation may come from an incomplete case statement (all selector values are not covered). You should carefully review if it was in your intentions to describe such a latch.
+    Found 32-bit register for signal <leds>.
+    Found 7-bit up counter for signal <counter>.
+    Found 1-bit register for signal <toggle>.
+    Summary:
+	inferred   1 Counter(s).
+	inferred   1 D-type flip-flop(s).
+Unit <CPLD_Tester> synthesized.
+
+
+=========================================================================
+HDL Synthesis Report
+
+Macro Statistics
+# Counters                                             : 1
+ 7-bit up counter                                      : 1
+# Registers                                            : 2
+ 1-bit register                                        : 1
+ 32-bit register                                       : 1
+# Latches                                              : 5
+ 1-bit latch                                           : 5
+
+=========================================================================
+
+=========================================================================
+*                       Advanced HDL Synthesis                          *
+=========================================================================
+
+
+=========================================================================
+Advanced HDL Synthesis Report
+
+Macro Statistics
+# Counters                                             : 1
+ 7-bit up counter                                      : 1
+# Registers                                            : 1
+ Flip-Flops                                            : 1
+# Latches                                              : 5
+ 1-bit latch                                           : 5
+
+=========================================================================
+
+=========================================================================
+*                         Low Level Synthesis                           *
+=========================================================================
+INFO:Xst:2261 - The FF/Latch <leds_8> in Unit <CPLD_Tester> is equivalent to the following 8 FFs/Latches, which will be removed : <leds_7> <leds_6> <leds_5> <leds_4> <leds_3> <leds_2> <leds_1> <leds_0> 
+INFO:Xst:2261 - The FF/Latch <leds_14> in Unit <CPLD_Tester> is equivalent to the following 5 FFs/Latches, which will be removed : <leds_13> <leds_12> <leds_11> <leds_10> <leds_9> 
+INFO:Xst:2261 - The FF/Latch <leds_16> in Unit <CPLD_Tester> is equivalent to the following FF/Latch, which will be removed : <leds_15> 
+INFO:Xst:2261 - The FF/Latch <leds_24> in Unit <CPLD_Tester> is equivalent to the following 7 FFs/Latches, which will be removed : <leds_23> <leds_22> <leds_21> <leds_20> <leds_19> <leds_18> <leds_17> 
+INFO:Xst:2261 - The FF/Latch <leds_31> in Unit <CPLD_Tester> is equivalent to the following 6 FFs/Latches, which will be removed : <leds_30> <leds_29> <leds_28> <leds_27> <leds_26> <leds_25> 
+
+Optimizing unit <CPLD_Tester> ...
+  implementation constraint: INIT=r	 : counter_1
+  implementation constraint: INIT=r	 : counter_0
+  implementation constraint: INIT=r	 : counter_2
+  implementation constraint: INIT=r	 : counter_4
+  implementation constraint: INIT=r	 : counter_3
+  implementation constraint: INIT=r	 : counter_6
+  implementation constraint: INIT=r	 : counter_5
+
+=========================================================================
+*                           Partition Report                            *
+=========================================================================
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+=========================================================================
+*                            Final Report                               *
+=========================================================================
+Final Results
+RTL Top Level Output File Name     : CPLD_Tester.ngr
+Top Level Output File Name         : CPLD_Tester
+Output Format                      : NGC
+Optimization Goal                  : Speed
+Keep Hierarchy                     : Yes
+Target Technology                  : CoolRunner2 CPLDs
+Macro Preserve                     : YES
+XOR Preserve                       : YES
+Clock Enable                       : YES
+wysiwyg                            : NO
+
+Design Statistics
+# IOs                              : 33
+
+Cell Usage :
+# BELS                             : 67
+#      AND2                        : 9
+#      AND3                        : 4
+#      AND6                        : 1
+#      AND7                        : 4
+#      GND                         : 1
+#      INV                         : 42
+#      XOR2                        : 6
+# FlipFlops/Latches                : 18
+#      FD                          : 12
+#      FDCE                        : 1
+#      LD                          : 5
+# IO Buffers                       : 33
+#      IBUF                        : 1
+#      OBUF                        : 32
+=========================================================================
+
+
+Total REAL time to Xst completion: 5.00 secs
+Total CPU time to Xst completion: 5.18 secs
+ 
+--> 
+
+Total memory usage is 227896 kilobytes
+
+Number of errors   :    0 (   0 filtered)
+Number of warnings :    6 (   0 filtered)
+Number of infos    :    6 (   0 filtered)
+

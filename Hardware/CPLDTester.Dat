@@ -1,0 +1,19 @@
+Field=Comment~String~Comment~100|Field=Description~String~Description~100|Field=Designator~String~Designator~100|Field=Footprint~String~Footprint~100|Field=LibRef~String~LibRef~100|Field=Quantity~Integer~Quantity~100|Field=Farnell PN~String~Farnell PN~100|Field=Digikey~String~Digikey~100|ReportField=Currency~<none>|ReportField=ProductionQuantity~1|ReportField=ProjectFileName~CPLDTester.PrjPCB|ReportField=ProjectFullPath~C:\Users\podonoghue\Documents\Development\PCB\Digital_Lab_Equipment\CPLDTester\Hardware\CPLDTester.PrjPCB|ReportField=Title~Bill of Materials For Project [CPLDTester.PrjPCB] (No PCB Document Selected)|ReportField=TotalQuantity~26|ReportField=ReportTime~3:27:02 PM|ReportField=ReportDate~10/03/2017|ReportField=ReportDateTime~10/03/2017 3:27:02 PM|ReportField=OutputName~Bill of Materials|ReportField=OutputType~BOM_PartType|ReportField=GeneratorName~BOM|ReportField=GeneratorDescription~Bill of Materials|ReportField=VariantName~None|ReportField=ProjectName~CPLD Tester|ReportField=ProjectRevision~V2.0|ReportField=Address1~|ReportField=Address2~|ReportField=Address3~|ReportField=Address4~|ReportField=Application_BuildNumber~|ReportField=ApprovedBy~|ReportField=Author~|ReportField=CheckedBy~|ReportField=CompanyName~|ReportField=CurrentDate~|ReportField=CurrentTime~|ReportField=Date~|ReportField=DocumentFullPathAndName~|ReportField=DocumentName~|ReportField=DocumentNumber~|ReportField=DrawnBy~|ReportField=Engineer~|ReportField=ImagePath~|ReportField=ModifiedDate~|ReportField=Organization~|ReportField=Revision~|ReportField=Rule~|ReportField=SheetNumber~|ReportField=SheetTotal~|ReportField=Time~|ReportField=Title~|ReportField=DataSourceFileName~CPLDTester.PrjPCB|ReportField=DataSourceFullPath~C:\Users\podonoghue\Documents\Development\PCB\Digital_Lab_Equipment\CPLDTester\Hardware\CPLDTester.PrjPCB
+100nF|Capacitor SMT|C1, C8|CCNP2012-0805|Cap|2|1186187|
+4u7/10V|Capacitor SMT|C9|CCNP2012-0805|Cap|1|1186187|
+TP|Test Point|Clk, Gnd, Vcc|PCBPIN - 0.7mm|TP|3||
+LED Array x 10|DIL LED x 10|D1, D2, D3, D4|LED20|LEDX10|4||
+1N5819HW|SCHOTTKY, 1A, 40V, SOD-123|D5|SOD-123|1N5819HW|1|2306459|
+LED|3mm RED LED|D6|LED3MM-RED|LED_3MM_RED|1||
+MINISMDC050F-2|PolySwitch miniSMDC Series, 500 mA, 1 A, 24 VDC|F1|PTC4532-1812|MINISMDC050F-2|1|1175839|
+2.1mm Jack|2.1 mm Power Jack|J1|2.1MMJACK|2.1mmJack|1||
+Header 1x5H|Header, 5-Pin, Right Angle|P1|HDR1X5H|Header 1x5H|1||
+10K|Resistor|R1|CR2012-0805|Res_CR0805|1||
+1K|Resistor|R2|CR2012-0805|Res_CR0805|1||
+470R|Resistor|R3|CR2012-0805|Res_CR0805|1||
+RESPACK*9|Resistor Pack SIP x9|RP1, RP3|SIP10|RESPACK*9|2||
+RESPACK*8|Resistor Pack SIP x8|RP2, RP4|SIP9|RESPACK*8|2||
+ZIF-40-Socket||S1|ZIF40|ZIF-40-Socket|1||
+SW_PB-FSM4JAH|Switch miniature push-button|S2|SW_MIN_PB-FSM4JAH|SW_PB-FSM4JAH|1|2468761|1825910-3-ND
+MKE04Z8VTG4|Kinetis ARM uC|U1|TSSOP16|MKE04Z8VTG4|1||
+MC33375ST-3.3T3|Low Dropout 300mA Voltage Regulator with ON/OFF Control|U2|SOT223|MC33375ST-3.3T3|1|1150444|

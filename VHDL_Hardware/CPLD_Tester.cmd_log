@@ -1,0 +1,151 @@
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+taengine -intstyle ise -f CPLD_Tester -w --format html1 -l CPLD_Tester_html/tim/timing_report.htm 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 
+xst -intstyle ise -ifn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.xst" -ofn "C:/Users/podonoghue/Documents/Subjects/EEE20001_17_S1/Laboratory/CPLD_Tester/CPLD_Tester.syr" 
+ngdbuild -intstyle ise -dd _ngo -uc CMOD.ucf -p xc2c64a-VQ44-7 CPLD_Tester.ngc CPLD_Tester.ngd  
+cpldfit -intstyle ise -p xc2c64a-7-VQ44 -ofmt vhdl -optimize density -htmlrpt -loc on -slew fast -init low -inputs 32 -pterms 28 -unused keeper -terminate keeper -iostd LVCMOS18 CPLD_Tester.ngd 
+XSLTProcess CPLD_Tester_build.xml 
+tsim -intstyle ise CPLD_Tester CPLD_Tester.nga 
+hprep6 -s IEEE1149 -i CPLD_Tester 

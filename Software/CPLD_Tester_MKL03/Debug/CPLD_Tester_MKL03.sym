@@ -1,0 +1,147 @@
+00000000 R __flash_start
+00000000 A __RAM_VECTOR_TABLE_SIZE_BYTES
+00000000 A __sram_u_size
+00000000 R __VECTOR_RAM
+00000000 R __vector_table
+00000000 R __VECTOR_TABLE
+00000000 A M_VECTOR_RAM_SIZE
+000000c0 R __VECTOR_TABLE_END
+00000200 A __heap_size
+00000200 A __heap_size__
+00000200 A __stack_size
+00000200 A __stack_size__
+00000400 R securityInfo
+00000458 T _mainCRTStartup
+00000458 T _start
+000004d0 T Reset_Handler
+00000514 T __aeabi_uidiv
+00000514 T __udivsi3
+00000620 T __aeabi_uidivmod
+00000628 W __aeabi_idiv0
+00000628 W __aeabi_ldiv0
+0000064c W USBDM::RtcInfo::enableClock()
+00000670 W USBDM::McgInfo::getMcgPClk()
+000006ac W USBDM::McgInfo::getLircClk()
+0000070c W USBDM::McgInfo::getLircDiv1Clk()
+00000730 W USBDM::McgInfo::getMcgOutClock()
+00000770 W USBDM::SimInfo::initRegs()
+000007b8 W USBDM::Mcg::setSysDividers(unsigned long)
+000007d8 W USBDM::Mcg::initialise()
+000007e8 T USBDM::Mcg::clockTransition(USBDM::McgInfo::ClockInfo const&)
+00000a04 T USBDM::Mcg::SystemCoreClockUpdate()
+00000a78 T USBDM::Mcg::defaultConfigure()
+00000aa0 T clock_initialise
+00000ab6 W USBDM::OscBase_T<USBDM::Osc0Info>::initialise()
+00000ac4 W USBDM::RtcBase_T<USBDM::RtcInfo>::initialise()
+00000ad4 W USBDM::OscBase_T<USBDM::Osc0Info>::defaultConfigure()
+00000ae8 W USBDM::RtcBase_T<USBDM::RtcInfo>::defaultConfigure()
+00000af6 W _exit
+00000b02 W console_initialise
+00000b0c W rtc_initialise
+00000b16 W software_init_hook
+00000b20 T SystemInitLowLevel
+00000b50 T SystemInit
+00000b6c W USBDM::PmcBase_T<USBDM::PmcInfo>::releasePins()
+00000b88 W ADC0_IRQHandler
+00000b88 W CMP0_IRQHandler
+00000b88 T Default_Handler
+00000b88 W FTF_Command_IRQHandler
+00000b88 W I2C0_IRQHandler
+00000b88 W LLWU_IRQHandler
+00000b88 W LPTMR0_IRQHandler
+00000b88 W LPUART0_IRQHandler
+00000b88 W NMI_Handler
+00000b88 W PendSV_Handler
+00000b88 W PMC_IRQHandler
+00000b88 W PORTA_IRQHandler
+00000b88 W PORTB_IRQHandler
+00000b88 W RTC_Alarm_IRQHandler
+00000b88 W RTC_Seconds_IRQHandler
+00000b88 W SPI0_IRQHandler
+00000b88 W SVC_Handler
+00000b88 W SysTick_Handler
+00000b88 W TPM1_IRQHandler
+00000ba0 W HardFault_Handler
+00000bbe T _HardFault_Handler
+00000bf0 W USBDM::Tpm0Info::enableClock()
+00000c14 W USBDM::Tpm1Info::enableClock()
+00000c38 W USBDM::Tpm1Info::disableClock()
+00000c60 T USBDM::TpmBase_T<USBDM::Tpm0Info>::irqHandler()
+00000cc4 T getRunButton()
+00000ce8 T enableClock()
+00000d06 T main
+00000d64 W USBDM::TpmBase_T<USBDM::Tpm0Info>::Channel<0>::clearInterruptFlag()
+00000d78 W USBDM::GpioBase_T<1024ul, 1074044928ul, (IRQn_Type)31, 1074786368ul, 4u, (USBDM::Polarity)1>::read()
+00000d88 W USBDM::TpmBase_T<USBDM::Tpm1Info>::defaultConfigure()
+00000dc0 W USBDM::TpmBase_T<USBDM::Tpm1Info>::Channel<1>::setOutput(USBDM::PinDriveStrength, USBDM::PinDriveMode, USBDM::PinSlewRate)
+00000e12 W USBDM::TpmBase_T<USBDM::Tpm1Info>::Channel<1>::setDutyCycle(int)
+00000e2c W USBDM::GpioBase_T<512ul, 1074040832ul, (IRQn_Type)30, 1074786304ul, 5u, (USBDM::Polarity)1>::setOutput(USBDM::PinDriveStrength, USBDM::PinDriveMode, USBDM::PinSlewRate)
+00000e6c W USBDM::GpioBase_T<1024ul, 1074044928ul, (IRQn_Type)31, 1074786368ul, 4u, (USBDM::Polarity)1>::setInput(USBDM::PinPull, USBDM::PinAction, USBDM::PinFilter)
+00000ea4 W USBDM::TpmBase_T<USBDM::Tpm0Info>::defaultConfigure()
+00000edc W USBDM::TpmBase_T<USBDM::Tpm0Info>::Channel<0>::configure(USBDM::TpmChMode, USBDM::TpmChannelAction)
+00000f0c W USBDM::TpmBase_T<USBDM::Tpm1Info>::disable()
+00000f28 W USBDM::GpioBase_T<1024ul, 1074044928ul, (IRQn_Type)31, 1074786368ul, 4u, (USBDM::Polarity)1>::isHigh()
+00000f44 W USBDM::TpmBase_T<USBDM::Tpm1Info>::enable()
+00000f56 W USBDM::TpmBase_T<USBDM::Tpm1Info>::enableNvicInterrupts(unsigned long)
+00000f72 W USBDM::TpmBase::CheckPinMapping<USBDM::Tpm1Info, 1>::check()
+00000f7c W USBDM::Pcr_T<1024ul, 1074044928ul, (IRQn_Type)31, 5, 512ul>::setPCR(unsigned long)
+00000fa0 W USBDM::TpmBase_T<USBDM::Tpm1Info>::setDutyCycle(int, int)
+00001010 W USBDM::GpioBase_T<512ul, 1074040832ul, (IRQn_Type)30, 1074786304ul, 5u, (USBDM::Polarity)1>::setOutput(unsigned long)
+00001040 W USBDM::GpioBase_T<1024ul, 1074044928ul, (IRQn_Type)31, 1074786368ul, 4u, (USBDM::Polarity)1>::setInput(unsigned long)
+0000106c W USBDM::TpmBase_T<USBDM::Tpm0Info>::enable()
+0000107e W USBDM::TpmBase_T<USBDM::Tpm0Info>::enableNvicInterrupts(unsigned long)
+0000109a W USBDM::GpioBase_T<512ul, 1074040832ul, (IRQn_Type)30, 1074786304ul, 5u, (USBDM::Polarity)1>::setActive()
+000010a8 W USBDM::GpioBase_T<512ul, 1074040832ul, (IRQn_Type)30, 1074786304ul, 5u, (USBDM::Polarity)1>::setInactive()
+000010b8 W USBDM::GpioBase_T<1024ul, 1074044928ul, (IRQn_Type)31, 1074786368ul, 4u, (USBDM::Polarity)1>::gpio()
+000010c8 W USBDM::Pcr_T<1024ul, 1074044928ul, (IRQn_Type)31, 5, 512ul>::pcrReg()
+000010d8 W USBDM::GpioBase_T<512ul, 1074040832ul, (IRQn_Type)30, 1074786304ul, 5u, (USBDM::Polarity)1>::setOut()
+000010f0 W USBDM::Pcr_T<512ul, 1074040832ul, (IRQn_Type)30, 5, 256ul>::setPCR(unsigned long)
+00001114 W USBDM::GpioBase_T<1024ul, 1074044928ul, (IRQn_Type)31, 1074786368ul, 4u, (USBDM::Polarity)1>::setIn()
+0000112c W USBDM::Pcr_T<1024ul, 1074044928ul, (IRQn_Type)31, 4, 256ul>::setPCR(unsigned long)
+00001150 W USBDM::GpioBase_T<512ul, 1074040832ul, (IRQn_Type)30, 1074786304ul, 5u, (USBDM::Polarity)1>::set()
+00001164 W USBDM::GpioBase_T<512ul, 1074040832ul, (IRQn_Type)30, 1074786304ul, 5u, (USBDM::Polarity)1>::clear()
+00001178 W USBDM::GpioBase_T<512ul, 1074040832ul, (IRQn_Type)30, 1074786304ul, 5u, (USBDM::Polarity)1>::gpio()
+00001188 W USBDM::Pcr_T<512ul, 1074040832ul, (IRQn_Type)30, 5, 256ul>::pcrReg()
+00001198 W USBDM::Pcr_T<1024ul, 1074044928ul, (IRQn_Type)31, 4, 256ul>::pcrReg()
+000012f0 T cpp_initialise
+000012fa T USBDM::enableNvicInterrupt(IRQn_Type, unsigned long)
+00001338 T exit
+00001364 T __libc_init_array
+000013ac T memset
+000013bc T USBDM::Mcg::clockInfo
+00001410 T _global_impure_ptr
+00001414 T _init
+00001420 T _fini
+0000142c T __CTOR_END__
+0000142c T __CTOR_LIST__
+0000142c T __DTOR_END__
+0000142c T __DTOR_LIST__
+00001440 T __exidx_start
+00001448 R __DATA_ROM
+00001448 R __etext
+00001448 R __exidx_end
+000014b0 A __DATA_END
+1ffffe00 D __DATA_RAM
+1ffffe00 D __data_start__
+1ffffe00 ? __interrupts_ram_end__
+1ffffe00 ? __interrupts_ram_start__
+1ffffe00 ? __VECTOR_RAM__
+1ffffe00 ? _mtb_end
+1ffffe00 ? _mtb_start
+1ffffe00 V SystemCoreClock
+1ffffe04 V SystemBusClock
+1ffffe68 B __bss_start__
+1ffffe68 D __data_end__
+1ffffe68 B __START_BSS
+1ffffe84 B USBDM::SystemMcgOutClock
+1ffffe88 B USBDM::SystemLpoClock
+1ffffe8c B USBDM::Mcg::currentClockMode
+1ffffe94 B USBDM::errorCode
+1ffffe98 B __bss_end__
+1ffffe98 B __END_BSS
+1ffffe98 B __heap_addr
+1ffffe98 B __HeapBase
+20000400 B __HeapLimit
+20000400 B __StackLimit
+20000600 B __stack
+20000600 B __StackTop
