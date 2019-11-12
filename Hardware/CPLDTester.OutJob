@@ -15,13 +15,13 @@ LifeCycleDefinitionGUID=
 RevisionNamingSchemeGUID=
 
 [OutputGroup1]
-Name=CPLD_Breakout.OutJob
+Name=CPLDTester.OutJob
 Description=
-TargetOutputMedium=Generate Files
+TargetOutputMedium=Publish To PDF
 VariantName=[No Variations]
 VariantScope=1
 CurrentConfigurationName=
-TargetPrinter=Adobe PDF
+TargetPrinter=Virtual Printer
 PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintJobKind=1|PrintWhat=0
 OutputMedium1=Print To Adobe PDF
 OutputMedium1_Type=Printer
@@ -38,7 +38,7 @@ OutputName1=Schematic Prints
 OutputCategory1=Documentation
 OutputDocumentPath1=[Project Physical Documents]
 OutputVariantName1=[No Variations]
-OutputEnabled1=0
+OutputEnabled1=1
 OutputEnabled1_OutputMedium1=0
 OutputEnabled1_OutputMedium2=1
 OutputEnabled1_OutputMedium3=2
@@ -52,7 +52,7 @@ OutputName2=PCB Prints
 OutputCategory2=Documentation
 OutputDocumentPath2=
 OutputVariantName2=
-OutputEnabled2=0
+OutputEnabled2=1
 OutputEnabled2_OutputMedium1=0
 OutputEnabled2_OutputMedium2=2
 OutputEnabled2_OutputMedium3=1
@@ -99,7 +99,7 @@ OutputName3=Bill of Materials
 OutputCategory3=Report
 OutputDocumentPath3=
 OutputVariantName3=
-OutputEnabled3=1
+OutputEnabled3=0
 OutputEnabled3_OutputMedium1=0
 OutputEnabled3_OutputMedium2=0
 OutputEnabled3_OutputMedium3=3
@@ -123,7 +123,7 @@ OutputName4=Gerber Files
 OutputCategory4=Fabrication
 OutputDocumentPath4=
 OutputVariantName4=
-OutputEnabled4=1
+OutputEnabled4=0
 OutputEnabled4_OutputMedium1=0
 OutputEnabled4_OutputMedium2=0
 OutputEnabled4_OutputMedium3=0
@@ -136,7 +136,7 @@ OutputName5=NC Drill Files
 OutputCategory5=Fabrication
 OutputDocumentPath5=
 OutputVariantName5=
-OutputEnabled5=1
+OutputEnabled5=0
 OutputEnabled5_OutputMedium1=0
 OutputEnabled5_OutputMedium2=0
 OutputEnabled5_OutputMedium3=0
@@ -149,28 +149,42 @@ OutputName6=Generates pick and place files
 OutputCategory6=Assembly
 OutputDocumentPath6=
 OutputVariantName6=
-OutputEnabled6=1
+OutputEnabled6=0
 OutputEnabled6_OutputMedium1=0
 OutputEnabled6_OutputMedium2=0
 OutputEnabled6_OutputMedium3=0
 OutputEnabled6_OutputMedium4=4
 OutputDefault6=0
 Configuration6_Name1=OutputConfigurationParameter1
-Configuration6_Item1=Record=PickPlaceView|Units=Metric|GenerateCSVFormat=True|GenerateTextFormat=False|ShowUnits=False|Separator=.|ExcludeFilterParam=False|IncludeVariations=False|Filter= |FilterActive=False|Column#1=Name:Designator,Fixed:True,Metric:False,Visible:True,Sort:None,Position:0|Column#2=Name:Comment,Fixed:True,Metric:False,Visible:False,Sort:None,Position:1|Column#3=Name:Layer,Fixed:True,Metric:False,Visible:True,Sort:None,Position:10|Column#4=Name:Footprint,Fixed:True,Metric:False,Visible:True,Sort:None,Position:2|Column#5=Name:Footprint Description,Fixed:True,Metric:False,Visible:False,Sort:None,Position:3|Column#6=Name:Center-X,Fixed:True,Metric:True,Visible:True,Sort:Ascending,SortIndex:0,Position:4|Column#7=Name:Center-Y,Fixed:True,Metric:True,Visible:True,Sort:None,Position:5|Column#8=Name:Rotation,Fixed:True,Metric:False,Visible:True,Sort:None,Position:11|Column#9=Name:Description,Fixed:True,Metric:False,Visible:False,Sort:None,Position:12|Column#10=Name:ComponentKind,Fixed:True,Metric:False,Visible:False,Sort:None,Position:13|Column#11=Name:Height,Fixed:True,Metric:True,Visible:False,Sort:None,Position:14|Column#12=Name:Ref-X,Fixed:True,Metric:True,Visible:True,Sort:None,Position:6|Column#13=Name:Ref-Y,Fixed:True,Metric:True,Visible:True,Sort:None,Position:7|Column#14=Name:Pad-X,Fixed:True,Metric:True,Visible:True,Sort:None,Position:8|Column#15=Name:Pad-Y,Fixed:True,Metric:True,Visible:True,Sort:None,Position:9|Column#16=Name:Variation,Fixed:True,Metric:False,Visible:False,Sort:None,Position:15|Column#17=Name:Revision,Fixed:False,Metric:False,Visible:False,Sort:None,Position:26|Column#18=Name:Class I,Fixed:False,Metric:False,Visible:False,Sort:None,Position:17|Column#19=Name:Digikey,Fixed:False,Metric:False,Visible:False,Sort:None,Position:19|Column#20=Name:Class,Fixed:False,Metric:False,Visible:False,Sort:None,Position:16|Column#21=Name:Manufacturer,Fixed:False,Metric:False,Visible:False,Sort:None,Position:23|Column#22=Name:LatestRevisionNote,Fixed:False,Metric:False,Visible:False,Sort:None,Position:22|Column#23=Name:SubClass,Fixed:False,Metric:False,Visible:False,Sort:None,Position:27|Column#24=Name:Farnell PN,Fixed:False,Metric:False,Visible:False,Sort:None,Position:20|Column#25=Name:Value,Fixed:False,Metric:False,Visible:False,Sort:None,Position:28|Column#26=Name:LatestRevisionDate,Fixed:False,Metric:False,Visible:False,Sort:None,Position:21|Column#27=Name:Publisher,Fixed:False,Metric:False,Visible:False,Sort:None,Position:25|Column#28=Name:Class II,Fixed:False,Metric:False,Visible:False,Sort:None,Position:18|Column#29=Name:Published,Fixed:False,Metric:False,Visible:False,Sort:None,Position:24|Column#30=Name:LCSC,Fixed:False,Metric:False,Visible:False,Sort:None,Position:32|Column#31=Name:Digikey Part Number,Fixed:False,Metric:False,Visible:False,Sort:None,Position:31|Column#32=Name:Digikey Link,Fixed:False,Metric:False,Visible:False,Sort:None,Position:30|Column#33=Name:Part Number,Fixed:False,Metric:False,Visible:False,Sort:None,Position:34|Column#34=Name:Angle,Fixed:False,Metric:False,Visible:False,Sort:None,Position:29|Column#35=Name:Mouser,Fixed:False,Metric:False,Visible:False,Sort:None,Position:33
-OutputType7=PDF3D
-OutputName7=PDF3D
+Configuration6_Item1=Record=PickPlaceView|Units=Metric|GenerateCSVFormat=True|GenerateTextFormat=False|ShowUnits=False|Separator=.|ExcludeFilterParam=False|IncludeVariations=False|Filter= |FilterActive=False|Column#1=Name:Designator,Fixed:True,Metric:False,Visible:True,Sort:Ascending,SortIndex:0,Position:0|Column#2=Name:Comment,Fixed:True,Metric:False,Visible:False,Sort:None,Position:1|Column#3=Name:Layer,Fixed:True,Metric:False,Visible:True,Sort:None,Position:10|Column#4=Name:Footprint,Fixed:True,Metric:False,Visible:True,Sort:None,Position:2|Column#5=Name:Footprint Description,Fixed:True,Metric:False,Visible:False,Sort:None,Position:3|Column#6=Name:Center-X,Fixed:True,Metric:True,Visible:True,Sort:None,Position:4|Column#7=Name:Center-Y,Fixed:True,Metric:True,Visible:True,Sort:None,Position:5|Column#8=Name:Rotation,Fixed:True,Metric:False,Visible:True,Sort:None,Position:11|Column#9=Name:Description,Fixed:True,Metric:False,Visible:False,Sort:None,Position:12|Column#10=Name:ComponentKind,Fixed:True,Metric:False,Visible:False,Sort:None,Position:13|Column#11=Name:Height,Fixed:True,Metric:True,Visible:False,Sort:None,Position:14|Column#12=Name:Ref-X,Fixed:True,Metric:True,Visible:True,Sort:None,Position:6|Column#13=Name:Ref-Y,Fixed:True,Metric:True,Visible:True,Sort:None,Position:7|Column#14=Name:Pad-X,Fixed:True,Metric:True,Visible:True,Sort:None,Position:8|Column#15=Name:Pad-Y,Fixed:True,Metric:True,Visible:True,Sort:None,Position:9|Column#16=Name:Variation,Fixed:True,Metric:False,Visible:False,Sort:None,Position:15|Column#17=Name:Revision,Fixed:False,Metric:False,Visible:False,Sort:None,Position:26|Column#18=Name:Class I,Fixed:False,Metric:False,Visible:False,Sort:None,Position:17|Column#19=Name:Digikey,Fixed:False,Metric:False,Visible:False,Sort:None,Position:19|Column#20=Name:Class,Fixed:False,Metric:False,Visible:False,Sort:None,Position:16|Column#21=Name:Manufacturer,Fixed:False,Metric:False,Visible:False,Sort:None,Position:23|Column#22=Name:LatestRevisionNote,Fixed:False,Metric:False,Visible:False,Sort:None,Position:22|Column#23=Name:SubClass,Fixed:False,Metric:False,Visible:False,Sort:None,Position:27|Column#24=Name:Farnell PN,Fixed:False,Metric:False,Visible:False,Sort:None,Position:20|Column#25=Name:Value,Fixed:False,Metric:False,Visible:False,Sort:None,Position:28|Column#26=Name:LatestRevisionDate,Fixed:False,Metric:False,Visible:False,Sort:None,Position:21|Column#27=Name:Publisher,Fixed:False,Metric:False,Visible:False,Sort:None,Position:25|Column#28=Name:Class II,Fixed:False,Metric:False,Visible:False,Sort:None,Position:18|Column#29=Name:Published,Fixed:False,Metric:False,Visible:False,Sort:None,Position:24|Column#30=Name:LCSC,Fixed:False,Metric:False,Visible:False,Sort:None,Position:32|Column#31=Name:Digikey Part Number,Fixed:False,Metric:False,Visible:False,Sort:None,Position:31|Column#32=Name:Digikey Link,Fixed:False,Metric:False,Visible:False,Sort:None,Position:30|Column#33=Name:Part Number,Fixed:False,Metric:False,Visible:False,Sort:None,Position:33|Column#34=Name:Angle,Fixed:False,Metric:False,Visible:False,Sort:None,Position:29
+OutputType7=PCB 3D Print
+OutputName7=PCB 3D Print
 OutputCategory7=Documentation
 OutputDocumentPath7=
 OutputVariantName7=
-OutputEnabled7=0
+OutputEnabled7=1
 OutputEnabled7_OutputMedium1=0
 OutputEnabled7_OutputMedium2=3
 OutputEnabled7_OutputMedium3=0
 OutputEnabled7_OutputMedium4=0
 OutputDefault7=0
-PageOptions7=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=A4|PaperIndex=9
+PageOptions7=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=2.48|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=A4|PaperIndex=9
 Configuration7_Name1=OutputConfigurationParameter1
-Configuration7_Item1=Record=ExportPDF3DSetting|Version=110|Format=0|Flags=8158|Scheme=0|ViewColorR0=255|ViewColorG0=255|ViewColorB0=255|ViewLignt0=9|ViewColorR1=255|ViewColorG1=255|ViewColorB1=255|ViewLignt1=9|ViewColorR2=255|ViewColorG2=255|ViewColorB2=255|ViewLignt2=9|ViewColorR3=255|ViewColorG3=255|ViewColorB3=255|ViewLignt3=9
+Configuration7_Item1=Record=Pcb3DPrintView|ResX=150|ResY=150|ViewX=24000000|ViewY=33400001|LookAtX=29000000|LookAtY=32300000|LookAtZ=0|UpX=0|UpY=1|UpZ=0|FOV=0|QuatX=0|QuatY=0|QuatZ=0|QuatW=1|Zoom=2.15269454632651E-5|UnitsPercent=True|UnitsDPI=True|LockResAspect=True|ViewConfigType=.config_3d|CustomCamera=False|ViewFromTop=True|ScreenWidth=0|ScreenHeight=0|ViewConfig= 
+OutputType8=PDF3D
+OutputName8=PDF3D
+OutputCategory8=Documentation
+OutputDocumentPath8=
+OutputVariantName8=
+OutputEnabled8=1
+OutputEnabled8_OutputMedium1=0
+OutputEnabled8_OutputMedium2=4
+OutputEnabled8_OutputMedium3=0
+OutputEnabled8_OutputMedium4=0
+OutputDefault8=0
+PageOptions8=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=A4|PaperIndex=9
+Configuration8_Name1=OutputConfigurationParameter1
+Configuration8_Item1=Record=ExportPDF3DSetting|Version=110|Format=0|Flags=8158|Scheme=0|ViewColorR0=255|ViewColorG0=255|ViewColorB0=255|ViewLignt0=9|ViewColorR1=255|ViewColorG1=255|ViewColorB1=255|ViewLignt1=9|ViewColorR2=255|ViewColorG2=255|ViewColorB2=255|ViewLignt2=9|ViewColorR3=255|ViewColorG3=255|ViewColorB3=255|ViewLignt3=9
 
 [PublishSettings]
 OutputFilePath2=C:\Users\podonoghue\Documents\Development\DigitalLabBoard\PCB_Design\.\DigitalLabBoard.PDF
@@ -224,9 +238,9 @@ MarkNetLabels3=1
 MarkPortsId3=1
 WebOutputMediumType3=FS
 OutputDirectory3=C:\Peter\Development\USBDM\PCB\USBDM_JS16_SOIC20[Minimal]
-OutputFilePath4=C:\Users\podonoghue\Documents\Development\CPLD_Breakout\Project Outputs for CPLD_Breakout\
+OutputFilePath4=C:\Users\podonoghue\Documents\Development\CPLD_Tester\Hardware\Project Outputs for CPLDTester\
 ReleaseManaged4=1
-OutputBasePath4=Project Outputs for CPLD_Breakout
+OutputBasePath4=Project Outputs for CPLDTester
 OutputPathMedia4=
 OutputPathMediaValue4=
 OutputPathOutputer4=
@@ -243,7 +257,7 @@ RelativeOutputPath2=C:\Users\podonoghue\Documents\Development\DigitalLabBoard\PC
 OpenOutputs2=1
 RelativeOutputPath3=
 OpenOutputs3=1
-RelativeOutputPath4=C:\Users\podonoghue\Documents\Development\CPLD_Breakout\Project Outputs for CPLD_Breakout\
+RelativeOutputPath4=C:\Users\podonoghue\Documents\Development\CPLD_Tester\Hardware\Project Outputs for CPLDTester\
 OpenOutputs4=0
 AddToProject4=1
 TimestampFolder4=0

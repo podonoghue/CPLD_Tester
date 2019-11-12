@@ -7,7 +7,7 @@
 // Allow access to USBDM methods without USBDM:: prefix
 using namespace USBDM;
 
-// Hardware pin mapping
+// Hardware mapping
 using Clock        = Tpm1;
 using ClockChannel = Clock::Channel<1>;
 
@@ -27,8 +27,8 @@ enum PowerStatus {
    Error,
 };
 
-static PowerStatus powerStatus = Off;
-static unsigned powerChangeSettling = 0;
+static PowerStatus powerStatus         = Off;
+static unsigned    powerChangeSettling = 0;
 
 constexpr unsigned DEBOUNCE_COUNT = 5; // 5 * 5 ms = 25 ms
 

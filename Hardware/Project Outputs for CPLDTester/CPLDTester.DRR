@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------------------------
-NCDrill File Report For: CPLDTester.PcbDoc   11/11/2019  12:40:22 AM
+NCDrill File Report For: CPLDTester.PcbDoc   11/11/2019  3:26:37 PM
 ----------------------------------------------------------------------------------------------------------------------------------
 
 Layer Pair : Top Layer to Bottom Layer
@@ -8,14 +8,12 @@ ASCII SlotHoles File : CPLDTester-SlotHoles.TXT
 
 Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
 ----------------------------------------------------------------------------------------------------------------------------------
-T1      8mil (0.2mm)                                              Round             4         PTH        0.00inch (0.00mm)
-T2      12mil (0.3mm)                                             Round             48        PTH        0.00inch (0.00mm)
-T3      16mil (0.4mm)                                             Round             16        PTH        0.00inch (0.00mm)
-T4      24mil (0.6mm)                                             Round             9         PTH        0.00inch (0.00mm)
-T5      24mil (0.6mm)                                             Slot              4         PTH        0.00inch (0.00mm)
-T6      32mil (0.8mm)                                             Round             40        PTH        0.00inch (0.00mm)
-T7      35mil (0.9mm)                                             Round             4         PTH        0.00inch (0.00mm)
+T1      12mil (0.3mm)                                             Round             105       PTH        0.00inch (0.00mm)
+T2      16mil (0.4mm)                                             Round             16        PTH        0.00inch (0.00mm)
+T3      24mil (0.6mm)                                             Round             9         PTH        0.00inch (0.00mm)
+T4      24mil (0.6mm)                                             Slot              4         PTH        0.00inch (0.00mm)
+T5      35mil (0.9mm)                                             Round             44        PTH        0.00inch (0.00mm)
 ----------------------------------------------------------------------------------------------------------------------------------
-Totals                                                                              125
+Totals                                                                              178
 
 Total Processing Time (hh:mm:ss) : 00:00:00
