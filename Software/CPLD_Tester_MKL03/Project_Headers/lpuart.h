@@ -127,7 +127,7 @@ protected:
          }
          // Check for Rx buffer full
       } while ((status & LPUART_STAT_RDRF_MASK) == 0);
-      return (uint8_t)(lpuart.DATA);
+      return static_cast<uint8_t>(lpuart.DATA);
    }
 
    /**
@@ -146,6 +146,12 @@ protected:
       }
    }
 
+   void puts(const char *s) {
+      while (*s != '\0') {
+         _writeChar(*s);
+      }
+      _writeChar('\n');
+   }
    /**
     * Handler for interrupts when no handler set
     */

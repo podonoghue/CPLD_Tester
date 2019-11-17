@@ -27,9 +27,19 @@ enum PowerStatus {
    Error,
 };
 
+/**
+ * State of power control
+ */
 static PowerStatus powerStatus         = Off;
+
+/**
+ * Used to allow for settling time when changing the power
+ */
 static unsigned    powerChangeSettling = 0;
 
+/**
+ * Number of consistent samples to confirm debouncing
+ */
 constexpr unsigned DEBOUNCE_COUNT = 5; // 5 * 5 ms = 25 ms
 
 namespace USBDM {
@@ -45,6 +55,7 @@ void PollTimer::irqHandler() {
 
    PollChannel::clearInterruptFlag();
 
+   // Sample voltage
    TVddSample::startConversion(AdcInterrupt_Enabled);
 
    bool currentRunButton = PowerButton::read();
@@ -81,7 +92,7 @@ void PollTimer::irqHandler() {
  */
 template<>
 void Adc0::irqHandler() {
-   bool targetVddPresent = (getConversionResult()>100);
+   bool targetVddPresent = (getConversionResult()>200);
    if ((powerStatus == On) && (powerChangeSettling == 0) && !targetVddPresent) {
       powerStatus = Error;
       TVddEnable::off();
@@ -92,7 +103,7 @@ void Adc0::irqHandler() {
    }
 }
 
-};
+}
 
 /**
  * Enable clock output
@@ -100,7 +111,8 @@ void Adc0::irqHandler() {
 void enableClock() {
    Clock::defaultConfigure();
    ClockChannel::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
-   ClockChannel::setDutyCycle(50);
+   ClockChannel::configure(TpmChMode_OutputCompareToggle, TpmChannelAction_None);
+   ClockChannel::setEventTime(1);
 }
 
 int main() {

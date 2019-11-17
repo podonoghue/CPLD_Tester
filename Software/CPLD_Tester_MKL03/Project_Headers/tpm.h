@@ -698,7 +698,7 @@ public:
       // Calculate timer prescale factor
       int prescaleFactor = 1<<((tmr().SC&TPM_SC_PS_MASK)>>TPM_SC_PS_SHIFT);
 
-      return ((float)Info::getInputClockFrequency())/prescaleFactor;
+      return static_cast<float>(Info::getInputClockFrequency())/prescaleFactor;
    }
 
    /**
@@ -763,7 +763,7 @@ public:
 
       // Calculate period
       uint32_t tickRate = getTickFrequencyAsInt();
-      uint64_t rv       = ((uint64_t)time*tickRate)/1000000;
+      uint64_t rv       = (static_cast<uint64_t>(time)*tickRate)/1000000;
       usbdm_assert(rv <= 0xFFFFUL, "Interval is too long");
       if (rv > 0xFFFFUL) {
          // Attempt to set too long a period
@@ -815,7 +815,7 @@ public:
    static uint32_t convertTicksToMicroseconds(int timeInTicks) {
 
       // Calculate period
-      uint64_t rv = ((uint64_t)timeInTicks*1000000)/getTickFrequencyAsInt();
+      uint64_t rv = (static_cast<uint64_t>(timeInTicks)*1000000)/getTickFrequencyAsInt();
 #ifdef DEBUG_BUILD
       if (rv > 0xFFFFUL) {
          // Attempt to set too long a period
@@ -841,7 +841,7 @@ public:
    static uint32_t convertTicksToMilliseconds(int timeInTicks) {
 
       // Calculate period
-      uint64_t rv = ((uint64_t)timeInTicks*1000)/getTickFrequencyAsInt();
+      uint64_t rv = (static_cast<uint64_t>(timeInTicks)*1000)/getTickFrequencyAsInt();
 #ifdef DEBUG_BUILD
       if (rv > 0xFFFFUL) {
          // Attempt to set too long a period
@@ -863,7 +863,7 @@ public:
     * @return Time in seconds
     */
    static float INLINE_RELEASE convertTicksToSeconds(int timeInTicks) {
-      return ((float)timeInTicks)/getTickFrequencyAsFloat();
+      return static_cast<float>(timeInTicks)/getTickFrequencyAsFloat();
    }
 
    /**
@@ -1136,7 +1136,7 @@ public:
        * @return Reference to the TPM channel registers
        */
       static __attribute__((always_inline)) volatile TpmChannelRegs &channelRegs() {
-         return *(TpmChannelRegs *)&Tpm::tmr().CONTROLS[CHANNEL];
+         return *reinterpret_cast<TpmChannelRegs *>(&Tpm::tmr().CONTROLS[CHANNEL]);
       }
 
       /** Timer channel number */
@@ -1186,7 +1186,7 @@ public:
        * @return Current mode of operation for the channel
        */
       static INLINE_RELEASE TpmChMode getMode() {
-         return (TpmChMode)(Tpm::tmr().CONTROLS[channel].CnSC &
+         return static_cast<TpmChMode>(Tpm::tmr().CONTROLS[channel].CnSC &
                (TPM_CnSC_MS_MASK|TPM_CnSC_ELS_MASK));
       }
 
@@ -1445,7 +1445,7 @@ public:
             PinAction         pinAction         = PinAction_None,
             PinFilter         pinFilter         = PinFilter_None,
             PinSlewRate       pinSlewRate       = PinSlewRate_Fast,
-            PinMux            pinMux            = (PinMux)(Info::info[channel].pcrValue&PORT_PCR_MUX_MASK)
+            PinMux            pinMux            = static_cast<PinMux>(Info::info[channel].pcrValue&PORT_PCR_MUX_MASK)
       ) {
          CheckPinMapping<Info, channel>::check();
          Pcr::setPCR(pinPull,pinDriveStrength,pinDriveMode,pinAction,pinFilter,pinSlewRate,pinMux);

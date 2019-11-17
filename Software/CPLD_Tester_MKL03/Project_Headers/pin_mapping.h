@@ -57,51 +57,51 @@ namespace USBDM {
 #if defined(PCC)
 
 /** Dummy port information for pins without an associated PCR */
-constexpr PortInfo  __attribute__((unused)) NoPortInfo {0, 0, (IRQn_Type)-1};
+constexpr PortInfo  __attribute__((unused)) NoPortInfo {0, 0, static_cast<IRQn_Type>(-1)};
 
 #if defined(PCC_PCC_PORTA_CGC_MASK)
 /** Port information for PORTA*/
-constexpr PortInfo  __attribute__((unused)) PortAInfo {PORTA_BasePtr, (uint32_t)(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTA)), PORTA_IRQn};
+constexpr PortInfo  __attribute__((unused)) PortAInfo {PORTA_BasePtr, static_cast<uint32_t>(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTA)), PORTA_IRQn};
 #endif
 
 #if defined(PCC_PCC_PORTB_CGC_MASK)
 /** Port information for PORTB*/
-constexpr PortInfo  __attribute__((unused)) PortBInfo {PORTB_BasePtr, (uint32_t)(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTB)), PORTB_IRQn};
+constexpr PortInfo  __attribute__((unused)) PortBInfo {PORTB_BasePtr, static_cast<uint32_t>(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTB)), PORTB_IRQn};
 #endif
 
 #if defined(PCC_PCC_PORTC_CGC_MASK)
 /** Port information for PORTC*/
-constexpr PortInfo  __attribute__((unused)) PortCInfo {PORTC_BasePtr, (uint32_t)(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTC)), PORTC_IRQn};
+constexpr PortInfo  __attribute__((unused)) PortCInfo {PORTC_BasePtr, static_cast<uint32_t>(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTC)), PORTC_IRQn};
 #endif
 
 #if defined(PCC_PCC_PORTD_CGC_MASK)
 /** Port information for PORTD*/
-constexpr PortInfo  __attribute__((unused)) PortDInfo {PORTD_BasePtr, (uint32_t)(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTD)), PORTD_IRQn};
+constexpr PortInfo  __attribute__((unused)) PortDInfo {PORTD_BasePtr, static_cast<uint32_t>(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTD)), PORTD_IRQn};
 #endif
 
 #if defined(PCC_PCC_PORTE_CGC_MASK)
 /** Port information for PORTE*/
-constexpr PortInfo  __attribute__((unused)) PortEInfo {PORTE_BasePtr, (uint32_t)(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTE)), PORTE_IRQn};
+constexpr PortInfo  __attribute__((unused)) PortEInfo {PORTE_BasePtr, static_cast<uint32_t>(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTE)), PORTE_IRQn};
 #endif
 
 #if defined(PCC_PCC_PORTF_CGC_MASK)
 /** Port information for PORTF*/
-constexpr PortInfo  __attribute__((unused)) PortFInfo {PORTF_BasePtr, (uint32_t)(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTF)), PORTF_IRQn};
+constexpr PortInfo  __attribute__((unused)) PortFInfo {PORTF_BasePtr, static_cast<uint32_t>(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTF)), PORTF_IRQn};
 #endif
 
 #if defined(PCC_PCC_PORTG_CGC_MASK)
 /** Port information for PORTG*/
-constexpr PortInfo  __attribute__((unused)) PortGInfo {PORTG_BasePtr, (uint32_t)(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTG)), PORTG_IRQn};
+constexpr PortInfo  __attribute__((unused)) PortGInfo {PORTG_BasePtr, static_cast<uint32_t>(PCC_BasePtr+offsetof(PCC_Type, PCC_PORTG)), PORTG_IRQn};
 #endif
 
 #else // defined(PCC)
 /** Dummy port information for pins without an associated PCR */
-constexpr PortInfo  __attribute__((unused)) NoPortInfo {0, 0, (IRQn_Type)-1};
+constexpr PortInfo  __attribute__((unused)) NoPortInfo {0, 0, static_cast<IRQn_Type>(-1)};
 
 #ifdef SIM_SCGC5_PORTA_MASK
 /** Port information for PORTA */
 #ifndef PORTA_IRQS
-constexpr PortInfo  __attribute__((unused)) PortAInfo {PORTA_BasePtr, SIM_SCGC5_PORTA_MASK, ((IRQn_Type)-1)};
+constexpr PortInfo  __attribute__((unused)) PortAInfo {PORTA_BasePtr, SIM_SCGC5_PORTA_MASK, (static_cast<IRQn_Type>(-1))};
 #else
 constexpr IRQn_Type PORTA_IRQS_AR[] = PORTA_IRQS;
 constexpr PortInfo  __attribute__((unused)) PortAInfo {PORTA_BasePtr, SIM_SCGC5_PORTA_MASK, PORTA_IRQS_AR[0]};
@@ -111,7 +111,7 @@ constexpr PortInfo  __attribute__((unused)) PortAInfo {PORTA_BasePtr, SIM_SCGC5_
 #ifdef SIM_SCGC5_PORTB_MASK
 /** Port information for PORTB */
 #ifndef PORTB_IRQS
-constexpr PortInfo  __attribute__((unused)) PortBInfo {PORTB_BasePtr, SIM_SCGC5_PORTB_MASK, ((IRQn_Type)-1)};
+constexpr PortInfo  __attribute__((unused)) PortBInfo {PORTB_BasePtr, SIM_SCGC5_PORTB_MASK, (static_cast<IRQn_Type>(-1))};
 #else
 constexpr IRQn_Type PORTB_IRQS_AR[] = PORTB_IRQS;
 constexpr PortInfo  __attribute__((unused)) PortBInfo {PORTB_BasePtr, SIM_SCGC5_PORTB_MASK, PORTB_IRQS_AR[0]};
@@ -121,7 +121,7 @@ constexpr PortInfo  __attribute__((unused)) PortBInfo {PORTB_BasePtr, SIM_SCGC5_
 #ifdef SIM_SCGC5_PORTC_MASK
 /** Port information for PORTC */
 #ifndef PORTC_IRQS
-constexpr PortInfo  __attribute__((unused)) PortCInfo {PORTC_BasePtr, SIM_SCGC5_PORTC_MASK, ((IRQn_Type)-1)};
+constexpr PortInfo  __attribute__((unused)) PortCInfo {PORTC_BasePtr, SIM_SCGC5_PORTC_MASK, (static_cast<IRQn_Type>(-1))};
 #else
 constexpr IRQn_Type PORTC_IRQS_AR[] = PORTC_IRQS;
 constexpr PortInfo  __attribute__((unused)) PortCInfo {PORTC_BasePtr, SIM_SCGC5_PORTC_MASK, PORTC_IRQS_AR[0]};
@@ -131,7 +131,7 @@ constexpr PortInfo  __attribute__((unused)) PortCInfo {PORTC_BasePtr, SIM_SCGC5_
 #ifdef SIM_SCGC5_PORTD_MASK
 /** Port information for PORTD */
 #ifndef PORTD_IRQS
-constexpr PortInfo  __attribute__((unused)) PortDInfo {PORTD_BasePtr, SIM_SCGC5_PORTD_MASK, ((IRQn_Type)-1)};
+constexpr PortInfo  __attribute__((unused)) PortDInfo {PORTD_BasePtr, SIM_SCGC5_PORTD_MASK, (static_cast<IRQn_Type>(-1))};
 #else
 constexpr IRQn_Type PORTD_IRQS_AR[] = PORTD_IRQS;
 constexpr PortInfo  __attribute__((unused)) PortDInfo {PORTD_BasePtr, SIM_SCGC5_PORTD_MASK, PORTD_IRQS_AR[0]};
@@ -141,7 +141,7 @@ constexpr PortInfo  __attribute__((unused)) PortDInfo {PORTD_BasePtr, SIM_SCGC5_
 #ifdef SIM_SCGC5_PORTE_MASK
 /** Port information for PORTE */
 #ifndef PORTE_IRQS
-constexpr PortInfo  __attribute__((unused)) PortEInfo {PORTE_BasePtr, SIM_SCGC5_PORTE_MASK, ((IRQn_Type)-1)};
+constexpr PortInfo  __attribute__((unused)) PortEInfo {PORTE_BasePtr, SIM_SCGC5_PORTE_MASK, (static_cast<IRQn_Type>(-1))};
 #else
 constexpr IRQn_Type PORTE_IRQS_AR[] = PORTE_IRQS;
 constexpr PortInfo  __attribute__((unused)) PortEInfo {PORTE_BasePtr, SIM_SCGC5_PORTE_MASK, PORTE_IRQS_AR[0]};
@@ -190,7 +190,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile OSC_Type &osc() {
-      return *(OSC_Type *)baseAddress;
+      return *reinterpret_cast<OSC_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -293,7 +293,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile RTC_Type &rtc() {
-      return *(RTC_Type *)baseAddress;
+      return *reinterpret_cast<RTC_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -443,7 +443,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile MCG_Type &mcg() {
-      return *(MCG_Type *)baseAddress;
+      return *reinterpret_cast<MCG_Type *>(baseAddress);
    }
 
    enum ClockMode {
@@ -636,7 +636,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile SIM_Type &sim() {
-      return *(SIM_Type *)baseAddress;
+      return *reinterpret_cast<SIM_Type *>(baseAddress);
    }
 
    //! System Options Register 1
@@ -858,7 +858,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile ADC_Type &adc() {
-      return *(ADC_Type *)baseAddress;
+      return *reinterpret_cast<ADC_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -908,8 +908,11 @@ public:
     *  @return Frequency in Hz
     */
    static unsigned getInputClockFrequency() {
-      return getInputClockFrequency((AdcClockSource)(adc().CFG1 & ADC_CFG1_ADICLK_MASK));
+      return getInputClockFrequency(static_cast<AdcClockSource>(adc().CFG1 & ADC_CFG1_ADICLK_MASK));
    }
+
+   //! Default resolution
+   static constexpr uint32_t defaultAdcResolution = ADC_CFG1_MODE(2);
 
    //! Default value for ADCx_CFG1 register
    static constexpr uint32_t cfg1  = 
@@ -1040,7 +1043,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile CMP_Type &cmp() {
-      return *(CMP_Type *)baseAddress;
+      return *reinterpret_cast<CMP_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -1317,7 +1320,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile FTFA_Type &ftfa() {
-      return *(FTFA_Type *)baseAddress;
+      return *reinterpret_cast<FTFA_Type *>(baseAddress);
    }
 
    //! IRQ numbers for hardware
@@ -1434,7 +1437,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile I2C_Type &i2c() {
-      return *(I2C_Type *)baseAddress;
+      return *reinterpret_cast<I2C_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -1548,7 +1551,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile LLWU_Type &llwu() {
-      return *(LLWU_Type *)baseAddress;
+      return *reinterpret_cast<LLWU_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -1652,7 +1655,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile LPTMR_Type &lptmr() {
-      return *(LPTMR_Type *)baseAddress;
+      return *reinterpret_cast<LPTMR_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -1817,7 +1820,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile LPUART_Type &lpuart() {
-      return *(LPUART_Type *)baseAddress;
+      return *reinterpret_cast<LPUART_Type *>(baseAddress);
    }
 
    //! Number of samples per bit
@@ -1969,7 +1972,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile PMC_Type &pmc() {
-      return *(PMC_Type *)baseAddress;
+      return *reinterpret_cast<PMC_Type *>(baseAddress);
    }
 
    //! Default value for Low Voltage Detect Status And Control 1 register
@@ -2066,7 +2069,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile RCM_Type &rcm() {
-      return *(RCM_Type *)baseAddress;
+      return *reinterpret_cast<RCM_Type *>(baseAddress);
    }
 
    //! Reset Pin Filter Control Register
@@ -2105,7 +2108,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile SMC_Type &smc() {
-      return *(SMC_Type *)baseAddress;
+      return *reinterpret_cast<SMC_Type *>(baseAddress);
    }
 
    // Power Mode Protection Register
@@ -2153,7 +2156,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile SPI_Type &spi() {
-      return *(SPI_Type *)baseAddress;
+      return *reinterpret_cast<SPI_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -2318,7 +2321,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile TPM_Type &tpm() {
-      return *(TPM_Type *)baseAddress;
+      return *reinterpret_cast<TPM_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -2446,7 +2449,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile TPM_Type &tpm() {
-      return *(TPM_Type *)baseAddress;
+      return *reinterpret_cast<TPM_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
@@ -2594,7 +2597,7 @@ public:
 
    //! Hardware base pointer
    __attribute__((always_inline)) static volatile VREF_Type &vref() {
-      return *(VREF_Type *)baseAddress;
+      return *reinterpret_cast<VREF_Type *>(baseAddress);
    }
 
    //! Base value for PCR (excluding MUX value)
