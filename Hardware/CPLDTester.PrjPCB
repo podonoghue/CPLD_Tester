@@ -153,12 +153,12 @@ DocumentPath=Project Outputs for CPLDTester\Pick Place for CPLDTester.csv
 DItemRevisionGUID=
 
 [Parameter1]
-Name=ProjectDescription
-Value=CPLD Tester SMD Version
+Name=ProjectRevision
+Value=V1.1
 
 [Parameter2]
-Name=ProjectRevision
-Value=V1
+Name=ProjectDescription
+Value=CPLD Tester SMD Version
 
 [Configuration1]
 Name=Default Configuration
