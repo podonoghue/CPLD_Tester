@@ -146,12 +146,6 @@ protected:
       }
    }
 
-   void puts(const char *s) {
-      while (*s != '\0') {
-         _writeChar(*s);
-      }
-      _writeChar('\n');
-   }
    /**
     * Handler for interrupts when no handler set
     */

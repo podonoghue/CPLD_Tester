@@ -8,18 +8,21 @@
 using namespace USBDM;
 
 // Hardware mapping
-using Clock        = Tpm1;
-using ClockChannel = Clock::Channel<1>;
+using Clock          = Tpm1;
+using ClockChannel   = Clock::Channel<1>; // = PTB5
+using ClockGpio      = GpioB<5>;
 
-using PollTimer    = Tpm0;
-using PollChannel  = PollTimer::Channel<0>;
+using PollTimer      = Tpm0;
+using PollChannel    = PollTimer::Channel<0>; // No pin
 
-using TVddEnable   = GpioB<1>;
-using TVddStatus   = GpioA<5>;
-using PowerButton  = GpioB<4>;
+using TVddEnable     = GpioB<1>;
+using TVddStatusLed  = GpioA<5>;
 
-using Adc          = Adc0;
-using TVddSample   = Adc::Channel<9>;
+using PowerButton    = GpioB<4, ActiveLow>;
+
+using Adc            = Adc0;
+using TVddSample     = Adc::Channel<9>; // = PTB0
+using TVddDischarge  = GpioB<0>;
 
 enum PowerStatus {
    Off,
@@ -42,7 +45,43 @@ static unsigned    powerChangeSettling = 0;
  */
 constexpr unsigned DEBOUNCE_COUNT = 5; // 5 * 5 ms = 25 ms
 
+/**
+ * Enable clock output
+ */
+void enableClock() {
+   Clock::defaultConfigure();
+   ClockChannel::configure(TpmChMode_OutputCompareToggle, TpmChannelAction_None);
+   ClockChannel::setEventTime(1);
+   ClockChannel::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+}
+
+/**
+ * Disable CPLD clock
+ */
+void disableClock() {
+   ClockGpio::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+}
+
+/**
+ * Enable CPLD power, clock etc
+ */
+void powerOn() {
+   TVddSample::setInput();
+   TVddEnable::on();
+   enableClock();
+}
+
+/**
+ * Disable CPLD power, clock etc
+ */
+void powerOff() {
+   disableClock();
+   TVddEnable::off();
+   TVddDischarge::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+}
+
 namespace USBDM {
+
 /**
  * Polling interrupt handler (Executed every 5 ms)
  *
@@ -69,17 +108,17 @@ void PollTimer::irqHandler() {
       stableCount++;
    }
    // Check for debounce time
-   if (stableCount == DEBOUNCE_COUNT) {
+   if ((stableCount == DEBOUNCE_COUNT) && currentRunButton) {
       powerChangeSettling = 5;
       switch (powerStatus) {
          case Off:
          case Error:
             powerStatus = On;
-            TVddEnable::on();
+            powerOn();
             break;
          case On:
             powerStatus = Off;
-            TVddEnable::off();
+            powerOff();
             break;
       }
    }
@@ -97,22 +136,12 @@ void Adc0::irqHandler() {
       powerStatus = Error;
       TVddEnable::off();
    }
-   TVddStatus::write(targetVddPresent);
+   TVddStatusLed::write(targetVddPresent);
    if (powerChangeSettling>0) {
       powerChangeSettling--;
    }
 }
 
-}
-
-/**
- * Enable clock output
- */
-void enableClock() {
-   Clock::defaultConfigure();
-   ClockChannel::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
-   ClockChannel::configure(TpmChMode_OutputCompareToggle, TpmChannelAction_None);
-   ClockChannel::setEventTime(1);
 }
 
 int main() {
@@ -125,7 +154,7 @@ int main() {
    Adc::defaultConfigure();
    TVddSample::setInput();
 
-   TVddStatus::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+   TVddStatusLed::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
 
    for(;;) {
       __asm__("nop");

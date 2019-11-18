@@ -62,6 +62,6 @@
    <item key="/TPM0/irqHandlingMethod"                     value="$ClassMethod" />
    <item key="/TPM0/tpm_mod"                               value="9999" />
    <item key="/TPM0/tpm_sc_ps"                             value="2" />
-   <item key="/TPM1/tpm_mod"                               value="62499" />
-   <item key="/TPM1/tpm_sc_ps"                             value="7" />
+   <item key="/TPM1/tpm_mod"                               value="249" />
+   <item key="/TPM1/tpm_sc_ps"                             value="4" />
 </section>

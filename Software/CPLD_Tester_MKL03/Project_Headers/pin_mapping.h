@@ -2468,14 +2468,14 @@ public:
    static constexpr uint32_t tpmExternalClock =  0;
 
    //! Default Timer Modulo
-   static constexpr uint32_t modulo =TPM_MOD_MOD(62499);
+   static constexpr uint32_t modulo =TPM_MOD_MOD(249);
 
    //! Default value for SC register
    static constexpr uint32_t sc  = 
        TPM_SC_CPWMS(0)|  // Centre-Aligned PWM Select
        TPM_SC_CMOD(1) |  // Clock Mode Selection
        TPM_SC_TOIE(0)|   // Timer Overflow Interrupt Enable
-       TPM_SC_PS(7);     // Prescale Factor Selection 
+       TPM_SC_PS(4);     // Prescale Factor Selection 
 
    //! IRQ numbers for hardware
    static constexpr IRQn_Type irqNums[]  = TPM1_IRQS;
