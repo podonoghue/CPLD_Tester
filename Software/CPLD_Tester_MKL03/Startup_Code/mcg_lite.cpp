@@ -300,15 +300,6 @@ volatile uint32_t SystemMcgFllClock;
 /** MCGPLLCLK - Output of PLL */
 volatile uint32_t SystemMcgPllClock;
 
-/** Core/System clock (from MCGOUTCLK/CLKDIV) */
-//volatile uint32_t SystemCoreClock;
-
-/** Bus clock (from MCGOUTCLK/CLKDIV) */
-//volatile uint32_t SystemBusClock;
-
-/** LPO - Low power oscillator 1kHz clock available in LP modes */
-volatile uint32_t SystemLpoClock;
-
 /** Callback for programmatically set handler */
 MCGCallbackFunction Mcg::callback = {0};
 
@@ -348,7 +339,7 @@ const char *Mcg::getClockModeName(McgInfo::ClockMode clockMode) {
 /**
  * Transition from current clock mode to mode given
  *
- * @param to Clock mode to transition to
+ * @param clockInfo Clock mode to transition to
  *
  * @return E_NO_ERROR on success
  */
@@ -467,7 +458,7 @@ ErrorCode Mcg::clockTransition(const McgInfo::ClockInfo &clockInfo) {
          }
          currentClockMode = next;
          if (transitionCount++>5) {
-            return setErrorCode(E_CLOCK_INIT_FAILED);
+            return setAndCheckErrorCode(E_CLOCK_INIT_FAILED);
          }
       } while (currentClockMode != to);
    }
@@ -494,8 +485,6 @@ void Mcg::SystemCoreClockUpdate(void) {
 
    SystemCoreClock   = SystemMcgOutClock/(((SIM->CLKDIV1&SIM_CLKDIV1_OUTDIV1_MASK)>>SIM_CLKDIV1_OUTDIV1_SHIFT)+1);
    SystemBusClock    = SystemCoreClock/(((SIM->CLKDIV1&SIM_CLKDIV1_OUTDIV4_MASK)>>SIM_CLKDIV1_OUTDIV4_SHIFT)+1);
-
-   SystemLpoClock    = 1000;
 
 //   ::SystemBusClock  = SystemBusClock;
 //   ::SystemCoreClock = SystemCoreClock;

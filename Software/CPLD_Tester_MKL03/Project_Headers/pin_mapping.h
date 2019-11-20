@@ -824,6 +824,82 @@ public:
  * @}
  */
 /**
+ * @addtogroup PMC_Group PMC, Power Management Controller
+ * @brief Abstraction for Power Management Controller
+ * @{
+ */
+#define USBDM_PMC_IS_DEFINED
+/**
+ * Peripheral information for PMC, Power Management Controller.
+ * 
+ * This may include pin information, constants, register addresses, and default register values,
+ * along with simple accessor functions.
+ */
+class PmcInfo {
+public:
+   // Template:pmc_mk
+
+   //! Hardware base address as uint32_t 
+   static constexpr uint32_t baseAddress = PMC_BasePtr;
+
+   //! Hardware base pointer
+   __attribute__((always_inline)) static volatile PMC_Type &pmc() {
+      return *reinterpret_cast<PMC_Type *>(baseAddress);
+   }
+
+   //! Default value for Low Voltage Detect Status And Control 1 register
+   static constexpr uint32_t pmc_lvdsc1  = 
+   #ifdef PMC_LVDSC1_LVDV
+      PMC_LVDSC1_LVDV(0)   | // Low-Voltage Detect Voltage Select
+   #endif
+      PMC_LVDSC1_LVDIE(0) | // Low-Voltage Detect Interrupt Enable
+      PMC_LVDSC1_LVDRE(0);  // Low-Voltage Detect Reset Enable
+
+   //! Frequency of Low Power Oscillator (LPO) Clock [~1kHz]
+   static constexpr uint32_t system_low_power_clock = 1000UL;
+
+   //! Default value for Low Voltage Detect Status And Control 2 register
+   static constexpr uint32_t pmc_lvdsc2  = 
+   #ifdef PMC_LVDSC2_LVWV
+      PMC_LVDSC2_LVWV(0)   | // Low-Voltage Warning Voltage Select
+   #endif
+      PMC_LVDSC2_LVWIE(0);  // Low-Voltage Warning Interrupt Enable
+
+   /**
+    * Get LPO clock
+    *
+    * @return frequency in Hz as uint32_t
+    */
+   static constexpr uint32_t getLpoClk() {
+      return system_low_power_clock;
+   }
+
+   #ifdef PMC_REGSC_BGEN
+   //! Default value for Regulator Status And Control register
+   static constexpr uint32_t pmc_regsc  = 
+      PMC_REGSC_BGEN(0) | // Bandgap Enable In VLPx Operation
+      PMC_REGSC_BGBE(0);  // Bandgap Buffer Enable   
+
+   #endif
+   //! IRQ numbers for hardware
+   static constexpr IRQn_Type irqNums[]  = PMC_IRQS;
+
+   //! Number of IRQs for hardware
+   static constexpr uint32_t irqCount  = sizeof(irqNums)/sizeof(irqNums[0]);
+
+   //! Class based callback handler has been installed in vector table
+   static constexpr bool irqHandlerInstalled = 0;
+
+   //! Default IRQ level
+   static constexpr uint32_t irqLevel =  8;
+
+};
+
+/** 
+ * End group PMC_Group
+ * @}
+ */
+/**
  * @addtogroup ADC_Group ADC, Analogue Input
  * @brief Abstraction for Analogue Input
  * @{
@@ -1709,7 +1785,7 @@ public:
       switch(lptmr().PSR&LPTMR_PSR_PCS_MASK) {
       default:
       case LPTMR_PSR_PCS(0): return McgInfo::getMcgIrClock();
-      case LPTMR_PSR_PCS(1): return SystemLpoClock;
+      case LPTMR_PSR_PCS(1): return PmcInfo::getLpoClk();
       case LPTMR_PSR_PCS(2): return SimInfo::getErc32kClock();
       case LPTMR_PSR_PCS(3): return Osc0Info::getOscerClock();
       }
@@ -1949,70 +2025,6 @@ public:
 
 /** 
  * End group LPUART_Group
- * @}
- */
-/**
- * @addtogroup PMC_Group PMC, Power Management Controller
- * @brief Abstraction for Power Management Controller
- * @{
- */
-#define USBDM_PMC_IS_DEFINED
-/**
- * Peripheral information for PMC, Power Management Controller.
- * 
- * This may include pin information, constants, register addresses, and default register values,
- * along with simple accessor functions.
- */
-class PmcInfo {
-public:
-   // Template:pmc_mk
-
-   //! Hardware base address as uint32_t 
-   static constexpr uint32_t baseAddress = PMC_BasePtr;
-
-   //! Hardware base pointer
-   __attribute__((always_inline)) static volatile PMC_Type &pmc() {
-      return *reinterpret_cast<PMC_Type *>(baseAddress);
-   }
-
-   //! Default value for Low Voltage Detect Status And Control 1 register
-   static constexpr uint32_t pmc_lvdsc1  = 
-   #ifdef PMC_LVDSC1_LVDV
-      PMC_LVDSC1_LVDV(0)   | // Low-Voltage Detect Voltage Select
-   #endif
-      PMC_LVDSC1_LVDIE(0) | // Low-Voltage Detect Interrupt Enable
-      PMC_LVDSC1_LVDRE(0);  // Low-Voltage Detect Reset Enable
-
-   //! Default value for Low Voltage Detect Status And Control 2 register
-   static constexpr uint32_t pmc_lvdsc2  = 
-   #ifdef PMC_LVDSC2_LVWV
-      PMC_LVDSC2_LVWV(0)   | // Low-Voltage Warning Voltage Select
-   #endif
-      PMC_LVDSC2_LVWIE(0);  // Low-Voltage Warning Interrupt Enable
-
-   #ifdef PMC_REGSC_BGEN
-   //! Default value for Regulator Status And Control register
-   static constexpr uint32_t pmc_regsc  = 
-      PMC_REGSC_BGEN(0) | // Bandgap Enable In VLPx Operation
-      PMC_REGSC_BGBE(0);  // Bandgap Buffer Enable   
-
-   #endif
-   //! IRQ numbers for hardware
-   static constexpr IRQn_Type irqNums[]  = PMC_IRQS;
-
-   //! Number of IRQs for hardware
-   static constexpr uint32_t irqCount  = sizeof(irqNums)/sizeof(irqNums[0]);
-
-   //! Class based callback handler has been installed in vector table
-   static constexpr bool irqHandlerInstalled = 0;
-
-   //! Default IRQ level
-   static constexpr uint32_t irqLevel =  8;
-
-};
-
-/** 
- * End group PMC_Group
  * @}
  */
 /**
