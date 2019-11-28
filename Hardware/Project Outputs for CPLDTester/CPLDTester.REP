@@ -2,6 +2,85 @@
 FileName = CPLDTester.GBR
 AutoAperture = True
 *************************************************************
+Generating : Top Solder
+      File : CPLDTester.GTS
+
+    Adding Layer      : Top Solder
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D23
+    D24
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+*************************************************************
+
+*************************************************************
+Generating : Bottom Solder
+      File : CPLDTester.GBS
+
+    Adding Layer      : Bottom Solder
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D31
+    D32
+    D33
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+*************************************************************
+
+*************************************************************
+Generating : Bottom Layer
+      File : CPLDTester.GBL
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D10
+    D17
+    D20
+    D48
+    D50
+    D51
+    D52
+    D53
+    D54
+    D55
+    D56
+    D57
+    D58
+*************************************************************
+
+*************************************************************
 Generating : Top Layer
       File : CPLDTester.GTL
 
@@ -14,8 +93,7 @@ Used DCodes :
     D10
     D17
     D20
-    D21
-    D39
+    D22
     D40
     D41
     D42
@@ -34,82 +112,7 @@ Used DCodes :
     D55
     D56
     D57
-*************************************************************
-
-*************************************************************
-Generating : Bottom Solder
-      File : CPLDTester.GBS
-
-    Adding Layer      : Bottom Solder
-
-    Adding Layer      : Bottom Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-    D30
-    D31
-    D32
-    D33
-    D34
-    D35
-    D36
-    D37
-    D38
-*************************************************************
-
-*************************************************************
-Generating : Top Solder
-      File : CPLDTester.GTS
-
-    Adding Layer      : Top Solder
-
-    Adding Layer      : Top Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-    D22
-    D23
-    D24
-    D25
-    D26
-    D27
-    D28
-    D29
-    D30
-    D31
-    D32
-    D33
-    D34
-    D35
-    D36
-    D37
-    D38
-*************************************************************
-
-*************************************************************
-Generating : Keep-Out Layer
-      File : CPLDTester.GKO
-
-    Adding Layer      : Keep-Out Layer
-
-
-Used DCodes :
-    D10
-*************************************************************
-
-*************************************************************
-Generating : Bottom Overlay
-      File : CPLDTester.GBO
-
-    Adding Layer      : Bottom Overlay
-
-
-Used DCodes :
-    D10
+    D58
 *************************************************************
 
 *************************************************************
@@ -132,30 +135,28 @@ Used DCodes :
     D19
     D20
     D21
+    D22
 *************************************************************
 
 *************************************************************
-Generating : Bottom Layer
-      File : CPLDTester.GBL
+Generating : Bottom Overlay
+      File : CPLDTester.GBO
 
-    Adding Layer      : Bottom Layer
-
-    Adding Layer      : Multi-Layer
+    Adding Layer      : Bottom Overlay
 
 
 Used DCodes :
     D10
-    D17
-    D20
-    D47
-    D49
-    D50
-    D51
-    D52
-    D53
-    D54
-    D55
-    D56
-    D57
+*************************************************************
+
+*************************************************************
+Generating : Keep-Out Layer
+      File : CPLDTester.GKO
+
+    Adding Layer      : Keep-Out Layer
+
+
+Used DCodes :
+    D10
 *************************************************************
 
