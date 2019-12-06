@@ -149,10 +149,6 @@ DocumentPath=Project Outputs for CPLDTester\CPLDTester.RUL
 DItemRevisionGUID=
 
 [GeneratedDocument16]
-DocumentPath=Project Outputs for CPLDTester\Design Rule Check - CPLDTester.html
-DItemRevisionGUID=
-
-[GeneratedDocument17]
 DocumentPath=Project Outputs for CPLDTester\Pick Place for CPLDTester.csv
 DItemRevisionGUID=
 
@@ -162,7 +158,7 @@ Value=CPLD Tester SMD Version
 
 [Parameter2]
 Name=ProjectRevision
-Value=V1.1
+Value=V2
 
 [Configuration1]
 Name=Default Configuration
