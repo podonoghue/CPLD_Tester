@@ -10,6 +10,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>Readme-Hardware.md</name>
+			<type>1</type>
+			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/Hardware/Readme.md</location>
+		</link>
+		<link>
 			<name>Readme-Software.md</name>
 			<type>1</type>
 			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/Software/Readme.md</location>
