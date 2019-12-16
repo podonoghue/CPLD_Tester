@@ -24,5 +24,10 @@
 			<type>1</type>
 			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/Software/Readme.md</location>
 		</link>
+		<link>
+			<name>Readme-VHDL.md</name>
+			<type>1</type>
+			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/VHDL_Hardware/Readme.md</location>
+		</link>
 	</linkedResources>
 </projectDescription>
