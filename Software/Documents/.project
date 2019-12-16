@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Documents</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>Readme-Software.md</name>
+			<type>1</type>
+			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/Software/Readme.md</location>
+		</link>
+		<link>
+			<name>Readme-overall.md</name>
+			<type>1</type>
+			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/README.md</location>
+		</link>
+	</linkedResources>
+</projectDescription>
