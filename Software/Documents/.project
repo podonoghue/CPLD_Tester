@@ -12,22 +12,22 @@
 		<link>
 			<name>Readme-Hardware.md</name>
 			<type>1</type>
-			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/Hardware/Readme.md</location>
+			<locationURI>PARENT-1-WORKSPACE_LOC/Hardware/Readme.md</locationURI>
 		</link>
 		<link>
 			<name>Readme-Overall.md</name>
 			<type>1</type>
-			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/Readme.md</location>
+			<locationURI>PARENT-1-WORKSPACE_LOC/Readme.md</locationURI>
 		</link>
 		<link>
 			<name>Readme-Software.md</name>
 			<type>1</type>
-			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/Software/Readme.md</location>
+			<locationURI>PARENT-1-WORKSPACE_LOC/Software/Readme.md</locationURI>
 		</link>
 		<link>
 			<name>Readme-VHDL.md</name>
 			<type>1</type>
-			<location>C:/Users/podonoghue/Documents/Development/CPLD_Tester/VHDL_Hardware/Readme.md</location>
+			<locationURI>PARENT-1-WORKSPACE_LOC/VHDL_Hardware/Readme.md</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
