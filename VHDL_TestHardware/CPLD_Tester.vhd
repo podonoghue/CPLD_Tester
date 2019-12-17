@@ -16,28 +16,28 @@ signal value          : std_logic_vector (31 downto 0);
 
 begin
 
-	counter <= counter + 1 when rising_edge(clock);
-	
+   counter <= counter + 1 when rising_edge(clock);
+   
    toggle <= not toggle when rising_edge(clock) and (counter = 0);
 
    leds <= value when rising_edge(clock);
-	
-	process(counter) 
-	begin
-	-- Stagger LED output changes to avoid noise problems (Vdd ?)
-	case counter is
-	   when 1 =>
-			value(31 downto 25) <= (others=>toggle);
-	   when 2 =>
-			value(24 downto 15) <= (others=>toggle);
-	   when 3 =>
-			value(16 downto 9)  <= (others=>toggle);
-	   when 4 =>
-			value(8 downto 0)   <= (others=>toggle);
+   
+   process(counter) 
+   begin
+   -- Stagger LED output changes to avoid noise problems (Vdd ?)
+   case counter is
+      when 1 =>
+         value(31 downto 25) <= (others=>toggle);
+      when 2 =>
+         value(24 downto 15) <= (others=>toggle);
+      when 3 =>
+         value(16 downto 9)  <= (others=>toggle);
+      when 4 =>
+         value(8 downto 0)   <= (others=>toggle);
       when others =>
-			null;
+         null;
    end case;
-	end process;
-	
+   end process;
+   
 end Behavioral;
 
