@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2019-12-17T21:44:42</DateModified>
+  <DateModified>2019-12-23T10:42:34</DateModified>
   <ModuleName>CPLD_Tester</ModuleName>
-  <SummaryTimeStamp>2017-01-29T11:35:14</SummaryTimeStamp>
+  <SummaryTimeStamp>2019-12-23T10:41:53</SummaryTimeStamp>
   <SavedFilePath>C:/Users/podonoghue/Documents/Development/CPLD_Tester/VHDL_TestHardware/iseconfig/CPLD_Tester.xreport</SavedFilePath>
   <ImplementationReportsDirectory>C:/Users/podonoghue/Documents/Development/CPLD_Tester/VHDL_TestHardware\</ImplementationReportsDirectory>
   <DateInitialized>2017-01-29T09:42:39</DateInitialized>
