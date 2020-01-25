@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2019-12-24T23:03:13</DateModified>
+  <DateModified>2020-01-25T20:46:31</DateModified>
   <ModuleName>CPLD_Tester</ModuleName>
-  <SummaryTimeStamp>2019-12-23T10:41:53</SummaryTimeStamp>
-  <SavedFilePath>C:/Users/podonoghue/Documents/Development/CPLD_Tester/VHDL_TestHardware/iseconfig/CPLD_Tester.xreport</SavedFilePath>
+  <SummaryTimeStamp>2020-01-12T02:45:07</SummaryTimeStamp>
+  <SavedFilePath>C:/Users/podonoghue/Documents/Development/CPLD_Tester/VHDL_TestHardware/iseconfig/cpld_tester.xreport</SavedFilePath>
   <ImplementationReportsDirectory>C:/Users/podonoghue/Documents/Development/CPLD_Tester/VHDL_TestHardware\</ImplementationReportsDirectory>
   <DateInitialized>2017-01-29T09:42:39</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>

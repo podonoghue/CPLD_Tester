@@ -3,40 +3,48 @@ use IEEE.std_logic_1164.ALL;
 
 use IEEE.NUMERIC_STD.ALL;
 
-entity CPLD_Tester is
-    Port ( clock : in   std_logic;
-           leds  : out  std_logic_vector (31 downto 0));
-end CPLD_Tester;
+entity cpld_tester is
+    Port ( 
+       clock : in   std_logic;
+       leds  : out  std_logic_vector (31 downto 0)
+    );
+end cpld_tester;
 
-architecture Behavioral of CPLD_Tester is
+architecture Behavioral of cpld_tester is
 
-signal toggle         : std_logic;
-signal counter        : integer range 0 to 100;
+signal selectOut : std_logic;
+signal flash     : std_logic;
+
+signal   chaser         : std_logic_vector(7 downto 0);
+constant prescaler_max  : integer := 255;
+signal   prescaler      : integer range 0 to prescaler_max;
+constant count_max      : integer := 31;
+signal   count          : integer range 0 to count_max;
 
 begin
 
-   counter <= counter + 1 when rising_edge(clock);
+   leds <= chaser&chaser&chaser&chaser;
    
-   toggle <= not toggle when rising_edge(clock) and (counter = 0);
-
    process(clock)
    begin
    if rising_edge(clock) then
-      -- Stagger LED output changes to avoid noise problems (Vdd ?)
-      case counter is
-         when 1 =>
-            leds(31 downto 24) <= (others=>toggle);
-         when 2 =>
-            leds(23 downto 16) <= (others=>toggle);
-         when 3 =>
-            leds(15 downto 8)  <= (others=>toggle);
-         when 4 =>
-            leds(7 downto 0)   <= (others=>toggle);
-         when others =>
-            null;
-      end case;
-    end if;
+      prescaler <= prescaler + 1;
+      if (prescaler = prescaler_max) then
+         prescaler <= 0;
+         count  <= count + 1;
+         flash  <= not flash;
+         if (selectOut = '0') then
+            chaser <= (others => flash);
+         else
+            chaser <= chaser(0) & chaser(chaser'left downto 1);
+         end if;
+      end if;
+      if (count = count_max) then
+         count <= 0;
+         selectOut <= not selectOut;
+         chaser <= (0=>'0', others => '1');
+      end if;
+   end if;
    end process;
-   
+      
 end Behavioral;
-
