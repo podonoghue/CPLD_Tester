@@ -1,17 +1,15 @@
 /*
- *============================================================================
- * CPLD Tester
- *============================================================================
+ * ============================================================================
+ * MCP23008 Tester
+ * ============================================================================
  */
 #include "hardware.h"
+#include "mcp23008.h"
 
 // Allow access to USBDM methods without USBDM:: prefix
 using namespace USBDM;
 
-// Hardware mapping
-using Clock          = Tpm1;
-using ClockChannel   = Clock::Channel<1>; // = PTB5
-using ClockGpio      = GpioB<5>;
+static const unsigned I2C_SPEED = 400*kHz;
 
 using PollTimer      = Tpm0;
 using PollChannel    = PollTimer::Channel<0>; // No pin
@@ -46,22 +44,31 @@ static unsigned    powerChangeSettling = 0;
  */
 constexpr unsigned DEBOUNCE_COUNT = 5; // 5 * 5 ms = 25 ms
 
-/**
- * Enable clock output
- */
-void enableClock() {
-   Clock::defaultConfigure();
-   ClockChannel::configure(TpmChMode_OutputCompareToggle, TpmChannelAction_None);
-   ClockChannel::setEventTime(1);
-   ClockChannel::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
-}
+class ShiftRegister {
+   // Hardware mapping
+   using SR_Clock      = GpioB<6>;
+   using SR_Data       = GpioB<7>;
+   using SR_Load       = GpioB<10>;
 
-/**
- * Disable CPLD clock
- */
-void disableClock() {
-   ClockGpio::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
-}
+public:
+   ShiftRegister() {
+      SR_Clock::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Fast);
+      SR_Data::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Fast);
+      SR_Load::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Fast);
+   }
+
+   void write(uint8_t data) {
+      for(uint8_t bitMask = 0b1; bitMask != 0; bitMask <<= 1) {
+         console.write("Pattern = ").writeln(bitMask, Radix_2);
+         SR_Data::write((bitMask & data) != 0);
+         SR_Clock::on();
+         SR_Clock::off();
+         waitMS(1);
+      }
+      SR_Load::on();
+      SR_Load::off();
+   }
+};
 
 /**
  * Enable CPLD power, clock etc
@@ -69,14 +76,12 @@ void disableClock() {
 void powerOn() {
    TVddSample::setInput();
    TVddEnable::on();
-   enableClock();
 }
 
 /**
  * Disable CPLD power, clock etc
  */
 void powerOff() {
-   disableClock();
    TVddEnable::off();
    TVddDischarge::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
 }
@@ -145,6 +150,31 @@ void Adc0::irqHandler() {
 
 }
 
+void testMcp23008() {
+   I2c0     i2c(I2C_SPEED, I2cMode_Polled);
+   mcp23008 gpio(i2c);
+
+   gpio.setDirection(0b00000000);
+
+   console.setWidth(8).setPadding(Padding_LeadingZeroes);
+   for(uint8_t pattern = 0b1; pattern != 0; pattern <<= 1) {
+      console.write("Pattern = ").writeln(pattern, Radix_2);
+      gpio.writeData(pattern);
+      waitMS(100);
+   }
+}
+
+void testShiftRegister() {
+   ShiftRegister sr;
+
+   console.setWidth(8).setPadding(Padding_LeadingZeroes);
+   for(uint8_t pattern = 0b1; pattern != 0; pattern <<= 1) {
+      console.write("Pattern = ").writeln(pattern, Radix_2);
+      sr.write(pattern);
+      waitMS(100);
+   }
+}
+
 int main() {
    TVddEnable::setOutput(PinDriveStrength_Low, PinDriveMode_PushPull, PinSlewRate_Slow);
    PowerButton::setInput(PinPull_Up, PinAction_None, PinFilter_Passive);
@@ -157,8 +187,10 @@ int main() {
 
    TVddStatusLed::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
 
-   for(;;) {
-      __asm__("nop");
-   }
+   console.writeln("Starting\n");
+
+   testMcp23008();
+   testShiftRegister();
+
    return 0;
 }

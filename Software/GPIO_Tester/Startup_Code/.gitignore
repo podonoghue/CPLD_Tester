@@ -1,0 +1,8 @@
+/newlib_stubs.c
+/startup_ARMLtdGCC.S
+/vectors.cpp
+/console.cpp
+/mcg_lite.cpp
+/rtc.cpp
+/system-gcc.cpp
+/system.cpp
