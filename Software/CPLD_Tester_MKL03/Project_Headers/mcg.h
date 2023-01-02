@@ -19,7 +19,7 @@
  */
 #include "derivative.h"
 #include "system.h"
-#include "hardware.h"
+#include "pin_mapping.h"
 
 namespace USBDM {
 
@@ -37,19 +37,52 @@ extern volatile uint32_t SystemMcgOutClock;
 extern volatile uint32_t SystemMcgFllClock;
 /** MCGPLLCLK - Output of PLL */
 extern volatile uint32_t SystemMcgPllClock;
-/** Core/System clock (from MCGOUTCLK/CLKDIV) */
-
-extern void setSysDividersStub(uint32_t simClkDiv1);
 
 /**
- * Clock configuration names
+ * Clock configurations
  */
-enum ClockConfig {
-   ClockConfig_HIRC_48MHz,
-   ClockConfig_LIRC_2MHz,
-   ClockConfig_LIRC_8MHz,
+enum ClockConfig : uint8_t {
+   ClockConfig_RUN_HIRC_48MHz,
 
    ClockConfig_default = 0,
+};
+
+   //! Structure for clock configurations
+   struct ClockInfo {
+      //! System Clock Divider Register 1
+      const uint32_t clkdiv1;
+
+      //! SIM SOPT2 - Clock selectors for various peripherals
+      const uint32_t sopt2;
+
+      //! Clock Mode
+      const McgClockMode clockMode;
+
+      //! Run Mode
+      const SmcRunMode runMode;
+
+      //! Control Register 1 - IRCLKEN, IREFSTEN, (-CLKS)
+      const uint8_t c1;
+      //! Control Register 2 - RANGE0, HGO0, EREFS0, IRCS
+      const uint8_t c2;
+      //! Status and Control Register - FCRDIV
+      const uint8_t sc;
+      //! Miscellaneous Control Register - HIRCEN, LIRC_DIV2 (-HIRCLPEN)
+      const uint8_t mc;
+   };
+
+class ClockChangeCallback {
+
+public:
+      // Pointer to next in chain
+      ClockChangeCallback *next = nullptr;
+
+      virtual ~ClockChangeCallback() = default;
+
+      // This method is overridden to obtain notification before clock change
+      virtual void beforeClockChange(){}
+      // This method is overridden to obtain notification after clock change
+      virtual void afterClockChange(){};
 };
 
 /**
@@ -68,26 +101,59 @@ typedef void (*MCGCallbackFunction)(void);
 class Mcg {
 
 private:
+   static ClockChangeCallback *clockChangeCallbackQueue;
+
+   static void notifyBeforeClockChange() {
+      ClockChangeCallback *p = clockChangeCallbackQueue;
+      while (p != nullptr) {
+         p->beforeClockChange();
+         p = p->next;
+      }
+   }
+   static void notifyAfterClockChange() {
+      ClockChangeCallback *p = clockChangeCallbackQueue;
+      while (p != nullptr) {
+         p->afterClockChange();
+         p = p->next;
+      }
+   }
+public:
+   /**
+    * Add callback for clock configuration changes
+    *
+    * @param callback Call-back class to notify on clock configuration changes
+    */
+   static void addClockChangeCallback(ClockChangeCallback &callback) {
+      callback.next = clockChangeCallbackQueue;
+      clockChangeCallbackQueue = &callback;
+   }
+
+private:
    /** Callback function for ISR */
    static MCGCallbackFunction callback;
 
    /** Hardware instance */
-   static __attribute__((always_inline)) volatile MCG_Type &mcg() { return McgInfo::mcg(); }
+   static constexpr HardwarePtr<MCG_Type> mcg = McgInfo::baseAddress;
+
+// No private methods found
 
 public:
+
+// No public methods found
+
    /**
     * Table of clock settings
     */
-   static const McgInfo::ClockInfo clockInfo[];
+   static const ClockInfo clockInfo[];
 
    /**
     * Transition from current clock mode to mode given
     *
-    * @param[in]  to Clock mode to transition to
+    * @param[in]  clockInfo Clock mode to transition to
     *
     * @return E_NO_ERROR on success
     */
-   static ErrorCode clockTransition(const McgInfo::ClockInfo &to);
+   static ErrorCode clockTransition(const ClockInfo &clockInfo);
 
    /**
     * Update SystemCoreClock variable
@@ -96,24 +162,16 @@ public:
     */
    static void SystemCoreClockUpdate(void);
 
-   /**
-    *  Change SIM->CLKDIV1 value
-    *
-    * @param[in]  simClkDiv1 - Value to write to SIM->CLKDIV1 register
-    */
-   static void setSysDividers(uint32_t simClkDiv1) {
-      SIM->CLKDIV1 = simClkDiv1;
-   }
 
    /** Current clock mode (LIRC_8M out of reset) */
-   static McgInfo::ClockMode currentClockMode;
+   static McgClockMode currentClockMode;
 
    /**
     * Get current clock mode
     *
     * @return
     */
-   static McgInfo::ClockMode getClockMode() {
+   static McgClockMode getClockMode() {
       return currentClockMode;
    }
 
@@ -122,7 +180,7 @@ public:
     *
     * @return Pointer to static string
     */
-   static const char *getClockModeName(McgInfo::ClockMode);
+   static const char *getClockModeName(McgClockMode);
 
    /**
     * Get name for current clock mode

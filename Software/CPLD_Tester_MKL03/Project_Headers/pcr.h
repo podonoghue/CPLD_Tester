@@ -1,5 +1,5 @@
 /**
- * @file     pcr.h (180.ARM_Peripherals/Project_Headers/pcr-MKL.h)
+ * @file     pcr.h (180.ARM_Peripherals/Project_Headers/pcr.h)
  * @brief    Port Control Register interface
  *
  * @version  V4.12.1.80
@@ -16,13 +16,424 @@
  * Any manual changes will be lost.
  */
 #include <stddef.h>
+#include <math.h>
+#include <algorithm>
+#include <climits>
 #include "derivative.h"
-#include "bme.h"
+#include "error.h"
+
+#if __cplusplus <= 201703L
+#define consteval constexpr
+#endif
+
+// Variable Argument Macro (VA_MACRO) up to 10 arguments
+#define USBDM_COUNT_ARGUMENTS_(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, value, ...) value
+#define USBDM_COUNT_ARGUMENTS(...) USBDM_COUNT_ARGUMENTS_( __VA_ARGS__ __VA_OPT__(,) 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+
+#define USBDM_CONCAT_(left, right) left ## right
+#define USBDM_CONCAT(left, right)  USBDM_CONCAT_(left, right)
+
+#define USBDM_VA_MACRO(MACRO, ...) USBDM_CONCAT(MACRO, USBDM_COUNT_ARGUMENTS(__VA_ARGS__))(__VA_ARGS__)
 
 /*
  * Default port information
  */
 namespace USBDM {
+
+#if __GNUC__ > 10
+// USBDM makes extensive use of enums as bit masks
+#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+#endif
+
+#pragma GCC push_options
+#pragma GCC optimize ("Os")
+
+#if (false)
+class Ticks {
+
+private:
+   unsigned value = 0;
+
+public:
+   constexpr Ticks()                   = default;
+   constexpr Ticks(const Ticks& other) = default;
+
+   constexpr Ticks(int value)          : value(value) {}
+   constexpr Ticks(unsigned value)     : value(value) {}
+   constexpr Ticks(long value)         : value((unsigned)value) {}
+   constexpr Ticks(unsigned long value): value((unsigned)value) {}
+   constexpr Ticks(float    value)     : value(roundf(value)) {}
+   constexpr Ticks(double    value)    : value(roundf(value)) {}
+   Ticks(const volatile Ticks& other)  : value(other.value) {}
+
+   Ticks &operator =(const Ticks &other) = default;
+
+   auto &operator =(float other)                  {value = other;       return *this; }
+   auto &operator =(const volatile Ticks &other)  {
+      if (this != &other) {
+         value = other.value;
+      }
+      return *this;
+   }
+
+   void  operator =(const Ticks &other) volatile  {
+      if (this != &other) {
+         value = other.value;
+      }
+   }
+
+   constexpr auto getValue() const { return value; }
+   unsigned getValue() const volatile { return value; }
+
+   constexpr auto operator *(unsigned other) const { return Ticks(value*other); }
+   constexpr auto operator *(float    other) const { return Ticks(value*other); }
+
+   constexpr auto operator /(unsigned other) const { return Ticks(value/other); }
+   constexpr auto operator /(float    other) const { return Ticks(value/other); }
+   constexpr auto operator /(Ticks    other) const { return (value/other.getValue()); }
+
+   constexpr auto operator +(const Ticks &other)    const { return Ticks(value+other.value); }
+   constexpr auto operator +(const unsigned other)  const { return Ticks(value+other); }
+   constexpr auto operator +(const int other)       const { return Ticks(value+(unsigned)other); }
+
+   constexpr auto operator -(const Ticks &other)    const { return Ticks(value-other.value); }
+   constexpr auto operator -(const unsigned other)  const { return Ticks(value-other); }
+   constexpr auto operator -(const int other)       const { return Ticks(value-(unsigned)other); }
+
+   constexpr auto operator ==(const Ticks &other)   const { return value==other.value; }
+   constexpr auto operator ==(const unsigned other) const { return value==other; }
+
+   constexpr operator unsigned() const { return value; }
+   explicit operator unsigned() const volatile { return value; }
+};
+
+class Seconds {
+
+private:
+   float value = 0.0;
+
+public:
+   constexpr Seconds()                       = default;
+   constexpr Seconds(const Seconds& other)   = default;
+
+//   constexpr Seconds(int value)              : value((float)value) {}
+//   constexpr Seconds(unsigned value)         : value((float)value) {}
+//   constexpr Seconds(long value)             : value((float)value) {}
+//   constexpr Seconds(unsigned long value)    : value((float)value) {}
+   constexpr Seconds(double value)           : value((float)value) {}
+   Seconds(const volatile Seconds& other)    : value(other.getValue()) {}
+
+   Seconds &operator =(const Seconds &other) = default;
+
+   auto &operator =(float other)                    {value = other;       return *this; }
+   auto &operator =(const volatile Seconds &other)  {value = other.value; return *this; }
+
+   void  operator =(const Seconds &other) volatile {value = other.value; }
+
+   constexpr auto getValue() const { return value; }
+   float getValue() const volatile { return value; }
+
+   constexpr auto operator *(float other)    const { return Seconds(value*other); }
+   constexpr auto operator *(unsigned other) const { return Seconds(value*other); }
+   constexpr auto operator *(int other)      const { return Seconds(value*other); }
+
+   constexpr auto operator /(float other)    const { return Seconds(value/other); }
+   constexpr auto operator /(unsigned other) const { return Seconds(value/other); }
+   constexpr auto operator /(int other)      const { return Seconds(value/other); }
+
+   constexpr auto operator /(Seconds other) const { return float(value/other.getValue()); }
+
+   constexpr auto operator +(Seconds other)  const { return Seconds(value+other.value); }
+   constexpr auto operator +(float other)    const { return Seconds(value+other); }
+   constexpr auto operator +(unsigned other) const { return Seconds(value+other); }
+   constexpr auto operator +(int other)      const { return Seconds(value+other); }
+
+   constexpr auto operator -(Seconds other)  const { return Seconds(value-other.value); }
+   constexpr auto operator -(float other)    const { return Seconds(value-other); }
+   constexpr auto operator -(unsigned other) const { return Seconds(value-other); }
+   constexpr auto operator -(int other)      const { return Seconds(value-other); }
+
+   constexpr auto operator ==(const Seconds &other) const { return value==other.value; }
+   constexpr auto operator ==(const float other)    const { return value==other; }
+   constexpr auto operator ==(const unsigned other) const { return value==other; }
+   constexpr auto operator ==(int other)            const { return value==other; }
+
+   constexpr auto operator <(const Seconds &other) const { return value<other.value; }
+   constexpr auto operator <(const float other)    const { return value<other; }
+   constexpr auto operator <(const unsigned other) const { return value<other; }
+   constexpr auto operator <(int other)            const { return value<other; }
+
+   constexpr auto operator <=(const Seconds &other) const { return value<=other.value; }
+   constexpr auto operator <=(const float other)    const { return value<=other; }
+   constexpr auto operator <=(const unsigned other) const { return value<=other; }
+   constexpr auto operator <=(int other)            const { return value<=other; }
+
+   constexpr auto operator >(const Seconds &other) const { return value>other.value; }
+   constexpr auto operator >(const float other)    const { return value>other; }
+   constexpr auto operator >(const unsigned other) const { return value>other; }
+   constexpr auto operator >(int other)            const { return value>other; }
+
+   constexpr auto operator >=(const Seconds &other) const { return value>=other.value; }
+   constexpr auto operator >=(const float other)    const { return value>=other; }
+   constexpr auto operator >=(const unsigned other) const { return value>=other; }
+   constexpr auto operator >=(int other)            const { return value>=other; }
+
+   constexpr operator float() const { return value; }
+   explicit operator float() const volatile { return value; }
+};
+
+class Hertz {
+private:
+   float value = 0.0;
+
+public:
+   constexpr Hertz()                      = default;
+   constexpr Hertz(const Hertz& other)    = default;
+
+//   constexpr Hertz(int value)             : value((float)value) {}
+//   constexpr Hertz(unsigned value)        : value((float)value) {}
+//   constexpr Hertz(long value)            : value((float)value) {}
+//   constexpr Hertz(unsigned long value)   : value((float)value) {}
+//   constexpr Hertz(float value)           : value((float)value) {}
+   constexpr Hertz(double value)          : value((float)value) {}
+   Hertz(const volatile Hertz& other)     : value(other.value) {}
+
+   Hertz &operator =(const Hertz &other) = default;
+
+   auto &operator =(float other)                 {value = other;       return *this; }
+   auto &operator =(const volatile Hertz &other) {value = other.value; return *this; }
+
+   void  operator =(const Hertz &other) volatile {value = other.value; }
+
+   constexpr auto getValue() const { return value; }
+   float getValue() const volatile { return value; }
+
+   constexpr auto operator *(float other)    const { return Hertz(value*other); }
+   constexpr auto operator *(unsigned other) const { return Hertz(value*other); }
+   constexpr auto operator *(int other)      const { return Hertz(value*other); }
+
+   constexpr auto operator /(float other)    const { return Hertz(value/other); }
+   constexpr auto operator /(unsigned other) const { return Hertz(value/other); }
+   constexpr auto operator /(int other)      const { return Hertz(value/other); }
+
+   constexpr auto operator /(Hertz other) const { return (float)(value/other.getValue()); }
+
+   constexpr auto operator +(Hertz other) const { return Hertz(value+other.value); }
+   constexpr auto operator -(Hertz other) const { return Hertz(value+other.value); }
+
+   constexpr auto operator ==(const Hertz &other)   const { return value==other.value; }
+   constexpr auto operator ==(const float other)    const { return value==other; }
+   constexpr auto operator ==(const unsigned other) const { return value==other; }
+   constexpr auto operator ==(int other)            const { return value==other; }
+
+   constexpr auto operator <(const Hertz &other)   const { return value<other.value; }
+   constexpr auto operator <(const float other)    const { return value<other; }
+   constexpr auto operator <(const unsigned other) const { return value<other; }
+   constexpr auto operator <(int other)            const { return value<other; }
+
+   constexpr auto operator <=(const Hertz &other)   const { return value<=other.value; }
+   constexpr auto operator <=(const float other)    const { return value<=other; }
+   constexpr auto operator <=(const unsigned other) const { return value<=other; }
+   constexpr auto operator <=(int other)            const { return value<=other; }
+
+   constexpr auto operator >(const Hertz &other)   const { return value>other.value; }
+   constexpr auto operator >(const float other)    const { return value>other; }
+   constexpr auto operator >(const unsigned other) const { return value>other; }
+   constexpr auto operator >(int other)            const { return value>other; }
+
+   constexpr auto operator >=(const Hertz &other)   const { return value>=other.value; }
+   constexpr auto operator >=(const float other)    const { return value>=other; }
+   constexpr auto operator >=(const unsigned other) const { return value>=other; }
+   constexpr auto operator >=(int other)            const { return value>=other; }
+
+   constexpr operator float()    const { return value; }
+   constexpr operator unsigned() const { return (int)round(value); }
+};
+
+constexpr auto operator *(float left,     Seconds right)  { return Seconds(left*right.getValue()); }
+constexpr auto operator *(unsigned left,  Seconds right)  { return Seconds(left*right.getValue()); }
+constexpr auto operator *(int left,       Seconds right)  { return Seconds(left*right.getValue()); }
+
+constexpr auto operator *(float left,     Hertz right)    { return Hertz(left*right.getValue()); }
+constexpr auto operator *(unsigned left,  Hertz right)    { return Hertz(left*right.getValue()); }
+constexpr auto operator *(int left,       Hertz right)    { return Hertz(left*right.getValue()); }
+constexpr auto operator *(Ticks left,     Hertz right)    { return Hertz(left*right.getValue()); }
+constexpr auto operator *(Seconds left,   Hertz right)    { return Ticks(left.getValue()*right.getValue()); }
+
+constexpr auto operator /(float left,     Seconds right) { return Hertz(left/right.getValue()); }
+constexpr auto operator /(unsigned left,  Seconds right) { return Hertz(left/right.getValue()); }
+constexpr auto operator /(int left,       Seconds right) { return Hertz(left/right.getValue()); }
+
+constexpr auto operator /(float left,     Hertz right)   { return Seconds(left/right.getValue()); }
+constexpr auto operator /(unsigned left,  Hertz right)   { return Seconds(left/right.getValue()); }
+constexpr auto operator /(int left,       Hertz right)   { return Seconds(left/right.getValue()); }
+constexpr auto operator /(Ticks left,     Hertz right)   { return Seconds(left.getValue()/right.getValue()); }
+
+#else
+   using Ticks    = unsigned;
+   using Seconds  = float;
+   using Hertz    = float;
+#endif
+
+   /**
+    * Create a value of type `To` from the bits of `from`.
+    *
+    * @tparam To       To type
+    * @tparam From     From type
+    * @param  from     Object to convert
+    *
+    * @return  object converted to target type
+    */
+   template<typename To, typename From>
+   [[nodiscard]]
+    constexpr To bit_cast(const From& from) noexcept {
+      return __builtin_bit_cast(To, from);
+   }
+
+/**
+ * Convenience class for sharing storage of time measurements in ticks and seconds
+ */
+union Seconds_Ticks {
+   ///  Time in seconds or Ticks
+   uint32_t value;
+
+   constexpr Seconds_Ticks() : value(0) {}
+
+   constexpr Seconds toSeconds() const { return bit_cast<float, unsigned>(value); }
+   constexpr Ticks   toTicks()   const { return value; }
+
+#if false
+   constexpr void fromSeconds(Seconds seconds) { value = bit_cast<unsigned, float>(seconds.getValue()); }
+   constexpr void fromTicks(Ticks ticks)       { value = ticks.getValue(); }
+#else
+   constexpr void fromSeconds(Seconds seconds) { value = bit_cast<unsigned, float>(seconds); }
+   constexpr void fromTicks(Ticks ticks)       { value = ticks; }
+#endif
+
+};
+
+   /*
+    * Allows writing numbers with units e.g. 100_ms
+    */
+   consteval auto operator"" _ticks(unsigned long long int num) { return static_cast<Ticks>((unsigned)num); };
+   consteval auto operator"" _ticks(long double num)            { return static_cast<Ticks>((float)num); };
+
+   consteval auto operator"" _s(unsigned long long int num)     { return static_cast<Seconds>((double)num); };
+   consteval auto operator"" _s(long double num)                { return static_cast<Seconds>((double)num); };
+
+   consteval auto operator"" _ms(unsigned long long int num)    { return static_cast<Seconds>((double)(num*0.001)); };
+   consteval auto operator"" _ms(long double num)               { return static_cast<Seconds>((double)(num*0.001)); };
+
+   consteval auto operator"" _us(unsigned long long int num)    { return static_cast<Seconds>((double)(num*0.000001)); };
+   consteval auto operator"" _us(long double num)               { return static_cast<Seconds>((double)(num*0.000001)); };
+
+   consteval auto operator"" _ns(unsigned long long int num)    { return static_cast<Seconds>((double)(num*0.000000001)); };
+   consteval auto operator"" _ns(long double num)               { return static_cast<Seconds>((double)(num*0.000000001)); };
+
+   consteval auto operator"" _Hz(unsigned long long int num)    { return static_cast<Hertz>((double)num); };
+   consteval auto operator"" _Hz(long double num)               { return static_cast<Hertz>((double)num); };
+
+   consteval auto operator"" _kHz(unsigned long long int num)   { return static_cast<Hertz>((double)(num*1000)); };
+   consteval auto operator"" _kHz(long double num)              { return static_cast<Hertz>((double)(num*1000)); };
+
+   consteval auto operator"" _MHz(unsigned long long int num)   { return static_cast<Hertz>((double)(num*1000000)); };
+   consteval auto operator"" _MHz(long double num)              { return static_cast<Hertz>((double)(num*1000000)); };
+
+//   consteval auto operator"" _percent(unsigned long long int num)  { return static_cast<double>(num)*0.01; };
+//   consteval auto operator"" _percent(long double num)             { return static_cast<double>(num)*0.01; };
+
+   /**
+    * IRQ priority levels
+    *
+    * Priority level used to configure the NVIC
+    * Subset of available levels
+    */
+   enum NvicPriority : int8_t {
+      NvicPriority_NotInstalled = (int8_t)255,                ///< Not Installed
+      NvicPriority_VeryLow      = (1<<__NVIC_PRIO_BITS)-1,    ///< VeryLow
+      NvicPriority_Low          = (NvicPriority_VeryLow*5/6), ///< Low
+      NvicPriority_Midlow       = (NvicPriority_VeryLow*4/6), ///< Midlow
+      NvicPriority_Normal       = (NvicPriority_VeryLow*3/6), ///< Normal
+      NvicPriority_MidHigh      = (NvicPriority_VeryLow*2/6), ///< MidHigh
+      NvicPriority_High         = (NvicPriority_VeryLow*1/6), ///< High
+      NvicPriority_VeryHigh     = 0,                          ///< VeryHigh
+
+   };
+
+
+/**
+ * Class to wrap a memory address as an array
+ *
+ * @tparam T         Type of array element
+ * @tparam address   Memory address of start of array
+ * @tparam size      Size of array (in elements)
+ */
+template<typename T, uint32_t address, size_t Size>
+class MemoryAddressWrapper {
+
+public:
+
+   static constexpr size_t size = Size;
+
+   /**
+    * Array access
+    *
+    * @return Reference to element of type T
+    *
+    * @note The const below refers to the MemoryAddressWrapper being const not the implied array
+    */
+   constexpr T & __attribute__((always_inline)) operator[](size_t index) const {
+      usbdm_assert(index<size, "Index out of range");
+      return (reinterpret_cast<T *>(address))[index];
+   }
+
+};
+
+/**
+ * This is to allow use of hardware pointers in classes with a constexpr constructor !
+ *
+ * @tparam T  The type of the hardware to create a pointer for
+ */
+template<typename T>
+class HardwarePtr {
+
+private:
+   HardwarePtr() = delete;
+   HardwarePtr(const HardwarePtr&) = delete;
+   HardwarePtr(HardwarePtr&&) = delete;
+
+   // Address of hardware
+   const uintptr_t ptr;
+
+public:
+   /**
+    * Constructor for hardware pointer
+    *
+    * @param ptr  Address of hardware to be wrapped.
+    */
+   constexpr __attribute__((always_inline))  HardwarePtr(uintptr_t ptr) : ptr(ptr){};
+
+   /**
+    * Convert to pointer to the hardware
+    *
+    * @return Hardware pointer
+    */
+   constexpr auto __attribute__((always_inline))  operator->() const { return reinterpret_cast<volatile T *>(ptr);}
+
+   /**
+    * Convert to reference to the hardware
+    *
+    * @return Hardware pointer
+    */
+   constexpr auto & __attribute__((always_inline))  operator*() const { return *reinterpret_cast<volatile T *>(ptr);}
+
+   /**
+    * Convert to uint32_t
+    *
+    * @return uint32
+    */
+   constexpr __attribute__((always_inline))  operator uint32_t() const { return ptr; }
+};
 
 /**
  * Enable and set priority of interrupts in NVIC.
@@ -43,9 +454,9 @@ void enableNvicInterrupt(IRQn_Type irqNum, uint32_t nvicPriority);
 /**
  * Used to indicate or control the polarity of an I/O with selectable polarity
  */
-enum Polarity {
-   ActiveLow=false,  //!< Signal is active low i.e. Active => Low level, Inactive => High level
-   ActiveHigh=true   //!< Signal is active high i.e. Active => High level, Inactive => Low level
+enum Polarity : uint32_t {
+   ActiveLow  = 0xFFFFFFFFU,  ///< Signal is active low i.e. Active => Low level, Inactive => High level
+   ActiveHigh = 0x00000000U,  ///< Signal is active high i.e. Active => High level, Inactive => Low level
 };
 
 /** Pin number indicating the function has a fixed mapping to a pin */
@@ -64,7 +475,7 @@ constexpr   int8_t UNMAPPED_PCR         = static_cast<int8_t>(0xA4);
  * @param[in] pccAddress Address of PCC register for port to enable
  */
 static inline void enablePortClocks(uint32_t pccAddress) {
-   *(uint32_t *)pccAddress |= PCC_PCCn_CGC_MASK;
+   *(volatile uint32_t *)pccAddress = *(volatile uint32_t *)pccAddress | PCC_PCCn_CGC_MASK;
    __DMB();
 };
 
@@ -74,103 +485,11 @@ static inline void enablePortClocks(uint32_t pccAddress) {
  * @param[in] pccAddress Address of PCC register for port to disable
  */
 static inline void disablePortClocks(uint32_t pccAddress) {
-   *(uint32_t *)pccAddress &= ~PCC_PCCn_CGC_MASK;
+   *(volatile uint32_t *)pccAddress = *(volatile uint32_t *)pccAddress & ~PCC_PCCn_CGC_MASK;
    __DMB();
 };
 
-#else
-/**
- * Enable clock to selected ports
- *
- * @param[in] clockMask Mask for PORTs to enable
- */
-static inline void enablePortClocks(uint32_t clockMask) {
-#ifdef RELEASE_BUILD
-   bmeOr(SIM->SCGC5, clockMask);
-#else
-   SIM->SCGC5 |= clockMask;
 #endif
-   __DMB();
-}
-
-/**
- * Disable clock to selected ports
- *
- * @param[in] clockMask Mask for PORTs to disable
- */
-static inline void disablePortClocks(uint32_t clockMask) {
-#ifdef RELEASE_BUILD
-   bmeAnd(SIM->SCGC5, ~clockMask);
-#else
-   SIM->SCGC5 &= ~clockMask;
-#endif
-   __DMB();
-}
-
-/*
- * PORT clock masks
- */
-#if defined(SIM_SCGC5_PORTA_MASK)
-static constexpr uint32_t PORTA_CLOCK_MASK = SIM_SCGC5_PORTA_MASK;
-#endif
-#if defined(SIM_SCGC5_PORTB_MASK)
-static constexpr uint32_t PORTB_CLOCK_MASK = SIM_SCGC5_PORTB_MASK;
-#endif
-#if defined(SIM_SCGC5_PORTC_MASK)
-static constexpr uint32_t PORTC_CLOCK_MASK = SIM_SCGC5_PORTC_MASK;
-#endif
-#if defined(SIM_SCGC5_PORTD_MASK)
-static constexpr uint32_t PORTD_CLOCK_MASK = SIM_SCGC5_PORTD_MASK;
-#endif
-#if defined(SIM_SCGC5_PORTE_MASK)
-static constexpr uint32_t PORTE_CLOCK_MASK = SIM_SCGC5_PORTE_MASK;
-#endif
-#if defined(SIM_SCGC5_PORTF_MASK)
-static constexpr uint32_t PORTF_CLOCK_MASK = SIM_SCGC5_PORTF_MASK;
-#endif
-#if defined(SIM_SCGC5_PORTG_MASK)
-static constexpr uint32_t PORTG_CLOCK_MASK = SIM_SCGC5_PORTG_MASK;
-#endif
-#endif
-
-/**
- * Port information
- * Information required to configure the PCR for a particular function
- */
-class PortInfo {
-public:
-   const uint32_t  portAddress;   //!< Port hardware base pointer
-   const uint32_t  clockInfo;     //!< Either clock mask or port clock control register address
-   const IRQn_Type irqNum;        //!< Port interrupt number
-};
-
-/**
- * Pin information
- */
-class PinInfo {
-public:
-   const uint32_t   portAddress;  //!< Port hardware base pointer
-   const uint32_t   clockInfo;    //!< Either clock mask or port clock control register address
-   const IRQn_Type  irqNum;       //!< Port interrupt number
-   const uint32_t   gpioAddress;  //!< GPIO Hardware base pointer
-   const int32_t    gpioBit;      //!< Bit number for pin - must be signed for error checks
-   const uint32_t   pcrValue;     //!< Default PCR value for pin
-
-   /**
-    *
-    * @param portInfo      Describes port
-    * @param gpioAddress   Base address of associated GPIO
-    * @param gpioBit       Bit number GPIO being modified
-    * @param pcrValue      Default PCR value for pin
-    */
-   constexpr PinInfo(
-         const PortInfo &portInfo,
-         uint32_t        gpioAddress,
-         int             gpioBit,
-         uint32_t        pcrValue) :
-                     portAddress(portInfo.portAddress), clockInfo(portInfo.clockInfo), irqNum(portInfo.irqNum),
-                     gpioAddress(gpioAddress), gpioBit(gpioBit), pcrValue(pcrValue) {}
-};
 
 #ifndef PORT_PCR_LK
 /**
@@ -223,185 +542,537 @@ public:
 #endif
 
 /**
- * Pull device modes
- *
- * @note Not all pins support this function
+ * PCR value
  */
-enum PinPull {
-   PinPull_None = PORT_PCR_PE(0),                //!< No pull device
-   PinPull_Up   = PORT_PCR_PE(1)|PORT_PCR_PS(1), //!< Weak pull-up
-   PinPull_Down = PORT_PCR_PE(1)|PORT_PCR_PS(0), //!< Weak pull-down
+enum class PcrValue : uint32_t {
+   // Using an ENUM prevents automatic conversions from uint32_t to PcrValue
 };
 
-/**
- * Pin drive strengths
- *
- * @note Few pins support this function
- */
-enum PinDriveStrength {
-   PinDriveStrength_Low  = PORT_PCR_DSE(0), //!< Low drive strength
-   PinDriveStrength_High = PORT_PCR_DSE(1), //!< High drive strength
-};
-
-/**
- * Pin drive mode
- *
- * @note Not all pins support this function
- */
-enum PinDriveMode {
-   PinDriveMode_PushPull      = PORT_PCR_ODE(0), //!< Push-pull output
-   PinDriveMode_OpenDrain     = PORT_PCR_ODE(1), //!< Open-drain output
-   PinDriveMode_OpenCollector = PinDriveMode_OpenDrain,       //!< For oldies like me
-};
-
-/**
- * Pin Slew rate control
- *
- * @note Few pins support this function
- */
-enum PinSlewRate {
-   PinSlewRate_Slow = PORT_PCR_SRE(1),  //!< Slow slew rate on output
-   PinSlewRate_Fast = PORT_PCR_SRE(0),  //!< Fast slew rate on output
-};
-
-/**
- * Pin filter mode
- *
- * @note Few pins support this function
- */
-enum PinFilter {
-   PinFilter_None      = PORT_PCR_PFE(0),  //!< No pin filter
-   PinFilter_Passive   = PORT_PCR_PFE(1),  //!< Pin filter enabled
-#ifdef PORT_DFCR_CS_MASK
-   PinFilter_Digital   = (1<<14), //!< Digital pin filter enabled - Not available on all ports
-#endif
-};
-
-/**
- * Pin Multiplexor setting
- */
-enum PinMux {
-   PinMux_None      = PORT_PCR_MUX(0), //!< Used for default/no mapping
-   PinMux_Analogue  = PORT_PCR_MUX(0), //!< Analogue function
-   PinMux_Analog    = PinMux_Analogue,  //!< Analogue function
-   PinMux_Tsi       = PinMux_Analogue,  //!< Touch Sense function is analogue
-   PinMux_Gpio      = PORT_PCR_MUX(1), //!< Gpio function
-   PinMux_2         = PORT_PCR_MUX(2), //!< Multiplexor 2
-   PinMux_3         = PORT_PCR_MUX(3), //!< Multiplexor 3
-   PinMux_4         = PORT_PCR_MUX(4), //!< Multiplexor 4
-   PinMux_5         = PORT_PCR_MUX(5), //!< Multiplexor 5
-   PinMux_6         = PORT_PCR_MUX(6), //!< Multiplexor 6
-   PinMux_7         = PORT_PCR_MUX(7), //!< Multiplexor 7
-};
-
-/**
- * Pin interrupt/DMA actions
- *
- * @note Not all pins support this function
- */
-enum PinAction {
-   PinAction_None        = PORT_PCR_IRQC(0),   //!< No interrupt or DMA function
-
-   PinAction_DmaRising   = PORT_PCR_IRQC(1),   //!< Generate DMA request on rising edge
-   PinAction_DmaFalling  = PORT_PCR_IRQC(2),   //!< Generate DMA request on falling edge
-   PinAction_DmaEither   = PORT_PCR_IRQC(3),   //!< Generate DMA request on either edge
-
-   PinAction_IrqLow      = PORT_PCR_IRQC(8),   //!< Generate IRQ request when low
-   PinAction_IrqRising   = PORT_PCR_IRQC(9),   //!< Generate IRQ request on rising edge
-   PinAction_IrqFalling  = PORT_PCR_IRQC(10),  //!< Generate IRQ request on falling edge
-   PinAction_IrqEither   = PORT_PCR_IRQC(11),  //!< Generate IRQ request on either edge
-   PinAction_IrqHigh     = PORT_PCR_IRQC(12),  //!< Generate IRQ request when high
-};
-
-/** Type for PCR value used by PCR functions */
-using PcrValue = uint32_t;
-
-/**
- * Construct PCR value from individual bit masks
- *
- * @param[in] pinPull          One of PinPull_None, PinPull_Up, PinPull_Down (defaults to PinPull_None)
- * @param[in] pinDriveStrength One of PinDriveStrength_Low, PinDriveStrength_High (defaults to PinDriveLow)
- * @param[in] pinDriveMode     One of PinDriveMode_PushPull, PinDriveMode_OpenDrain (defaults to PinPushPull)
- * @param[in] pinAction        One of PinAction_None, etc (defaults to PinAction_None)
- * @param[in] pinFilter        One of PinFilter_None, PinFilter_Passive (defaults to PinFilter_None)
- * @param[in] pinSlewRate      One of PinSlewRate_Slow, PinSlewRate_Fast (defaults to PinSlewRate_Fast)
- * @param[in] pinMux           Multiplexor setting (defaults to 0)
- *
- * @return PCR value constructed from individual flags
- */
-static constexpr PcrValue pcrValue(
-      PinPull           pinPull           = PinPull_None,
-      PinDriveStrength  pinDriveStrength  = PinDriveStrength_Low,
-      PinDriveMode      pinDriveMode      = PinDriveMode_PushPull,
-      PinAction         pinAction         = PinAction_None,
-      PinFilter         pinFilter         = PinFilter_None,
-      PinSlewRate       pinSlewRate       = PinSlewRate_Fast,
-      PinMux            pinMux            = PinMux_None
-      ) {
-   return pinPull|pinDriveStrength|pinDriveMode|pinAction|pinFilter|pinSlewRate|pinMux;
+constexpr uint32_t operator ~(PcrValue pcrValue) {
+   return ~static_cast<uint32_t>(pcrValue);
 }
+
+constexpr uint32_t operator &(PcrValue pcrValue, uint32_t mask) {
+   return static_cast<uint32_t>(pcrValue) & mask;
+}
+
+constexpr bool operator ==(PcrValue pcrValue, uint32_t mask) {
+   return static_cast<uint32_t>(pcrValue) & mask;
+}
+
+   /**
+    * Pin input filter
+    *
+    * Pin filtering on digital inputs
+    */
+   enum PinFilter : uint32_t {
+      PinFilter_None    = PORT_PCR_PFE(0), ///< No pin filter
+      PinFilter_Passive = PORT_PCR_PFE(1), ///< Pin filter enabled
+
+   };
+
+   /**
+    * Pin pull device
+    *
+    * Pin pull device (up/down/none) on digital inputs
+    */
+   enum PinPull : uint32_t {
+      PinPull_None = PORT_PCR_PD(0b00), ///< No pull device
+      PinPull_Up   = PORT_PCR_PD(0b11), ///< Weak pull-up
+      PinPull_Down = PORT_PCR_PD(0b10), ///< Weak pull-down
+
+   };
+
+   /**
+    * Pin drive strength
+    *
+    * Pin drive strength of digital outputs
+    */
+   enum PinDriveStrength : uint32_t {
+      PinDriveStrength_Low  = PORT_PCR_DSE(0), ///< Low drive strength
+      PinDriveStrength_High = PORT_PCR_DSE(1), ///< High drive strength
+
+   };
+
+   /**
+    * Pin slew rate
+    *
+    * Pin slew rate of digital outputs
+    */
+   enum PinSlewRate : uint32_t {
+      PinSlewRate_Fast = PORT_PCR_SRE(0), ///< Fast
+      PinSlewRate_Slow = PORT_PCR_SRE(1), ///< Slow
+
+   };
+
+   /**
+    * Pin interrupt/DMA actions
+    *
+    * DMA and/or interrupt actions to happen on pin change or level
+    */
+   enum PinAction : uint32_t {
+      PinAction_None       = PORT_PCR_IRQC(0),  ///< No interrupt or DMA function
+      PinAction_DmaRising  = PORT_PCR_IRQC(1),  ///< Generate DMA request on rising edge
+      PinAction_DmaFalling = PORT_PCR_IRQC(2),  ///< Generate DMA request on falling edge
+      PinAction_DmaEither  = PORT_PCR_IRQC(3),  ///< Generate DMA request on either edge
+      PinAction_IrqLow     = PORT_PCR_IRQC(8),  ///< Generate IRQ request on low level
+      PinAction_IrqRising  = PORT_PCR_IRQC(9),  ///< Generate IRQ request on rising edge
+      PinAction_IrqFalling = PORT_PCR_IRQC(10), ///< Generate IRQ request on falling edge
+      PinAction_IrqEither  = PORT_PCR_IRQC(11), ///< Generate IRQ request on either edge
+      PinAction_IrqHigh    = PORT_PCR_IRQC(12), ///< Generate IRQ request on high level
+
+   };
+
+   /**
+    * Pin Multiplexor setting
+    *
+    * Which function is mapped to the pin
+    */
+   enum PinMux : uint32_t {
+      PinMux_Analogue = PORT_PCR_MUX(0), ///< Analogue function (ADC/TSI etc)
+      PinMux_Tsi      = PORT_PCR_MUX(0), ///< Touch Sense Input
+      PinMux_Disabled = PORT_PCR_MUX(0), ///< Disabled
+      PinMux_Gpio     = PORT_PCR_MUX(1), ///< GPIO function
+      PinMux_2        = PORT_PCR_MUX(2), ///< Multiplexor 2 function
+      PinMux_3        = PORT_PCR_MUX(3), ///< Multiplexor 3 function
+      PinMux_4        = PORT_PCR_MUX(4), ///< Multiplexor 4 function
+      PinMux_5        = PORT_PCR_MUX(5), ///< Multiplexor 5 function
+      PinMux_6        = PORT_PCR_MUX(6), ///< Multiplexor 6 function
+      PinMux_7        = PORT_PCR_MUX(7), ///< Multiplexor 7 function
+
+   };
+
+   /**
+    * Enable clock to selected ports
+    *
+    * @param[in] clockMask Mask for PORTs to enable
+    */
+   static inline void enablePortClocks(uint32_t clockMask) {
+      SIM->SCGC5 = SIM->SCGC5 | clockMask;
+      __DMB();
+   }
+   
+   /**
+    * Disable clock to selected ports
+    *
+    * @param[in] clockMask Mask for PORTs to disable
+    */
+   static inline void disablePortClocks(uint32_t clockMask) {
+      SIM->SCGC5 = SIM->SCGC5 & ~clockMask;
+      __DMB();
+   }
+   
+   /**
+    * Creates a bitmask with a single '1' in the bit location indicated
+    *
+    * @param bitNum
+    *
+    * @return Bit mask
+    */
+   static constexpr uint32_t makeBitMask(int bitNum) {
+      if (bitNum < 0) {
+         // Negative bitNum is used to indicate illegal value - suppress to reduce assert noise.
+         return 0;
+      }
+      else {
+         return (uint32_t)(1<<bitNum);
+      }
+   }
+
+   constexpr inline PcrValue operator|(PcrValue op1, PinPull op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PcrValue op1, PinFilter op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PcrValue op1, PinDriveStrength op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PcrValue op1, PinSlewRate op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PcrValue op1, PinAction op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PcrValue op1, PinMux op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinPull op1, PinPull op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinPull op1, PinFilter op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinPull op1, PinDriveStrength op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinPull op1, PinSlewRate op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinPull op1, PinAction op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinPull op1, PinMux op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinFilter op1, PinPull op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinFilter op1, PinFilter op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinFilter op1, PinDriveStrength op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinFilter op1, PinSlewRate op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinFilter op1, PinAction op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinFilter op1, PinMux op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinDriveStrength op1, PinPull op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinDriveStrength op1, PinFilter op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinDriveStrength op1, PinDriveStrength op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinDriveStrength op1, PinSlewRate op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinDriveStrength op1, PinAction op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinDriveStrength op1, PinMux op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinSlewRate op1, PinPull op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinSlewRate op1, PinFilter op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinSlewRate op1, PinDriveStrength op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinSlewRate op1, PinSlewRate op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinSlewRate op1, PinAction op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinSlewRate op1, PinMux op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinAction op1, PinPull op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinAction op1, PinFilter op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinAction op1, PinDriveStrength op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinAction op1, PinSlewRate op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinAction op1, PinAction op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinAction op1, PinMux op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinMux op1, PinPull op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinMux op1, PinFilter op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinMux op1, PinDriveStrength op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinMux op1, PinSlewRate op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinMux op1, PinAction op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+   constexpr inline PcrValue operator|(PinMux op1, PinMux op2) { return static_cast<PcrValue>(static_cast<uint32_t>(op1)|static_cast<uint32_t>(op2)); }
+
+
+   /** Port Clock enable masks **/
+   static constexpr uint32_t PORTA_CLOCK_MASK = SIM_SCGC5_PORTA_MASK; ///< PORTA clock mask
+   static constexpr uint32_t PORTB_CLOCK_MASK = SIM_SCGC5_PORTB_MASK; ///< PORTB clock mask
+
+
+
+template<typename ... V>
+constexpr PcrValue pcrOr(const V &... v) {
+  std::common_type_t<PcrValue> result = {};
+  (void)std::initializer_list<uint32_t>{ (result = (result | v), 0U)... };
+  return result;
+}
+
+/**
+ * Force a PcrValue to refer to the GPIO function i.e. MUX field = PinMux_Gpio
+ *
+ * @param op   PCR value to base result on
+ *
+ * @return  Modified PCR value
+ */
+constexpr PcrValue gpioPcrValue(PcrValue op) {
+   return (PcrValue)((op&~PORT_PCR_MUX_MASK)|PinMux_Gpio);
+}
+
+/**
+ * Force a PcrValue to refer to the Analogue function i.e. MUX field = PinMux_Analogue
+ *
+ * @param op   PCR value to base result on
+ *
+ * @return  Modified PCR value
+ */
+constexpr PcrValue analoguePcrValue(PcrValue op) {
+   return (PcrValue)((op&~PORT_PCR_MUX_MASK)|PinMux_Analogue);
+}
+
+
+   /**
+    *
+    * Class used to do initialisation of GPIO PCR value
+    *
+    * This class has a templated constructor that accepts a list of options to set.
+    * Options not explicitly mentioned are cleared to 0.
+    *
+    * @note This constructor may be used to create a const instance in ROM
+    *
+    * Example1:
+    * @code
+    * // Initialisation value
+    * static constexpr PcrInit pcrInit(PinDriveStrength_High, PinSlewRate_Slow, PinPull_Down, PinFilter_Passive);
+    *
+    * Initialise devices
+    * Led::setOutput(pcrInit.value);
+    * Switch::setInput(pcrInit.value);
+    * Cmt::setOutput(pcrInit.value);
+    * @endcode
+    */
+   class PcrInit {
+   
+   private:
+      PcrInit(PcrInit&&) = delete;
+   
+   public:
+      /// Value for PCR register
+      PcrValue value = (PcrValue)0;
+   
+      /**
+       * Constructor
+       */
+      constexpr PcrInit()  {
+      }
+   
+      /**
+       * Construct from PcrValue
+       *
+       * @param value
+       */
+      constexpr PcrInit(PcrValue value) : value(value) {}
+   
+      /**
+       * Construct from PcrInit
+       *
+       * @param other
+       */
+      constexpr PcrInit(const USBDM::PcrInit &other) : value(other.value) {}
+   
+      /**
+       * Constructor
+       * This version is appropriate for a pin used as a digital output
+       *
+    * @param pinDriveStrength Pin drive strength of digital outputs
+    * @param pinSlewRate      Pin slew rate of digital outputs
+       */
+      constexpr PcrInit(
+         PinDriveStrength pinDriveStrength,
+         PinSlewRate      pinSlewRate
+      ) : value (pinDriveStrength|pinSlewRate) {
+      }
+   
+      /**
+       * Constructor
+       * This version is appropriate for a pin used as a digital input
+       *
+    * @param pinPull   Pin pull device (up/down/none) on digital inputs
+    * @param pinFilter Pin filtering on digital inputs
+    * @param pinAction DMA and/or interrupt actions to happen on pin change or level
+       */
+      constexpr PcrInit(
+         PinPull   pinPull,
+         PinFilter pinFilter,
+         PinAction pinAction
+      ) : value (pinPull|pinFilter|pinAction) {
+      }
+   
+      /**
+       * Constructor
+       * This version is appropriate for a pin used as a digital input/output
+       *
+    * @param pinDriveStrength Pin drive strength of digital outputs
+    * @param pinSlewRate      Pin slew rate of digital outputs
+    * @param pinPull          Pin pull device (up/down/none) on digital inputs
+    * @param pinFilter        Pin filtering on digital inputs
+    * @param pinAction        DMA and/or interrupt actions to happen on pin change or level
+       */
+      constexpr PcrInit(
+         PinDriveStrength pinDriveStrength,
+         PinSlewRate      pinSlewRate,
+         PinPull          pinPull,
+         PinFilter        pinFilter,
+         PinAction        pinAction
+      ) : value (pinDriveStrength|pinSlewRate|pinPull|pinFilter|pinAction) {
+      }
+   
+      /**
+       * Constructor
+       *
+       * @tparam   Types
+       * @param    rest
+       *
+       * @param pinPull Pin pull device
+       */
+      template <typename... Types>
+      constexpr PcrInit(PinPull pinPull, Types... rest) : PcrInit(rest...)  {
+   
+         value = value | pinPull;
+      }
+
+      /**
+       * Constructor
+       *
+       * @tparam   Types
+       * @param    rest
+       *
+       * @param pinFilter Pin input filter
+       */
+      template <typename... Types>
+      constexpr PcrInit(PinFilter pinFilter, Types... rest) : PcrInit(rest...)  {
+   
+         value = value | pinFilter;
+      }
+
+      /**
+       * Constructor
+       *
+       * @tparam   Types
+       * @param    rest
+       *
+       * @param pinDriveStrength Pin drive strength
+       */
+      template <typename... Types>
+      constexpr PcrInit(PinDriveStrength pinDriveStrength, Types... rest) : PcrInit(rest...)  {
+   
+         value = value | pinDriveStrength;
+      }
+
+      /**
+       * Constructor
+       *
+       * @tparam   Types
+       * @param    rest
+       *
+       * @param pinSlewRate Pin slew rate
+       */
+      template <typename... Types>
+      constexpr PcrInit(PinSlewRate pinSlewRate, Types... rest) : PcrInit(rest...)  {
+   
+         value = value | pinSlewRate;
+      }
+
+      /**
+       * Constructor
+       *
+       * @tparam   Types
+       * @param    rest
+       *
+       * @param pinAction Pin interrupt/DMA actions
+       */
+      template <typename... Types>
+      constexpr PcrInit(PinAction pinAction, Types... rest) : PcrInit(rest...)  {
+   
+         value = value | pinAction;
+      }
+
+      /**
+       * Constructor
+       *
+       * @tparam   Types
+       * @param    rest
+       *
+       * @param pinMux Pin Multiplexor setting
+       */
+      template <typename... Types>
+      constexpr PcrInit(PinMux pinMux, Types... rest) : PcrInit(rest...)  {
+   
+         value = value | pinMux;
+      }
+
+      constexpr operator       PcrValue() const { return value; }
+      constexpr operator       PcrValue()       { return value; }
+      constexpr PcrValue       pcrValue() const { return value; }
+      constexpr PcrValue       pcrValue()       { return value; }
+
+      constexpr operator         PinPull() const { return static_cast<PinPull>(value&PORT_PCR_PD_MASK); }
+      constexpr operator         PinPull()       { return static_cast<PinPull>(value&PORT_PCR_PD_MASK); }
+      constexpr PinPull       pinPull() const { return static_cast<PinPull>(value&PORT_PCR_PD_MASK); }
+      constexpr PinPull       pinPull()       { return static_cast<PinPull>(value&PORT_PCR_PD_MASK); }
+
+      constexpr operator         PinFilter() const { return static_cast<PinFilter>(value&PORT_PCR_PFE_MASK); }
+      constexpr operator         PinFilter()       { return static_cast<PinFilter>(value&PORT_PCR_PFE_MASK); }
+      constexpr PinFilter       pinFilter() const { return static_cast<PinFilter>(value&PORT_PCR_PFE_MASK); }
+      constexpr PinFilter       pinFilter()       { return static_cast<PinFilter>(value&PORT_PCR_PFE_MASK); }
+
+      constexpr operator         PinDriveStrength() const { return static_cast<PinDriveStrength>(value&PORT_PCR_DSE_MASK); }
+      constexpr operator         PinDriveStrength()       { return static_cast<PinDriveStrength>(value&PORT_PCR_DSE_MASK); }
+      constexpr PinDriveStrength       pinDriveStrength() const { return static_cast<PinDriveStrength>(value&PORT_PCR_DSE_MASK); }
+      constexpr PinDriveStrength       pinDriveStrength()       { return static_cast<PinDriveStrength>(value&PORT_PCR_DSE_MASK); }
+
+      constexpr operator         PinSlewRate() const { return static_cast<PinSlewRate>(value&PORT_PCR_SRE_MASK); }
+      constexpr operator         PinSlewRate()       { return static_cast<PinSlewRate>(value&PORT_PCR_SRE_MASK); }
+      constexpr PinSlewRate       pinSlewRate() const { return static_cast<PinSlewRate>(value&PORT_PCR_SRE_MASK); }
+      constexpr PinSlewRate       pinSlewRate()       { return static_cast<PinSlewRate>(value&PORT_PCR_SRE_MASK); }
+
+      constexpr operator         PinAction() const { return static_cast<PinAction>(value&PORT_PCR_IRQC_MASK); }
+      constexpr operator         PinAction()       { return static_cast<PinAction>(value&PORT_PCR_IRQC_MASK); }
+      constexpr PinAction       pinAction() const { return static_cast<PinAction>(value&PORT_PCR_IRQC_MASK); }
+      constexpr PinAction       pinAction()       { return static_cast<PinAction>(value&PORT_PCR_IRQC_MASK); }
+
+      constexpr operator         PinMux() const { return static_cast<PinMux>(value&PORT_PCR_MUX_MASK); }
+      constexpr operator         PinMux()       { return static_cast<PinMux>(value&PORT_PCR_MUX_MASK); }
+      constexpr PinMux       pinMux() const { return static_cast<PinMux>(value&PORT_PCR_MUX_MASK); }
+      constexpr PinMux       pinMux()       { return static_cast<PinMux>(value&PORT_PCR_MUX_MASK); }
+
+   };
+
+   /**
+    * Default PCR value for pins used as GPIO (including multiplexor value)
+    * High drive strength + Pull-up + GPIO_MUX value
+    */
+   static constexpr PcrValue GPIO_DEFAULT_PCR(PinPull_None|PinFilter_None|PinDriveStrength_Low|PinSlewRate_Fast|PinAction_None|PinMux_Gpio);
+
+
+
+/**
+ * Port information
+ * Information required to configure the PCR for a particular function
+ */
+class PortInfo {
+
+private:
+   PortInfo() = delete;
+   PortInfo(const PortInfo&) = delete;
+   PortInfo(PortInfo&&) = delete;
+
+public:
+   const uint32_t      portAddress;  ///< Port hardware base pointer
+   const uint32_t      clockInfo;    ///< Either clock mask or port clock control register address
+   const uint32_t      gpioAddress;  ///< Associated GPIO Hardware base pointer
+   const IRQn_Type     irqNum;       ///< Port interrupt number
+   const NvicPriority  irqLevel;     ///< Interrupt priority level or NvicPriority_NotInstalled if handler not installed
+
+   constexpr PortInfo(const uint32_t      portAddress,
+                      const uint32_t      clockInfo,
+                      const IRQn_Type     irqNum,
+                      const uint32_t      gpioAddress,
+                      const NvicPriority  nvicPriority) :
+               portAddress(portAddress),
+               clockInfo(clockInfo),
+               gpioAddress(gpioAddress),
+               irqNum(irqNum),
+               irqLevel(nvicPriority) {
+   }
+};
+
+/**
+ * Pin information
+ */
+class PinInfo {
+
+private:
+   PinInfo() = delete;
+   PinInfo(const PinInfo&) = delete;
+   PinInfo(PinInfo&&) = delete;
+
+public:
+   const uint32_t      portAddress;  ///< Port hardware base pointer
+   const uint32_t      clockInfo;    ///< Either clock mask or port clock control register address
+   const uint32_t      gpioAddress;  ///< GPIO Hardware base pointer
+   const PcrValue      pcrValue;     ///< Default PCR value for pin - Includes PinMux value which determines pin use in most cases
+   const int8_t        gpioBit;      ///< Bit number for pin - must be signed for special values used for error checks
+   const IRQn_Type     irqNum;       ///< Port interrupt number
+   const NvicPriority  irqLevel;     ///< Interrupt priority level or NvicPriority_NotInstalled if handler not installed
+
+   /**
+    * Constructor from portInfo etc.
+    *
+    * @param portInfo      Describes port
+    * @param gpioBit       Bit number GPIO being modified
+    * @param pcrValue      Default PCR value for pin
+    */
+   constexpr PinInfo(
+         const PortInfo &portInfo,
+         int             gpioBit,
+         PcrValue        pcrValue) :
+                     portAddress(portInfo.portAddress), clockInfo(portInfo.clockInfo), gpioAddress(portInfo.gpioAddress),
+                     pcrValue(pcrValue), gpioBit(gpioBit), irqNum(portInfo.irqNum), irqLevel(portInfo.irqLevel) {}
+
+   /**
+    * Constructor from pinInfo with override for bit number and PCR value.
+    * This is useful when re-using a PinInfo for another PinMux value i.e. peripheral
+    *
+    * @param pinInfo       Describes pin
+    * @param gpioBit       Bit number GPIO being modified
+    * @param pcrValue      Default PCR value for pin
+    */
+   constexpr PinInfo(
+         const PinInfo &pinInfo,
+         int             gpioBit,
+         PcrValue        pcrValue) :
+                     portAddress(pinInfo.portAddress), clockInfo(pinInfo.clockInfo), gpioAddress(pinInfo.gpioAddress),
+                     pcrValue(pcrValue), gpioBit(gpioBit), irqNum(pinInfo.irqNum), irqLevel(pinInfo.irqLevel) {}
+};
 
 #ifdef PORT_DFCR_CS_MASK
    /**
     * Controls the Digital Pin Filter clock source
     */
    enum PinDigitalFilterClock {
-      PinDigitalFilterClock_BusClock = PORT_DFCR_CS(0),//!< Pin Digital Filter Clock = BusClock
-      PinDigitalFilterClock_LpoClock = PORT_DFCR_CS(1),//!< Pin Digital Filter Clock = Low Power Oscillator
+      PinDigitalFilterClock_BusClock = PORT_DFCR_CS(0),///< Pin Digital Filter Clock = BusClock
+      PinDigitalFilterClock_LpoClock = PORT_DFCR_CS(1),///< Pin Digital Filter Clock = Low Power Oscillator
    };
 #endif
-
-/**
- * Construct PCR value from existing PcrValue and extra flags
- *
- * @param[in] original      Original value
- * @param[in] extraFlags    Extra flags
- *
- * @return PCR value constructed from individual flags
- */
-static constexpr PcrValue pcrValue(PcrValue original, uint32_t extraFlags) {
-   return original|extraFlags;
-}
-
-/**
- * Construct PCR value from flags
- *
- * @param[in] flags Extra flags
- *
- * @return PCR value constructed from individual flags
- */
-static constexpr PcrValue pcrValue(uint32_t flags) {
-   return flags;
-}
-
-/**
- * Default PCR setting for pins (excluding multiplexor value)
- * High drive strength + Pull-up
- */
-static constexpr PcrValue DEFAULT_PCR = pcrValue(PinPull_None, PinDriveStrength_Low);
-
-/**
- * Default PCR value for pins used as GPIO (including multiplexor value)
- * High drive strength + Pull-up + GPIO_MUX value
- */
-static constexpr PcrValue GPIO_DEFAULT_PCR = pcrValue(PinPull_None, PinDriveStrength_Low, PinDriveMode_PushPull, PinAction_None, PinFilter_None, PinSlewRate_Fast, PinMux_Gpio);
-
-/**
- * Default PCR setting for I2C pins (excluding multiplexor value)
- * High drive strength + Pull-up + Open-drain (if available)
- */
-static constexpr PcrValue I2C_DEFAULT_PCR =  pcrValue(PinPull_Up, PinDriveStrength_High, PinDriveMode_OpenDrain);
-
-/**
- * Default PCR setting for I2S pins (excluding multiplexor value)
- * High drive strength + Pull-up + Open-drain (if available)
- */
-static constexpr PcrValue I2S_DEFAULT_PCR =  pcrValue(PinPull_Up, PinDriveStrength_High, PinDriveMode_OpenDrain);
-
-/**
- * Default PCR setting for (E)XTAL pins (excluding multiplexor value)
- */
-static constexpr PcrValue XTAL_DEFAULT_PCR = pcrValue(PinPull_None, PinDriveStrength_Low, PinDriveMode_PushPull);
 
 /**
  * Type definition for PORT interrupt call back.
@@ -415,6 +1086,47 @@ typedef void (*PinCallbackFunction)(uint32_t status);
  * Provides common unhandledCallback for all PORTs
  */
 class PcrBase {
+
+public:
+   /**
+    * Limit index to permitted bit index range
+    * Used to prevent noise from static assertion checks that detect a condition already detected in a more useful fashion.
+    *
+    * @param bitNum   Index to limit
+    *
+    * @return Index limited to permitted range
+    */
+   static inline constexpr int limitIndex(int bitNum) {
+      if (bitNum<0) {
+         return 0;
+      }
+      if (bitNum>(int)(sizeof(uint32_t)*CHAR_BIT)) {
+         return (int)(sizeof(uint32_t)*CHAR_BIT);
+      }
+      return bitNum;
+   }
+
+   /** Class to static check inputNum input exists and is mapped to an input pin */
+   template<int bitNum> class CheckPinExistsAndIsMapped {
+      // Tests are chained so only a single assertion can fail so as to reduce noise
+
+      // Function is not currently mapped to a pin
+      static constexpr bool Test1 = (bitNum != UNMAPPED_PCR);
+      // Peripheral signal does not exit
+      static constexpr bool Test2 = !Test1 || (bitNum != INVALID_PCR);
+      // Peripheral signal mapped directly to pin - no PCR (not an error)
+      static constexpr bool Test3 = !Test2 || (bitNum != FIXED_NO_PCR);
+      // Illegal value
+      static constexpr bool Test4 = !Test3 || (bitNum>0) || (bitNum<=31);
+
+      static_assert(Test1, "Peripheral signal is not mapped to a pin - Modify Configure.usbdm");
+      static_assert(Test2, "Peripheral signal doesn't exist in this device/package - Check Configure.usbdm for available signals");
+      static_assert(Test4, "Illegal bit number should be [0..31]");
+
+   public:
+      /** Dummy function to allow convenient in-line checking */
+      static constexpr void check() {}
+   };
 
 private:
    /**
@@ -432,30 +1144,40 @@ public:
 };
 
 /**
- * Common PORT features shared by all port pins
+ * Common PORT features shared across all port pins
  *
- * tparam portAddress Address of port to be used
+ * @tparam portAddress           Address of port to be used
+ * @tparam irqNum                Interrupt number for NVIC entry
+ * @tparam defaultNvicPriority   Default interrupt priority.\n
+ *                               NvicPriority_NotInstalled indicates PORT not configured for interrupts.
  */
-template<uint32_t portAddress, IRQn_Type irqNum>
+template<uint32_t portAddress, IRQn_Type irqNum, NvicPriority defaultNvicPriority>
 class PcrBase_T {
 
 private:
    /**
     * This class is not intended to be instantiated
     */
-   PcrBase_T() = delete;
-   PcrBase_T(const PcrBase&) = delete;
-   PcrBase_T(PcrBase&&) = delete;
+   PcrBase_T(const PcrBase_T&) = delete;
+   PcrBase_T(PcrBase_T&&) = delete;
 
    /** Callback functions for ISRs */
    static PinCallbackFunction fCallback;
 
 public:
-#ifdef PORT_DFCR_CS_MASK
-   static volatile PORT_DFER_Type &port()   { return *reinterpret_cast<volatile PORT_DFER_Type *>(portAddress); }
+
+   // Empty Constructor
+   constexpr PcrBase_T() = default;
+
+#if defined(PORT_DFCR_CS_MASK)
+   /** PORT hardware as pointer to struct */
+   static constexpr HardwarePtr<PORT_DFER_Type> port = portAddress;
 #else
-   static volatile PORT_Type &port()   { return *reinterpret_cast<volatile PORT_Type *>(portAddress); }
+   /** PORT hardware as pointer to struct */
+   static constexpr HardwarePtr<PORT_Type> port = portAddress;
 #endif
+
+   static constexpr bool     HANDLER_INSTALLED  = defaultNvicPriority>=0;  ///< Used to check if USBDM port pin interrupt handler has been installed
 
    /**
     * Interrupt handler\n
@@ -464,12 +1186,91 @@ public:
     */
    static void irqHandler() {
       // Capture interrupt flags
-      uint32_t status = port().ISFR;
+      uint32_t status = port->ISFR;
 
       // Clear flags
-      port().ISFR = status;
+      port->ISFR = status;
 
       fCallback(status);
+   }
+
+   /**
+    * Wrapper to allow the use of a class member as a callback function
+    * @note Only usable with static objects.
+    *
+    * @tparam T         Type of the object containing the callback member function
+    * @tparam callback  Member function pointer
+    * @tparam object    Object containing the member function
+    *
+    * @return  Pointer to a function suitable for the use as a callback
+    *
+    * @code
+    * class AClass {
+    * public:
+    *    int y;
+    *
+    *    // Member function used as callback
+    *    // This function must match PinCallbackFunction
+    *    void callback(uint8_t status) {
+    *       ...;
+    *    }
+    * };
+    * ...
+    * // Instance of class containing callback member function
+    * static AClass aClass;
+    * ...
+    * // Wrap member function
+    * auto fn = Llwu::Pin<LlwuPin_0>::wrapCallback<AClass, &AClass::callback, aClass>();
+    * // Use as callback
+    * Llwu::Pin<LlwuPin_0>::setCallback(fn);
+    * @endcode
+    */
+   template<class T, void(T::*callback)(uint32_t), T &object>
+   static PinCallbackFunction wrapCallback() {
+      static PinCallbackFunction fn = [](uint32_t status) {
+         (object.*callback)(status);
+      };
+      return fn;
+   }
+
+   /**
+    * Wrapper to allow the use of a class member as a callback function
+    * @note There is a considerable space and time overhead to using this method
+    *
+    * @tparam T         Type of the object containing the callback member function
+    * @tparam callback  Member function pointer
+    * @tparam object    Object containing the member function
+    *
+    * @return  Pointer to a function suitable for the use as a callback
+    *
+    * @code
+    * class AClass {
+    * public:
+    *    int y;
+    *
+    *    // Member function used as callback
+    *    // This function must match PinCallbackFunction
+    *    void callback(uint8_t status) {
+    *       ...;
+    *    }
+    * };
+    * ...
+    * // Instance of class containing callback member function
+    * AClass aClass;
+    * ...
+    * // Wrap member function
+    * auto fn = Llwu::Pin<LlwuPin_0>::wrapCallback<AClass, &AClass::callback>(aClass);
+    * // Use as callback
+    * Llwu::Pin<LlwuPin_0>::setCallback(fn);
+    * @endcode
+    */
+   template<class T, void(T::*callback)(uint32_t)>
+   static PinCallbackFunction wrapCallback(T &object) {
+      static T &obj = object;
+      static PinCallbackFunction fn = [](uint32_t status) {
+         (obj.*callback)(status);
+      };
+      return fn;
    }
 
    /**
@@ -484,7 +1285,9 @@ public:
     * @note There is a single callback function for all pins on the related port.
     *       It is necessary to identify the originating pin in the callback
     */
-   static ErrorCode setCallback(PinCallbackFunction callback) {
+   static ErrorCode setPinCallback(PinCallbackFunction callback) {
+      static_assert(HANDLER_INSTALLED, "Gpio not configured for interrupts - Modify Configure.usbdm");
+
       if (callback == nullptr) {
          fCallback = PcrBase::unhandledCallback;
          return E_NO_ERROR;
@@ -502,7 +1305,7 @@ public:
    /**
     * Enable Pin interrupts in NVIC.
     */
-   static void enableNvicInterrupts() {
+   static void enableNvicPinInterrupts() {
       static_assert(irqNum>=0, "Pin does not support interrupts");
       NVIC_EnableIRQ(irqNum);
    }
@@ -513,7 +1316,7 @@ public:
     *
     * @param[in]  nvicPriority  Interrupt priority
     */
-   static void enableNvicInterrupts(uint32_t nvicPriority=NvicPriority_Normal) {
+   static void enableNvicPinInterrupts(NvicPriority nvicPriority) {
       static_assert(irqNum>=0, "Pin does not support interrupts");
       enableNvicInterrupt(irqNum, nvicPriority);
    }
@@ -521,7 +1324,7 @@ public:
    /**
     * Disable Pin interrupts in NVIC.
     */
-   static void disableNvicInterrupts() {
+   static void disableNvicPinInterrupts() {
       static_assert(irqNum>=0, "Pin does not support interrupts");
       NVIC_DisableIRQ(irqNum);
    }
@@ -542,386 +1345,321 @@ public:
  * PortC_3::disableClock();
  * @endcode
  *
- * @tparam clockInfo       PCC register address or mask for SIM clock register associated with this PCR
- * @tparam portAddress     PORT to be manipulated e.g. PORTA (PCR array)
- * @tparam bitNum          Bit number e.g. 3
- * @tparam defPcrValue     Default value for PCR (including MUX value)
+ * @tparam clockInfo             PCC register address or mask for SIM clock register associated with this PCR
+ * @tparam portAddress           PORT to be manipulated e.g. PORTA (PCR array)
+ * @tparam bitNum                Bit number e.g. 3
+ * @tparam defPcrValue           Default value for PCR (including MUX value)
+ * @tparam irqNum                IRQ number for pin interrupt
+ * @tparam defaultNvicPriority   Default interrupt priority.\n
+ *                               NvicPriority_NotInstalled indicates PORT not configured for interrupts.
  */
-template<uint32_t clockInfo, uint32_t portAddress, IRQn_Type irqNum, int bitNum, PcrValue defPcrValue>
-class Pcr_T : public PcrBase_T<portAddress, irqNum> {
+template<uint32_t clockInfo, uint32_t portAddress, IRQn_Type irqNum, PcrValue defPcrValue, NvicPriority defaultNvicPriority, int bitNum>
+class Pcr_T : public PcrBase_T<portAddress, irqNum, defaultNvicPriority> {
 
-//#ifdef DEBUG_BUILD
-//   static_assert((bitNum != UNMAPPED_PCR), "Pcr_T: Signal is not mapped to a pin - Modify Configure.usbdm");
-//   static_assert((bitNum != INVALID_PCR),  "Pcr_T: Non-existent signal");
-//   static_assert((bitNum == UNMAPPED_PCR)||(bitNum == INVALID_PCR)||((bitNum >= 0)&&(bitNum <= 31)), "Pcr_T: Illegal bit number");
-//#endif
+   // This situation is checked for elsewhere with more specific error messages
+//   PcrBase::CheckPinExistsAndIsMapped<bitNum> check;
+
+protected:
+   /// Default constructor used by derived classes only
+   constexpr Pcr_T() {};
 
 public:
-   static constexpr int      BITNUM  = bitNum;        ///< Bit number for port bit
-   static constexpr uint32_t BITMASK = (1<<bitNum);   ///< Bit mask for port bit
+   /// Bit number of bit being manipulated within underlying port hardware
+   static constexpr int       BITNUM             = bitNum;
+
+   /// Mask for the bit being manipulated within underlying port hardware
+   static constexpr uint32_t  BITMASK            = makeBitMask(bitNum);
+
+   /// Default PCR value including PinMux value for peripheral
+   static constexpr PcrInit  defaultPcrValue = defPcrValue;
 
 private:
    /**
     * This class is not intended to be instantiated
     */
-   Pcr_T() = delete;
-   Pcr_T(const PcrBase&) = delete;
-   Pcr_T(PcrBase&&) = delete;
+   Pcr_T(const Pcr_T&) = delete;
+   Pcr_T(Pcr_T&&) = delete;
 
 #ifdef PORT_DFCR_CS_MASK
-   static volatile uint32_t       &pcrReg() { return *reinterpret_cast<volatile uint32_t       *>(portAddress+offsetof(PORT_DFER_Type,PCR[bitNum])); }
-   static volatile PORT_DFER_Type &port()   { return *reinterpret_cast<volatile PORT_DFER_Type *>(portAddress); }
+   static constexpr HardwarePtr<uint32_t>       PCR    = portAddress+offsetof(PORT_DFER_Type,PCR[bitNum]);
 #else
-   static volatile uint32_t       &pcrReg() { return *reinterpret_cast<volatile uint32_t       *>(portAddress+offsetof(PORT_Type,PCR[bitNum])); }
+   static constexpr HardwarePtr<uint32_t>       PCR    = portAddress+offsetof(PORT_Type,PCR[bitNum]);
 #endif
+
+   using PcrBase = PcrBase_T<portAddress, irqNum, defaultNvicPriority>;
 
 public:
    /**
     * Enable clock associated with PORT
     */
-   static void enableClock() {
-      enablePortClocks(clockInfo);
+   static void enablePortClock() {
+      if constexpr (portAddress != 0) {
+         enablePortClocks(clockInfo);
+      }
    }
 
    /**
     * Disable clock associated with PORT
     */
-   static void disableClock() {
-      disablePortClocks(clockInfo);
-   }
-
-   /**
-    * Set Pin Control Register (PCR) value \n
-    * The clock to the port will be enabled before changing the PCR
-    *
-    * @param[in] pcrValue PCR value constructed using pcrValue() including MUX value.\n
-    *                     Defaults to template value.
-    */
-   static void setPCR(PcrValue pcrValue=defPcrValue) {
-      if (portAddress != 0) {
-         enablePortClocks(clockInfo);
-
-         // Pointer to PCR register for pin
-         pcrReg() = pcrValue;
+   static void disablePortClock() {
+      if constexpr (portAddress != 0) {
+         disablePortClocks(clockInfo);
       }
    }
+
    /**
     * Get Pin Control Register (PCR) value \n
     * The clock to the port will be enabled before reading the PCR
     *
     * @return pcrValue PCR value.
     */
-   static PcrValue getPCR() {
-      if (portAddress == 0) {
-         return static_cast<PcrValue>(0);
+   static uint32_t getPCR() {
+      if constexpr (portAddress == 0) {
+         return 0;
       }
       enablePortClocks(clockInfo);
-      return pcrReg();
+      return *PCR;
    }
+   
    /**
-    * Set Pin Control Register (PCR) value \n
+    * Set Pin Control Register Attributes
+    * Mux value is set appropriately for the pin function being used
     * The clock to the port will be enabled before changing the PCR
     *
-    * @param[in] pinPull          One of PinPull_None, PinPull_Up, PinPull_Down
-    * @param[in] pinDriveStrength One of PinDriveStrength_Low, PinDriveStrength_High (defaults to PinDriveLow)
-    * @param[in] pinDriveMode     One of PinDriveMode_PushPull, PinDriveMode_OpenDrain (defaults to PinPushPull)
-    * @param[in] pinAction        One of PinAction_None, etc (defaults to PinAction_None)
-    * @param[in] pinFilter        One of PinFilter_None, PinFilter_Passive (defaults to PinFilter_None)
-    * @param[in] pinSlewRate      One of PinSlewRate_Slow, PinSlewRate_Fast (defaults to PinSlewRate_Fast)
-    * @param[in] pinMux           One of PinMux_Analogue, PinMux_Gpio etc (defaults to template value)
+    * @param[in] pcrValue PCR value excluding MUX value. Defaults to template value.
     */
-   static void setPCR(
-         PinPull           pinPull,
-         PinDriveStrength  pinDriveStrength  = PinDriveStrength_Low,
-         PinDriveMode      pinDriveMode      = PinDriveMode_PushPull,
-         PinAction         pinAction         = PinAction_None,
-         PinFilter         pinFilter         = PinFilter_None,
-         PinSlewRate       pinSlewRate       = PinSlewRate_Fast,
-         PinMux            pinMux            = static_cast<PinMux>(defPcrValue&PORT_PCR_MUX_MASK)
-         ) {
-      if (portAddress != 0) {
+   static void setPCR(PcrValue pcrValue=defaultPcrValue)  {
+   
+      if constexpr (portAddress != 0) {
          enablePortClocks(clockInfo);
-
+   
+         uint32_t pcr  = static_cast<uint32_t>(pcrValue);
+   
+         // Make sure MUX value is correct
+         pcr = (pcr & ~(PORT_PCR_MUX_MASK)) | defaultPcrValue.pinMux();
+   
          // Set PCR register for pin
-         pcrReg() = pinPull|pinDriveStrength|pinDriveMode|pinAction|pinFilter|pinSlewRate|pinMux;
+         *PCR = pcr;
       }
    }
 
-#if defined(PORT_PCR_ODE_MASK) and defined (PORT_PCR_SRE_MASK)
    /**
-    * @brief
-    * Set subset of Pin Control Register Attributes associated with output direction \n
-    * Only specified attributes are changed.\n
-    * Assumes clock to the port has already been enabled
+    * Set Pin Control Register Attributes
+    * Mux value is set appropriately for the pin function being used
+    * The clock to the port will be enabled before changing the PCR
     *
-    * @param[in] pinDriveStrength One of PinDriveStrength_Low, PinDriveStrength_High
-    * @param[in] pinDriveMode     One of PinDriveMode_PushPull, PinDriveMode_OpenDrain (defaults to PinPushPull)
-    * @param[in] pinSlewRate      One of PinSlewRate_Slow, PinSlewRate_Fast (defaults to PinSlewRate_Fast)
+    * @param[in] pcrInit PCR value excluding MUX value. Defaults to template value.
     */
-   static void setOutput(
-         PinDriveStrength  pinDriveStrength,
-         PinDriveMode      pinDriveMode      = PinDriveMode_PushPull,
-         PinSlewRate       pinSlewRate       = PinSlewRate_Fast) {
-
-      pcrReg() =
-            (pcrReg()&~(PORT_PCR_DSE_MASK|PORT_PCR_ODE_MASK|PORT_PCR_SRE_MASK)) |
-            (pinDriveStrength|pinDriveMode|pinSlewRate);
-   }
-#elif defined(PORT_PCR_ODE_ASK)
-   /**
-    * @brief
-    * Set subset of Pin Control Register Attributes associated with output direction \n
-    * Only specified attributes are changed.\n
-    * Assumes clock to the port has already been enabled
-    *
-    * @param[in] pinDriveStrength One of PinDriveStrength_Low, PinDriveStrength_High
-    * @param[in] pinDriveMode     One of PinDriveMode_PushPull, PinDriveMode_OpenDrain (defaults to PinPushPull)
-    */
-   static void setOutput(
-         PinDriveStrength  pinDriveStrength,
-         PinDriveMode      pinDriveMode      = PinDriveMode_PushPull) {
-
-      pcrReg() =
-            (pcrReg()&~(PORT_PCR_DSE_MASK|PORT_PCR_ODE_ASK)) |
-            (pinDriveStrength|pinDriveMode);
-   }
-#elif defined(PORT_PCR_SRE_MASK)
-   /**
-    * @brief
-    * Set subset of Pin Control Register Attributes associated with output direction \n
-    * Only specified attributes are changed.\n
-    * Assumes clock to the port has already been enabled
-    *
-    * @param[in] pinDriveStrength One of PinDriveStrength_Low, PinDriveStrength_High
-    * @param[in] pinSlewRate      One of PinSlewRate_Slow, PinSlewRate_Fast (defaults to PinSlewRate_Fast)
-    */
-   static void setOutput(
-         PinDriveStrength  pinDriveStrength,
-         PinSlewRate       pinSlewRate       = PinSlewRate_Fast) {
-
-      pcrReg() =
-            (pcrReg()&~(PORT_PCR_DSE_MASK|PORT_PCR_SRE_MASK)) |
-            (pinDriveStrength|pinSlewRate);
-   }
-#else
-   /**
-    * @brief
-    * Set subset of Pin Control Register Attributes associated with output direction \n
-    * Only specified attributes are changed.\n
-    * Assumes clock to the port has already been enabled
-    *
-    * @param[in] pinDriveStrength One of PinDriveStrength_Low, PinDriveStrength_High
-    */
-   static void setOutput(
-         PinDriveStrength  pinDriveStrength) {
-
-      pcrReg() =
-            (pcrReg()&~(PORT_PCR_DSE_MASK)) | (pinDriveStrength);
+   static void setPCR(const PcrInit &pcrInit)  {
+   
+      if constexpr (portAddress != 0) {
+         enablePortClocks(clockInfo);
+   
+         uint32_t pcr  = static_cast<uint32_t>(pcrInit.value);
+   
+         // Make sure MUX value is correct
+         pcr = (pcr & ~(PORT_PCR_MUX_MASK)) | defaultPcrValue.pinMux();
+   
+         // Set PCR register for pin
+         *PCR = pcr;
+      }
    }
 
-#endif
+   /**
+    * Set Pin Control Register Attributes
+    * Parameters default to values appropriate for the pin function being used.
+    * The clock to the port will be enabled before changing the PCR
+    *
+    * @param pinPull          Pin pull device (up/down/none) on digital inputs
+    * @param pinDriveStrength Pin drive strength of digital outputs
+    * @param pinAction        DMA and/or interrupt actions to happen on pin change or level
+    * @param pinFilter        Pin filtering on digital inputs
+    * @param pinSlewRate      Pin slew rate of digital outputs
+    * @param pinMux           Which function is mapped to the pin
+    */
+   static void setPCR(
+         PinPull          pinPull,
+         PinDriveStrength pinDriveStrength = PinDriveStrength_Low,
+         PinAction        pinAction        = PinAction_None,
+         PinFilter        pinFilter        = PinFilter_None,
+         PinSlewRate      pinSlewRate      = PinSlewRate_Fast,
+         PinMux           pinMux           = PinMux_Analogue)  {
+   
+      if constexpr (portAddress != 0) {
+         enablePortClocks(clockInfo);
+   
+         // Set PCR register for pin
+         *PCR = pinPull|pinDriveStrength|pinAction|pinFilter|pinSlewRate|pinMux;
+      }
+   }
 
    /**
     * @brief
-    * Set subset of Pin Control Register Attributes associated with input direction \n
-    * Only specified attributes are changed.\n
-    * Assumes clock to the port has already been enabled.
+    * Set the Pin Control Register Attributes to the default values determined by Configure.usbdmProject.
+    * Mux value is set appropriately for the pin function being used.
+    * The clock to the port will be enabled before changing the PCR.
+    */
+   static void setOutput() {
+      setPCR(defaultPcrValue.value);
+   }
+
+   /**
+    * @brief
+    * Set the Pin Control Register Attributes
+    * Mux value is set appropriately for the pin function being used.
+    * The clock to the port will be enabled before changing the PCR.
+    */
+   static void setOutput(PcrValue pcrValue) {
+      setPCR(pcrValue);
+   }
+
+   /**
+    * @brief
+    * Set subset of Pin Control Register Attributes associated with output direction
     *
-    * @param[in] pinPull          One of PinPull_None, PinPull_Up, PinPull_Down
-    * @param[in] pinAction        One of PinAction_None, etc (defaults to PinAction_None)
-    * @param[in] pinFilter        One of PinFilter_None, PinFilter_Passive (defaults to PinFilter_None)
+    * Mux value is set appropriately for the pin function being used. Other attributes are cleared.
+    * The clock to the port will be enabled before changing the PCR.
+    *
+    * @param pinDriveStrength Pin drive strength of digital outputs
+    * @param pinSlewRate      Pin slew rate of digital outputs
+    */
+   static void setOutput(
+         PinDriveStrength pinDriveStrength,
+         PinSlewRate      pinSlewRate      = PinSlewRate_Fast)  {
+   
+      setPCR(pinDriveStrength|pinSlewRate);
+   }
+
+   /**
+    * @brief
+    * Set the Pin Control Register Attributes to the default values determined by Configure.usbdmProject.
+    * Mux value is set appropriately for the pin function being used.
+    * The clock to the port will be enabled before changing the PCR.
+    */
+   static void setInput() {
+   
+      setPCR(defaultPcrValue.value);
+   }
+   
+   /**
+    * @brief
+    * Set the Pin Control Register Attributes
+    * Mux value is set appropriately for the pin function being used.
+    * The clock to the port will be enabled before changing the PCR.
+    */
+   static void setInput(PcrValue pcrValue) {
+   
+      setPCR(pcrValue);
+   }
+   
+   /**
+    * @brief
+    * Set subset of Pin Control Register Attributes associated with input direction
+    *
+    * Mux value is set appropriately for the pin function being used. Other attributes are cleared.
+    * The clock to the port will be enabled before changing the PCR.
+    *
+    * @param pinPull   Pin pull device (up/down/none) on digital inputs
+    * @param pinAction DMA and/or interrupt actions to happen on pin change or level
+    * @param pinFilter Pin filtering on digital inputs
     */
    static void setInput(
-         PinPull           pinPull,
-         PinAction         pinAction         = PinAction_None,
-         PinFilter         pinFilter         = PinFilter_None) {
-
-      pcrReg() =
-            (pcrReg()&~(PORT_PCR_PD_MASK|PORT_PCR_IRQC_MASK|PORT_PCR_PFE_MASK)) |
-            (pinPull|pinAction|pinFilter);
+         PinPull   pinPull,
+         PinAction pinAction = PinAction_None,
+         PinFilter pinFilter = PinFilter_None)  {
+   
+      setPCR(pinPull|pinAction|pinFilter);
    }
 
    /**
-    * Set pin PCR.MUX value.
-    * Assumes clock to the port has already been enabled.
+    * Set Pin pull device
     *
-    * @param[in] pinMux PCR MUX value [0..7]
+    * pinPull Pin pull device (up/down/none) on digital inputs
     */
-   static void setMux(PinMux pinMux) {
-#ifdef RELEASE_BUILD
-      bmeInsert(pcrReg(), PORT_PCR_MUX_SHIFT, 3, pinMux>>PORT_PCR_MUX_SHIFT);
-#else
-      pcrReg() = (pcrReg()&~PORT_PCR_MUX_MASK) | pinMux;
-#endif
+   static void setPcrOption(PinPull pinPull)  {
+   
+      if constexpr (portAddress != 0) {
+         *PCR = (*PCR & ~PORT_PCR_PD_MASK)|pinPull;
+      }
    }
    /**
-    * Sets pin interrupt/DMA action.
-    * Assumes clock to the port has already been enabled.
+    * Set Pin input filter
     *
-    * @param[in] pinAction Interrupt/DMA mode
+    * pinFilter Pin filtering on digital inputs
     */
-   static void setPinAction(PinAction pinAction) {
-#ifdef RELEASE_BUILD
-      bmeInsert(pcrReg(), PORT_PCR_IRQC_SHIFT, 4, pinAction>>PORT_PCR_IRQC_SHIFT);
-#else
-      pcrReg() = (pcrReg()&~PORT_PCR_IRQC_MASK) | pinAction;
-#endif
+   static void setPcrOption(PinFilter pinFilter)  {
+   
+      if constexpr (portAddress != 0) {
+         *PCR = (*PCR & ~PORT_PCR_PFE_MASK)|pinFilter;
+      }
+   }
+   /**
+    * Set Pin drive strength
+    *
+    * pinDriveStrength Pin drive strength of digital outputs
+    */
+   static void setPcrOption(PinDriveStrength pinDriveStrength)  {
+   
+      if constexpr (portAddress != 0) {
+         *PCR = (*PCR & ~PORT_PCR_DSE_MASK)|pinDriveStrength;
+      }
+   }
+   /**
+    * Set Pin slew rate
+    *
+    * pinSlewRate Pin slew rate of digital outputs
+    */
+   static void setPcrOption(PinSlewRate pinSlewRate)  {
+   
+      if constexpr (portAddress != 0) {
+         *PCR = (*PCR & ~PORT_PCR_SRE_MASK)|pinSlewRate;
+      }
+   }
+   /**
+    * Set Pin interrupt/DMA actions
+    *
+    * pinAction DMA and/or interrupt actions to happen on pin change or level
+    */
+   static void setPcrOption(PinAction pinAction)  {
+   
+      if constexpr (portAddress != 0) {
+         *PCR = (*PCR & ~PORT_PCR_IRQC_MASK)|pinAction;
+      }
+   }
+   /**
+    * Set Pin Multiplexor setting
+    *
+    * pinMux Which function is mapped to the pin
+    */
+   static void setPcrOption(PinMux pinMux)  {
+   
+      if constexpr (portAddress != 0) {
+         *PCR = (*PCR & ~PORT_PCR_MUX_MASK)|pinMux;
+      }
+   }
+
+   /**
+    *  Disable Pin
+    *  This sets the pin to MUX 0 which is specified for minimum leakage in low-power modes.
+    *
+    *  @note The clock is left enabled as shared with other pins.
+    *  @note Mux(0) is also the Analogue MUX setting
+    */
+   static void disablePin() {
+      if constexpr (portAddress != 0) {
+         enablePortClock();
+         setPcrOption(PinMux_Disabled);
+      }
    }
 
    /**
     * Clear pin interrupt flag.
     * Assumes clock to the port has already been enabled.
     */
-   static void clearInterruptFlag() {
-      pcrReg() |= PORT_PCR_ISF_MASK;
-   }
-
-#ifdef PORT_PCR_PE_MASK
-   /**
-    * Set pull device on pin.
-    * Assumes clock to the port has already been enabled.
-    *
-    *  @param[in] pinPull Pull selection mode
-    */
-   static void setPullDevice(PinPull pinPull) {
-#ifdef RELEASE_BUILD
-      bmeInsert(pcrReg(), PORT_PCR_PD_SHIFT, 2, pinPull>>PORT_PCR_PD_SHIFT);
-#else
-      pcrReg() = (pcrReg()&~PORT_PCR_PD_MASK) | pinPull;
-#endif
-   }
-#else
-   /**
-    * Not supported
-    */
-   static void setPullDevice(PinPullMode) {
-   }
-#endif
-
-#ifdef PORT_PCR_ODE_MASK
-   /**
-    * Set drive mode on pin.
-    * Assumes clock to the port has already been enabled.
-    *
-    *  @param[in] pinDriveMode Drive mode
-    */
-   static void setDriveMode(PinDriveMode pinDriveMode) {
-#ifdef RELEASE_BUILD
-      bmeInsert(pcrReg(), PORT_PCR_ODE_SHIFT, 1, pinDriveMode>>PORT_PCR_ODE_SHIFT);
-#else
-      pcrReg() = (pcrReg()&~PORT_PCR_ODE_MASK) | pinDriveMode;
-#endif
-   }
-#else
-   /**
-    * Not supported
-    */
-   static void setDriveMode(PinDriveMode) {
-   }
-#endif
-
-#ifdef PORT_PCR_SRE_MASK
-   /**
-    * Set slew rate on pin.
-    * Assumes clock to the port has already been enabled.
-    *
-    *  @param[in] pinSlewRate Slew rate. Either PinSlewRate_Slow or PinSlewRate_Fast
-    */
-   static void setSlewRate(PinSlewRate  pinSlewRate) {
-#ifdef RELEASE_BUILD
-      bmeInsert(pcrReg(), PORT_PCR_SRE_SHIFT, 1, pinSlewRate>>PORT_PCR_SRE_SHIFT);
-#else
-      pcrReg() = (pcrReg()&~PORT_PCR_SRE_MASK) | pinSlewRate;
-#endif
-   }
-#else
-   /**
-    * Not supported
-    */
-   static void setSlewRate(PinSlewRate) {
-   }
-#endif
-
-#if defined PORT_PCR_PFE_MASK
-   /**
-    * Set passive filter on pin.
-    * Assumes clock to the port has already been enabled.
-    *
-    *  @param[in] pinFilter Pin filter option. Either PinFilter_None or PinFilter_Passive
-    *
-    *  @note see also enableDigitalFilter(), disableDigitalFilter()
-    */
-   static void setFilter(PinFilter pinFilter) {
-         pcrReg() = (pcrReg()&~PORT_PCR_PFE_MASK) | pinFilter;
-   }
-#endif
-
-#if defined(PORT_PCR_DSE_MASK)
-   /**
-    * Set drive strength on pin.
-    * Assumes clock to the port has already been enabled.
-    *
-    *  @param[in] pinDriveStrength Drive strength to set
-    */
-   static void setDriveStrength(PinDriveStrength pinDriveStrength) {
-#ifdef RELEASE_BUILD
-      bmeInsert(pcrReg(), PORT_PCR_DSE_SHIFT, 1, pinDriveStrength>>PORT_PCR_DSE_SHIFT);
-#else
-      pcrReg() = (pcrReg()&~PORT_PCR_DSE_MASK) | pinDriveStrength;
-#endif
-   }
-#else
-   /**
-    * Not supported
-    */
-   static void setDriveStrength(PinDriveStrength) {
-   }
-#endif
-
-#if defined(PORT_PCR_LK_MASK)
-   /**
-    * Locks most of the PCR properties e.g. drive strength, pull-device etc.
-    * Assumes clock to the port has already been enabled
-    * The pin properties remains locked until the next reset
-    * Not supported on all devices
-    */
-   static void lock() {
-      pcrReg() |= PORT_PCR_LK_MASK;
-   }
-#else
-   /**
-    * Not supported
-    */
-   static void lock() {
-   }
-#endif
-
-   /**
-    * Enable Pin interrupts in NVIC.
-    */
-   static void enableNvicInterrupts() {
-      static_assert(irqNum>=0, "Pin does not support interrupts");
-      NVIC_EnableIRQ(irqNum);
-   }
-
-   /**
-    * Enable and set priority of Pin interrupts in NVIC.
-    * Any pending NVIC interrupts are first cleared.
-    *
-    * @param[in]  nvicPriority  Interrupt priority
-    */
-   static void enableNvicInterrupts(uint32_t nvicPriority) {
-      static_assert(irqNum>=0, "Pin does not support interrupts");
-      enableNvicInterrupt(irqNum, nvicPriority);
-   }
-
-   /**
-    * Disable Pin interrupts in NVIC.
-    */
-   static void disableNvicInterrupts() {
-      static_assert(irqNum>=0, "Pin does not support interrupts");
-      // Disable interrupts
-      NVIC_DisableIRQ(irqNum);
+   static void clearPinInterruptFlag() {
+      if constexpr (portAddress != 0) {
+         *PCR = *PCR | PORT_PCR_ISF_MASK;
+      }
    }
 
 #ifdef PORT_DFCR_CS_MASK
@@ -934,16 +1672,18 @@ public:
     * @note Not all ports support this feature
     * @note This affects the digital filter for all pins of this port
     */
-   static void configureDigitalFilter(PinDigitalFilterClock pinDigitalFilterClock, int filterLength) {
-      // Disable all filtering before change
-      uint32_t dfer = port().DFER;
-      port().DFER = 0;
+   static void configureDigitalPinFilter(PinDigitalFilterClock pinDigitalFilterClock, int filterLength) {
+      if constexpr (portAddress != 0) {
+         // Disable all filtering before change
+         uint32_t dfer = Pcr_T::port->DFER;
+         Pcr_T::port->DFER = 0;
 
-      port().DFCR = pinDigitalFilterClock;
-      port().DFWR = PORT_DFWR_FILT(filterLength);
+         Pcr_T::port->DFCR = pinDigitalFilterClock;
+         Pcr_T::port->DFWR = PORT_DFWR_FILT(filterLength);
 
-      // Restore filtering on pins
-      port().DFER = dfer;
+         // Restore filtering on pins
+         Pcr_T::port->DFER = dfer;
+      }
    }
 
    /**
@@ -951,8 +1691,10 @@ public:
     *
     * @note Not all ports support this feature
     */
-   static void enableDigitalFilter() {
-         port().DFER |= BITMASK;
+   static void enableDigitalPinFilter() {
+      if constexpr (portAddress != 0) {
+         Pcr_T::port->DFER = Pcr_T::port->DFER | BITMASK;
+      }
    }
 
    /**
@@ -960,15 +1702,17 @@ public:
     *
     * @note Not all ports support this feature
     */
-   static void disableDigitalFilter() {
-      port().DFER &= ~BITMASK;
+   static void disableDigitalPinFilter() {
+      if constexpr (portAddress != 0) {
+         Pcr_T::port->DFER = Pcr_T::port->DFER & ~BITMASK;
+      }
    }
 #endif
 
 };
 
-template<uint32_t portAddress, IRQn_Type irqNum>
-PinCallbackFunction USBDM::PcrBase_T<portAddress, irqNum>::fCallback = PcrBase::unhandledCallback;
+template<uint32_t portAddress, IRQn_Type irqNum, NvicPriority defaultNvicPriority>
+PinCallbackFunction USBDM::PcrBase_T<portAddress, irqNum, defaultNvicPriority>::fCallback = PcrBase::unhandledCallback;
 
 /**
  * @brief Template function to set a PCR to the default value
@@ -1019,8 +1763,8 @@ void processPcrs(uint32_t pcrValue) {
 }
 
 /**
- * @brief Template representing a Pin Control Register (PCR)
- * Makes use of a configuration class
+ * @brief Template representing a Pin Control Register (PCR)\n
+ * Makes use of an info[] table in a configuration class
  *
  * Code examples:
  * @code
@@ -1038,15 +1782,30 @@ void processPcrs(uint32_t pcrValue) {
  * @endcode
  *
  * @tparam info          Configuration class
- * @tparam index         Index of pin in configuration table
+ * @tparam index         Index of pin in configuration table within class
  */
-template<class Info, uint8_t index> using PcrTable_T =
-      Pcr_T<Info::info[index].clockInfo, Info::info[index].portAddress, Info::info[index].irqNum, Info::info[index].gpioBit, Info::info[index].pcrValue>;
-
+template<class Info, uint8_t index>
+class PcrTable_T : public Pcr_T<Info::info[index].clockInfo, Info::info[index].portAddress, Info::info[index].irqNum, Info::info[index].pcrValue, Info::info[index].irqLevel, Info::info[index].gpioBit> {
+};
 /**
  * @}
  ** PeripheralPinTables
  */
+
+#if defined(RELEASE_BUILD)
+// MACRO to do OR operation
+#define USBDM_PCR_OR(...) USBDM_CONCAT(USBDM_OR, USBDM_COUNT_ARGUMENTS(__VA_ARGS__))(__VA_ARGS__)
+#define USBDM_OR0()
+#define USBDM_OR1(a)           (PcrValue)(a)
+#define USBDM_OR2(a,b)         (PcrValue)(a|b)
+#define USBDM_OR3(a,b,c)       (PcrValue)(a|b|c)
+#define USBDM_OR4(a,b,c,d)     (PcrValue)(a|b|c|d)
+#define USBDM_OR5(a,b,c,d,e)   (PcrValue)(a|b|c|d|e)
+#define USBDM_OR6(a,b,c,d,e,f) (PcrValue)(a|b|c|d|e|f)
+#endif
+
+#pragma GCC pop_options
+
 } // End namespace USBDM
 
 #endif /* HEADER_PCR_H */

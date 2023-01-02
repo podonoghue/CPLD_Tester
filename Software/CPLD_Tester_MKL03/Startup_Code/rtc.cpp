@@ -7,7 +7,6 @@
 
 #include <sys/time.h>
 #include "derivative.h"
-#include "utilities.h"
 #include "rtc.h"
  /*
  * *****************************
@@ -17,8 +16,6 @@
  * This file is generated automatically.
  * Any manual changes will be lost.
  */
-#ifdef USBDM_RTC_IS_DEFINED
-
 /*
  * To support time.h functions
  *
@@ -47,5 +44,3 @@ int settimeofday(const struct timeval *tp, const struct timezone *) {
    USBDM::Rtc::setTime(tp->tv_sec);
    return 0;
 }
-
-#endif

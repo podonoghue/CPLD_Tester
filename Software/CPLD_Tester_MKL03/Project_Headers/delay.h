@@ -39,7 +39,7 @@ static constexpr uint32_t TIMER_MASK = ((1UL<<24)-1UL);
  * @return Time value in timer ticks
  */
 static __attribute__((always_inline)) inline int64_t convertMSToTicks(uint32_t ms) {
-   return (static_cast<uint64_t>(ms) * SystemCoreClock) / 1000;
+   return ((uint64_t)ms * SystemCoreClock) / 1000;
 }
 
 /**
@@ -50,7 +50,7 @@ static __attribute__((always_inline)) inline int64_t convertMSToTicks(uint32_t m
  * @return Time value in milliseconds
  */
 static __attribute__((always_inline)) inline int64_t convertTicksToMS(uint32_t ticks) {
-   return (static_cast<uint64_t>(ticks) * 1000 / SystemCoreClock);
+   return ((uint64_t)ticks * 1000 / SystemCoreClock);
 }
 
 /**

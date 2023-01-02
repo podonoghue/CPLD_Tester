@@ -8,23 +8,6 @@
 // Allow access to USBDM methods without USBDM:: prefix
 using namespace USBDM;
 
-// Hardware mapping
-using Clock          = Tpm1;
-using ClockChannel   = Clock::Channel<1>; // = PTB5
-using ClockGpio      = GpioB<5>;
-
-using PollTimer      = Tpm0;
-using PollChannel    = PollTimer::Channel<0>; // No pin
-
-using TVddEnable     = GpioB<1>;
-using TVddStatusLed  = GpioA<5>;
-
-using PowerButton    = GpioB<4, ActiveLow>;
-
-using Adc            = Adc0;
-using TVddSample     = Adc::Channel<9>; // = PTB0
-using TVddDischarge  = GpioB<0>;
-
 enum PowerStatus {
    Off,
    On,
@@ -51,24 +34,24 @@ constexpr unsigned DEBOUNCE_COUNT = 5; // 5 * 5 ms = 25 ms
  */
 void enableClock() {
    Clock::defaultConfigure();
-   ClockChannel::configure(TpmChMode_OutputCompareToggle, TpmChannelAction_None);
+   ClockChannel::configure(TpmChannelMode_OutputCompareToggle, TpmChannelAction_None);
    ClockChannel::setEventTime(1);
-   ClockChannel::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+   ClockChannel::setOutput(PinDriveStrength_High);
 }
 
 /**
  * Disable CPLD clock
  */
 void disableClock() {
-   ClockGpio::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+   ClockGpio::setInput(PinPull_Up);
 }
 
 /**
  * Enable CPLD power, clock etc
  */
 void powerOn() {
-   TVddSample::setInput();
-   TVddEnable::on();
+   TargetVddSample::setInput();
+   TargetVddEnable::on();
    enableClock();
 }
 
@@ -77,8 +60,8 @@ void powerOn() {
  */
 void powerOff() {
    disableClock();
-   TVddEnable::off();
-   TVddDischarge::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+   TargetVddEnable::off();
+   TargetVddDischarge::setOutput(PinDriveStrength_High, PinSlewRate_Slow);
 }
 
 namespace USBDM {
@@ -89,14 +72,14 @@ namespace USBDM {
  * Polls power enable button and initiates the power check ADC conversion
  */
 template<>
-void PollTimer::irqHandler() {
+void PollTimer::TpmBase_T::irqHandler() {
    static bool     lastRunButton = false;
    static unsigned stableCount   = 0;
 
    PollChannel::clearInterruptFlag();
 
    // Sample voltage
-   TVddSample::startConversion(AdcInterrupt_Enabled);
+   TargetVddSample::startConversion(AdcInterrupt_Enabled);
 
    bool currentRunButton = PowerButton::read();
    if (currentRunButton != lastRunButton) {
@@ -126,18 +109,18 @@ void PollTimer::irqHandler() {
 }
 
 /**
- * Power check ADC conversion complete interrupt
+ * Target Vdd check ADC conversion complete interrupt
  *
  * Check status of target power.
  */
 template<>
-void Adc0::irqHandler() {
+void MyAdc::AdcBase_T::irqHandler() {
    bool targetVddPresent = (getConversionResult()>200);
    if ((powerStatus == On) && (powerChangeSettling == 0) && !targetVddPresent) {
       powerStatus = Error;
-      TVddEnable::off();
+      TargetVddEnable::off();
    }
-   TVddStatusLed::write(targetVddPresent);
+   TargetVddStatusLed::write(targetVddPresent);
    if (powerChangeSettling>0) {
       powerChangeSettling--;
    }
@@ -146,16 +129,16 @@ void Adc0::irqHandler() {
 }
 
 int main() {
-   TVddEnable::setOutput(PinDriveStrength_Low, PinDriveMode_PushPull, PinSlewRate_Slow);
+   TargetVddEnable::setOutput(PinDriveStrength_Low, PinSlewRate_Slow);
    PowerButton::setInput(PinPull_Up, PinAction_None, PinFilter_Passive);
 
    PollTimer::defaultConfigure();
-   PollChannel::configure(TpmChMode_PwmLowTruePulses, TpmChannelAction_Irq);
+   PollChannel::configure(TpmChannelMode_PwmLowTruePulses, TpmChannelAction_Interrupt);
 
-   Adc::defaultConfigure();
-   TVddSample::setInput();
+   MyAdc::defaultConfigure();
+   TargetVddSample::setInput();
 
-   TVddStatusLed::setOutput(PinDriveStrength_High, PinDriveMode_PushPull, PinSlewRate_Slow);
+   TargetVddStatusLed::setOutput(PinDriveStrength_High, PinSlewRate_Slow);
 
    for(;;) {
       __asm__("nop");

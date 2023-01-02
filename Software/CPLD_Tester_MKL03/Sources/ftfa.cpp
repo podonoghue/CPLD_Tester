@@ -9,8 +9,6 @@
 
 #include "system.h"
 #include "derivative.h"
-#include "hardware.h"
-#include "delay.h"
 #include "ftfa.h"
 
 namespace USBDM {
@@ -38,83 +36,55 @@ static constexpr uint8_t  F_ERSALL      =  0x44;
 /** A23 == 1 => indicates DATA flash */
 //static constexpr uint32_t DATA_ADDRESS_FLAG    = (1<<23);
 
+__attribute__((section(".ram_functions")))
+__attribute__((long_call))
+__attribute__((noinline))
 /**
  * Launch & wait for Flash command to complete
  *
- * @note This routine is copied to the stack (RAM) for execution
+ * @note This routine is executed from RAM
  */
-void Flash::executeFlashCommand_asm() {
-   __asm__ volatile (
-         "    .equ   FTFA_FSTAT,0x40020000        \n"
-         "    .equ   FTFA_FSTAT_ERROR_MASK,0x70   \n" // = FTFA_FSTAT_RDCOLERR_MASK|FTFA_FSTAT_ACCERR_MASK|FTFA_FSTAT_FPVIOL_MASK
-         "    .equ   FTFA_FSTAT_CCIF_MASK,0x80    \n"
-
-         "     ldr   r1,=FTFA_FSTAT               \n" // Point R1 @FTFA_FSTAT
-
-         "     movs  r2,#FTFA_FSTAT_ERROR_MASK    \n" // Clear previous errors
-         "     strb  r2,[r1,#0]                   \n" // FTFA_FSTAT = FTFA_FSTAT_ERROR_MASK
-
-         "     movs  r2,#FTFA_FSTAT_CCIF_MASK     \n" // Start command
-         "     strb  r2,[r1,#0]                   \n" // FTFA_FSTAT = FTFA_FSTAT_CCIF_MASK
-
-         "loop:                                   \n"
-         "     ldrb  r3,[r1,#0]                   \n" // Wait for completion
-#if (__CORTEX_M == 4)
-         "     ands  r3,r2                        \n" // while ((flashController().FSTAT & FTFA_FSTAT_CCIF_MASK) == 0) {
-#else
-         "     and   r3,r2                        \n" // while ((flashController().FSTAT & FTFA_FSTAT_CCIF_MASK) == 0) {
-#endif
-         "     beq   loop                         \n" // }
-
-         ::: "r1", "r2", "r3"
-   );
+void Flash::executeFlashCommand_ram() {
+   // Clear error flags
+   flashController->FSTAT = FTFA_FSTAT_RDCOLERR_MASK|FTFA_FSTAT_ACCERR_MASK|FTFA_FSTAT_FPVIOL_MASK;
+   // Start command
+   flashController->FSTAT = FTFA_FSTAT_CCIF_MASK;
+   do {
+   } while ((flashController->FSTAT & FTFA_FSTAT_CCIF_MASK) == 0);
 }
 
 /**
  * Launch & wait for Flash command to complete
- *
- * @note This routine must be placed in ROM immediately following executeFlashCommand_asm()
  */
 FlashDriverError_t Flash::executeFlashCommand() {
-   uint8_t space[50]; // Space for RAM copy of executeFlashCommand_asm()
-   FlashDriverError_t (*fp)() = (FlashDriverError_t (*)())((uint32_t)space|1);
-
-   volatile uint32_t source     = (uint32_t)executeFlashCommand_asm&~1;
-   volatile uint32_t source_end = (uint32_t)executeFlashCommand&~1;
-   volatile uint32_t size       = source_end-source;
-
-   usbdm_assert(size<sizeof(space), "Flash RAM buffer too small");
 
    if (!isFlashAvailable()) {
       return FLASH_ERR_NOT_AVAILABLE;
    }
 
-   // Copy routine to RAM (stack)
-   memcpy(space, (uint8_t*)(source), size);
-
-   // Call executeFlashCommand_asm() on the stack with interrupts disabled
    {
       CriticalSection cs;
-      (*fp)();
+      executeFlashCommand_ram();
    }
    // Handle any errors
-   if ((flashController().FSTAT & FTFA_FSTAT_FPVIOL_MASK ) != 0) {
+   uint8_t status = flashController->FSTAT;
+   if ((status & FTFA_FSTAT_FPVIOL_MASK ) != 0) {
       return FLASH_ERR_PROG_FPVIOL;
    }
-   if ((flashController().FSTAT & FTFA_FSTAT_ACCERR_MASK ) != 0) {
+   if ((status & FTFA_FSTAT_ACCERR_MASK ) != 0) {
       return FLASH_ERR_PROG_ACCERR;
    }
-   if ((flashController().FSTAT & FTFA_FSTAT_MGSTAT0_MASK ) != 0) {
+   if ((status & FTFA_FSTAT_MGSTAT0_MASK ) != 0) {
       return FLASH_ERR_PROG_MGSTAT0;
    }
-   if ((flashController().FSTAT & FTFA_FSTAT_RDCOLERR_MASK ) != 0) {
+   if ((status & FTFA_FSTAT_RDCOLERR_MASK ) != 0) {
       return FLASH_ERR_PROG_RDCOLERR;
    }
    return FLASH_ERR_OK;
 }
 
 /**
- * Read Flash Resource (IFR etc)
+ * Read Flash Resource (IFR etc).
  * This command reads 4 bytes from the selected flash resource
  *
  * @param[in]  resourceSelectCode 00 => IFR, 01 => Version ID
@@ -124,19 +94,19 @@ FlashDriverError_t Flash::executeFlashCommand() {
  * @return Error code, 0 => no error
  */
 FlashDriverError_t Flash::readFlashResource(uint8_t resourceSelectCode, uint32_t address, uint8_t *data) {
-   flashController().FCCOB0 = F_RDRSRC;
-   flashController().FCCOB1 = address>>16;
-   flashController().FCCOB2 = address>>8;
-   flashController().FCCOB3 = address;
-   flashController().FCCOB8 = resourceSelectCode;
+   flashController->FCCOB0 = F_RDRSRC;
+   flashController->FCCOB1 = address>>16;
+   flashController->FCCOB2 = address>>8;
+   flashController->FCCOB3 = address;
+   flashController->FCCOB8 = resourceSelectCode;
    FlashDriverError_t rc = executeFlashCommand();
    if (rc != FLASH_ERR_OK) {
       return rc;
    }
-   data[0] = flashController().FCCOB4;
-   data[1] = flashController().FCCOB5;
-   data[2] = flashController().FCCOB6;
-   data[3] = flashController().FCCOB7;
+   data[0] = flashController->FCCOB4;
+   data[1] = flashController->FCCOB5;
+   data[2] = flashController->FCCOB6;
+   data[3] = flashController->FCCOB7;
 
    return FLASH_ERR_OK;
 }
@@ -150,14 +120,14 @@ FlashDriverError_t Flash::readFlashResource(uint8_t resourceSelectCode, uint32_t
  * @return Error code
  */
 FlashDriverError_t Flash::programPhrase(const uint8_t *data, uint8_t *address) {
-   flashController().FCCOB0 = F_PGM4;
-   flashController().FCCOB1 = (uint8_t)(((uint32_t)address)>>16);
-   flashController().FCCOB2 = (uint8_t)(((uint32_t)address)>>8);
-   flashController().FCCOB3 = (uint8_t)(((uint32_t)address));
-   flashController().FCCOB7 = *data++;
-   flashController().FCCOB6 = *data++;
-   flashController().FCCOB5 = *data++;
-   flashController().FCCOB4 = *data++;
+   flashController->FCCOB0 = F_PGM4;
+   flashController->FCCOB1 = (uint8_t)(((uint32_t)address)>>16);
+   flashController->FCCOB2 = (uint8_t)(((uint32_t)address)>>8);
+   flashController->FCCOB3 = (uint8_t)(((uint32_t)address));
+   flashController->FCCOB7 = *data++;
+   flashController->FCCOB6 = *data++;
+   flashController->FCCOB5 = *data++;
+   flashController->FCCOB4 = *data++;
    return executeFlashCommand();
 }
 
@@ -194,10 +164,10 @@ FlashDriverError_t Flash::programRange(const uint8_t *data, uint8_t *address, ui
  * @return Error code
  */
 FlashDriverError_t Flash::eraseSector(uint8_t *address) {
-   flashController().FCCOB0 = F_ERSSCR;
-   flashController().FCCOB1 = (uint8_t)(((uint32_t)address)>>16);
-   flashController().FCCOB2 = (uint8_t)(((uint32_t)address)>>8);
-   flashController().FCCOB3 = (uint8_t)(((uint32_t)address));
+   flashController->FCCOB0 = F_ERSSCR;
+   flashController->FCCOB1 = (uint8_t)(((uint32_t)address)>>16);
+   flashController->FCCOB2 = (uint8_t)(((uint32_t)address)>>8);
+   flashController->FCCOB3 = (uint8_t)(((uint32_t)address));
    return executeFlashCommand();
 }
 
@@ -228,7 +198,7 @@ FlashDriverError_t Flash::eraseRange(uint8_t *address, uint32_t size) {
  * Mass erase entire Flash memory
  */
 void Flash::eraseAll() {
-   flashController().FCCOB0 = F_ERSALL;
+   flashController->FCCOB0 = F_ERSALL;
    FlashDriverError_t rc = executeFlashCommand();
    (void)rc;
    // Don't expect it to get here as flash is erased!!!!

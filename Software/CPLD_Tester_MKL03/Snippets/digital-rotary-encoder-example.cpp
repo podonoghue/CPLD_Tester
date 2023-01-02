@@ -75,7 +75,7 @@ void pinIrqCallback(uint32_t eventMask) {
    static State currentState = State_Idle;
 
    // Check channel
-   if (eventMask && Encoder::MASK) {
+   if (eventMask && Encoder::BITMASK) {
       // Use state of GPIOs to determine next state
       uint8_t value = Encoder::read();
       State nextState = nextStateTable[currentState][value];
@@ -134,9 +134,9 @@ void startEncoder() {
    position = 0;
 
    // Configure encoder pins as inputs with dual-edge interrupts
-   Encoder::setCallback(pinIrqCallback);
+   Encoder::setPinCallback(pinIrqCallback);
    Encoder::setInput(PinPull_Up, PinAction_IrqEither, PinFilter_Passive);
-   Encoder::enableNvicInterrupts(NvicPriority_Normal);
+   Encoder::enableNvicPinInterrupts(NvicPriority_Normal);
 }
 
 /**
@@ -144,7 +144,7 @@ void startEncoder() {
  */
 void stopEncoder() {
    Encoder::setInput(PinPull_None, PinAction_None);
-   Encoder::disableNvicInterrupts();
+   Encoder::disableNvicPinInterrupts();
 }
 
 /**
@@ -165,7 +165,7 @@ int main() {
       lastMeasurement    = currentMeasurement;
       currentMeasurement = getPosition();
       if (currentMeasurement != lastMeasurement) {
-         console.write("Position = ").writeln(currentMeasurement);
+         console.writeln("Position = ", currentMeasurement);
       }
    }
 }

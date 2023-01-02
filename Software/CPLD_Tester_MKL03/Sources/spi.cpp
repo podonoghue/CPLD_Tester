@@ -5,11 +5,8 @@
  *      Author: podonoghue
  */
 #include <stddef.h>
-#include <stdint.h>
+#include <math.h>
 #include "system.h"
-#include "derivative.h"
-#include "utilities.h"
-#include "hardware.h"
 #include "spi.h"
 /*
  * *****************************

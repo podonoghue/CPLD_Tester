@@ -5,8 +5,6 @@
  *
  *  Generic vectors Kinetis Cortex-M0 devices
  *
- *  Based on Keil Application Note 209
- *
  *  Created on: 22/05/2017
  *      Author: podonoghue
  */
@@ -15,25 +13,23 @@
 #include "derivative.h"
 #include "hardware.h"
 
-/*********** $start(VectorsIncludeFiles) *** Do not edit after this comment ****************/
 #include "tpm.h"
 #include "adc.h"
-/*********** $end(VectorsIncludeFiles)   *** Do not edit above this comment ***************/
+
 
 /*
  * Vector table related
  */
 typedef void( *const intfunc )( void );
 
-#define WEAK_DEFAULT_HANDLER __attribute__ ((__weak__, alias("Default_Handler")))
-
+#define WEAK_DEFAULT_HANDLER __attribute__ ((__nothrow__, __weak__, alias("Default_Handler")))
 /**
  * Default handler for interrupts
  *
  * Most of the vector table is initialised to point at this handler.
  *
  * If you end up here it probably means:
- *   - Failed to enable the interrupt handler in the USBDM device configuration
+ *   - Failed to enable the interrupt handler in the USBDM configuration (Configure.usbdmProject)
  *   - You have accidently enabled an interrupt source in a peripheral
  *   - Enabled the wrong interrupt source
  *   - Failed to install or create a handler for an interrupt you intended using e.g. mis-spelled the name.
@@ -42,6 +38,8 @@ typedef void( *const intfunc )( void );
  * You can check 'vectorNum' below to determine the interrupt source.  Look this up in the vector table below.
  */
 extern "C" {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 __attribute__((__interrupt__))
 void Default_Handler(void) {
 
@@ -54,6 +52,7 @@ void Default_Handler(void) {
       __asm__("bkpt");
    }
 }
+#pragma GCC diagnostic pop
 }
 
 typedef struct {
@@ -67,6 +66,8 @@ typedef struct {
    unsigned int psr;
 } ExceptionFrame;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 /*  Low-level exception handler
  *
  *  Interface from asm to C.
@@ -76,6 +77,7 @@ typedef struct {
  */
 __attribute__((__naked__, __weak__, __interrupt__))
 void HardFault_Handler(void) {
+#if defined(DEBUG_BUILD)
    /*
     * Determines the active stack pointer and loads it into r0
     * This is used as the 1st argument to _HardFault_Handler(volatile ExceptionFrame *exceptionFrame)
@@ -94,8 +96,17 @@ void HardFault_Handler(void) {
    __asm__ volatile ( "      mov   r1, lr                                  \n"); // Get LR=EXC_RETURN in r1
    __asm__ volatile ("       ldr r2, handler_addr_const                    \n"); // Go to C handler
    __asm__ volatile ("       bx r2                                         \n");
+   __asm__ volatile ("      .align 4                                       \n");
    __asm__ volatile ("       handler_addr_const: .word _HardFault_Handler  \n");
+
+#else
+   while (1) {
+      // Stop here for debugger
+      __asm__("bkpt");
+   }
+#endif
 }
+#pragma GCC diagnostic pop
 
 /******************************************************************************/
 /* Hard fault handler in C with stack frame location as input parameter
@@ -121,17 +132,17 @@ void _HardFault_Handler(
 
    console.setPadding(Padding_LeadingZeroes);
    console.setWidth(8);
-   console.write("\n[Hardfault]\n - Stack frame:\n");
-   console.write("R0  = 0x").writeln(exceptionFrame->r0,  Radix_16);
-   console.write("R1  = 0x").writeln(exceptionFrame->r1,  Radix_16);
-   console.write("R2  = 0x").writeln(exceptionFrame->r2,  Radix_16);
-   console.write("R3  = 0x").writeln(exceptionFrame->r3,  Radix_16);
-   console.write("R12 = 0x").writeln(exceptionFrame->r12, Radix_16);
-   console.write("LR  = 0x").writeln((void*)(exceptionFrame->lr),  Radix_16);
-   console.write("PC  = 0x").writeln((void*)(exceptionFrame->pc),  Radix_16);
-   console.write("PSR = 0x").writeln(exceptionFrame->psr, Radix_16);
+   console.writeln("\n[Hardfault]\n - Stack frame:\n");
+   console.writeln("R0  = 0x", exceptionFrame->r0,  Radix_16);
+   console.writeln("R1  = 0x", exceptionFrame->r1,  Radix_16);
+   console.writeln("R2  = 0x", exceptionFrame->r2,  Radix_16);
+   console.writeln("R3  = 0x", exceptionFrame->r3,  Radix_16);
+   console.writeln("R12 = 0x", exceptionFrame->r12, Radix_16);
+   console.writeln("LR  = 0x", (void*)(exceptionFrame->lr),  Radix_16);
+   console.writeln("PC  = 0x", (void*)(exceptionFrame->pc),  Radix_16);
+   console.writeln("PSR = 0x", exceptionFrame->psr, Radix_16);
    console.writeln("- Misc");
-   console.write("LR/EXC_RETURN= 0x").writeln(execReturn,  Radix_16);
+   console.write("LR/EXC_RETURN= 0x", execReturn,  Radix_16);
 #endif
 
    while (1) {
@@ -140,7 +151,10 @@ void _HardFault_Handler(
    }
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 void Reset_Handler(void) __attribute__((__interrupt__));
+#pragma GCC diagnostic pop
 
 extern uint32_t __StackTop;
 }
@@ -151,8 +165,7 @@ extern uint32_t __StackTop;
  * To install a handler, create a C linkage function with the name shown and it will override
  * the weak default.
  */
-/*********** $start(cVectorTable) *** Do not edit after this comment ****************/
-#ifdef __cplusplus
+ #ifdef __cplusplus
 extern "C" {
 #endif
 // Reset handler must have C linkage
@@ -242,6 +255,6 @@ VectorTable const __vector_table = {
    }
 };
 
-/*********** $end(cVectorTable)   *** Do not edit above this comment ***************/
+
 
 

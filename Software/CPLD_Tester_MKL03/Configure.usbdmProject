@@ -8,57 +8,70 @@
    <item key="$$DeviceInfo_Device_Variant"                 value="MKL03Z8VFG4" />
    <item key="$$DeviceInfo_SubFamily"                      value="MKL03Z4" />
    <item key="$$Hardware_Source_Filename"                  value="MKL03Z4.usbdmHardware" />
-   <item key="$signal$PTA0_descriptionSetting"             value="SWD_CLK" />
-   <item key="$signal$PTA0_muxSetting"                     value="mux3" />
-   <item key="$signal$PTA1_descriptionSetting"             value="RESET_b" />
-   <item key="$signal$PTA1_muxSetting"                     value="mux3" />
-   <item key="$signal$PTA2_descriptionSetting"             value="SWD_DIO" />
-   <item key="$signal$PTA2_muxSetting"                     value="mux3" />
-   <item key="$signal$PTA3_descriptionSetting"             value="Debug_Tx" />
-   <item key="$signal$PTA3_muxSetting"                     value="mux4" />
-   <item key="$signal$PTA4_descriptionSetting"             value="Debug_Rx" />
-   <item key="$signal$PTA4_muxSetting"                     value="mux4" />
-   <item key="$signal$PTA5_descriptionSetting"             value="TVdd_Status" />
-   <item key="$signal$PTA5_muxSetting"                     value="mux1" />
-   <item key="$signal$PTB0_descriptionSetting"             value="TVdd_Sample" />
-   <item key="$signal$PTB0_muxSetting"                     value="mux0" />
-   <item key="$signal$PTB1_descriptionSetting"             value="TVdd_Enable" />
-   <item key="$signal$PTB1_muxSetting"                     value="mux1" />
-   <item key="$signal$PTB4_descriptionSetting"             value="Power_Button" />
-   <item key="$signal$PTB4_muxSetting"                     value="mux1" />
-   <item key="$signal$PTB5_descriptionSetting"             value="Clock" />
-   <item key="$signal$PTB5_muxSetting"                     value="mux2" />
+   <item key="$peripheral$ADC0_codeIdentifier"             value="MyAdc" />
+   <item key="$peripheral$ADC0_userDescription"            value="ADC used for target Vdd sampling" />
+   <item key="$peripheral$TPM0_codeIdentifier"             value="PollTimer" />
+   <item key="$peripheral$TPM0_userDescription"            value="Timer used for polling switches and ADC trigger" />
+   <item key="$peripheral$TPM1_codeIdentifier"             value="Clock" />
+   <item key="$peripheral$TPM1_userDescription"            value="Timer used for CPLD clock" />
+   <item key="$pin$PTA0_pcrSetting_3"                      value="300" />
+   <item key="$pin$PTA1_pcrSetting_3"                      value="300" />
+   <item key="$pin$PTA2_pcrSetting_3"                      value="300" />
+   <item key="$pin$PTA3_pcrSetting_4"                      value="400" />
+   <item key="$pin$PTA4_pcrSetting_4"                      value="400" />
+   <item key="$pin$PTA5_pcrSetting_1"                      value="100" />
+   <item key="$pin$PTA6_pcrSetting_2"                      value="200" />
+   <item key="$pin$PTB0_pcrSetting_0"                      value="0" />
+   <item key="$pin$PTB0_pcrSetting_1"                      value="100" />
+   <item key="$pin$PTB1_pcrSetting_1"                      value="100" />
+   <item key="$pin$PTB4_pcrSetting_1"                      value="100" />
+   <item key="$pin$PTB5_pcrSetting_1"                      value="100" />
+   <item key="$pin$PTB5_pcrSetting_2"                      value="200" />
+   <item key="$signal$ADC0_SE9_codeIdentifier"             value="TargetVddSample" />
+   <item key="$signal$ADC0_SE9_descriptionSetting"         value="Target Vdd sampling" />
+   <item key="$signal$GPIOA_5_codeIdentifier"              value="TargetVddStatusLed" />
+   <item key="$signal$GPIOA_5_descriptionSetting"          value="TVdd Status LED" />
+   <item key="$signal$GPIOB_0_codeIdentifier"              value="TargetVddDischarge" />
+   <item key="$signal$GPIOB_0_descriptionSetting"          value="Target Vdd Discharge" />
+   <item key="$signal$GPIOB_1_codeIdentifier"              value="TargetVddEnable" />
+   <item key="$signal$GPIOB_1_descriptionSetting"          value="Target Vdd Enable" />
+   <item key="$signal$GPIOB_4_codeIdentifier"              value="PowerButton" />
+   <item key="$signal$GPIOB_4_descriptionSetting"          value="Power press-button" />
+   <item key="$signal$GPIOB_5_codeIdentifier"              value="ClockGpio" />
+   <item key="$signal$GPIOB_5_descriptionSetting"          value="GPIO Mapped to same pin as CPLD clock from TPM" />
+   <item key="$signal$LPUART0_RX_descriptionSetting"       value="Console_Rx" />
+   <item key="$signal$LPUART0_TX_descriptionSetting"       value="Console_Tx" />
+   <item key="$signal$RESET_b_descriptionSetting"          value="RESET_b" />
+   <item key="$signal$SWD_CLK_descriptionSetting"          value="SWD_CLK" />
+   <item key="$signal$SWD_DIO_descriptionSetting"          value="SWD_DIO" />
+   <item key="$signal$TPM0_CH0_codeIdentifier"             value="PollChannel" />
+   <item key="$signal$TPM0_CH0_descriptionSetting"         value="Timer channel used for polling switches and ADC trigger" />
+   <item key="$signal$TPM1_CH1_codeIdentifier"             value="ClockChannel" />
+   <item key="$signal$TPM1_CH1_descriptionSetting"         value="Timer channel for CPLD clock" />
    <item key="/ADC0/adc_cfg1_adiclk"                       value="1" />
    <item key="/ADC0/adc_cfg1_adiv"                         value="3" />
    <item key="/ADC0/irqHandlingMethod"                     value="$ClassMethod" />
-   <item key="/Console/consoleDevice"                      value="USBDM::Lpuart0" />
+   <item key="/CMP0/cmp_fpr_filt_per"                      value="0" />
    <item key="/Console/consoleEnable"                      value="false" />
-   <item key="/FTFA/peripheral_file"                       value="ftfa" />
-   <item key="/MCG/ClockConfig[0]"                         value="ClockConfig_HIRC_48MHz" />
+   <item key="/LINKER/heapSize"                            value="256" />
+   <item key="/LINKER/stackSize"                           value="768" />
+   <item key="/LLWU/llwu_filt1_filtsel"                    value="4" />
+   <item key="/MCG/ClockConfig[0]"                         value="ClockConfig_RUN_HIRC_48MHz" />
    <item key="/MCG/ClockConfig[1]"                         value="ClockConfig_LIRC_2MHz" />
    <item key="/MCG/ClockConfig[2]"                         value="ClockConfig_LIRC_8MHz" />
-   <item key="/MCG/clock_mode[0]"                          value="ClockMode_HIRC_48M" />
-   <item key="/MCG/clock_mode[1]"                          value="ClockMode_LIRC_2M" />
-   <item key="/MCG/clock_mode[2]"                          value="ClockMode_LIRC_8M" />
-   <item key="/MCG/mcg_c2_erefs0"                          value="false" />
+   <item key="/MCG/ClockConfig[3]"                         value="ClockConfig_3" />
+   <item key="/MCG/mcgClockMode[0]"                        value="2" />
    <item key="/MCG/mcg_c2_ircs[0]"                         value="true" />
-   <item key="/MCG/mcg_c2_ircs[2]"                         value="true" />
    <item key="/MCG/mcg_mc_hircen[0]"                       value="true" />
    <item key="/MCG/mcg_mc_hircen[1]"                       value="true" />
    <item key="/MCG/mcg_mc_hircen[2]"                       value="true" />
    <item key="/MCG/system_lirc_clock[0]"                   value="8000000" />
-   <item key="/MCG/system_lirc_clock[2]"                   value="8000000" />
    <item key="/MCG/system_lirc_div1_clock[0]"              value="8000000" />
-   <item key="/MCG/system_lirc_div1_clock[2]"              value="8000000" />
    <item key="/OSC0/mapPinsOnEnable"                       value="false" />
    <item key="/OSC0/osc_cr_erclken"                        value="false" />
    <item key="/OSC0/osc_input_freq"                        value="32768" />
-   <item key="/SIM/sim_sopt1_osc32ksel"                    value="0" />
-   <item key="/SIM/sim_sopt2_lpuart0src"                   value="1" />
-   <item key="/SIM/system_bus_clock[1]"                    value="2000000" />
-   <item key="/SIM/system_bus_clock[2]"                    value="8000000" />
-   <item key="/SIM/system_core_clock[1]"                   value="2000000" />
-   <item key="/SIM/system_core_clock[2]"                   value="8000000" />
+   <item key="/SIM/sim_clkdiv1_outdiv1[0]"                 value="0" />
+   <item key="/SIM/sim_sopt2_clkoutsel[0]"                 value="7" />
    <item key="/TPM0/irqHandlingMethod"                     value="$ClassMethod" />
    <item key="/TPM0/tpm_mod"                               value="9999" />
    <item key="/TPM0/tpm_sc_ps"                             value="2" />
