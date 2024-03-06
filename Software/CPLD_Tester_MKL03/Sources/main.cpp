@@ -93,13 +93,18 @@ void PollTimer::TpmBase_T::irqHandler() {
    }
    // Check for debounce time
    if ((stableCount == DEBOUNCE_COUNT) && currentRunButton) {
+
+      // 5 * 5ms power settling time
       powerChangeSettling = 5;
+
+      // Change power state due to button press
       switch (powerStatus) {
          case Off:
          case Error:
             powerStatus = On;
             powerOn();
             break;
+
          case On:
             powerStatus = Off;
             powerOff();
@@ -115,12 +120,19 @@ void PollTimer::TpmBase_T::irqHandler() {
  */
 template<>
 void MyAdc::AdcBase_T::irqHandler() {
+
+   // Poll TVdd
    bool targetVddPresent = (getConversionResult()>200);
+
    if ((powerStatus == On) && (powerChangeSettling == 0) && !targetVddPresent) {
+      // Power on + timeout + No target Vdd
       powerStatus = Error;
       TargetVddEnable::off();
    }
+   // Update TVdd LED
    TargetVddStatusLed::write(targetVddPresent);
+
+   // Settling timer for power change
    if (powerChangeSettling>0) {
       powerChangeSettling--;
    }
@@ -128,12 +140,26 @@ void MyAdc::AdcBase_T::irqHandler() {
 
 }
 
+/**
+ * Default initialisation value for Tpm0
+ * This value is created from Configure.usbdmProject settings
+ */
+static constexpr PollTimer::Init pollTimerInitValue = {
+   TpmMode_FreeRunning , // Alignment and whether interval or free-running mode - Free-running (count up)
+   TpmOverflowAction_None , // Action on Counter overflow - No action
+   NvicPriority_Normal , // IRQ level for this peripheral - Normal
+   TpmClockSource_SystemTpmClock , // Clock Source - System TPM Clock
+   TpmPrescale_DivBy4 , // Clock prescaler - Divide by 4
+   65535_ticks,  // End value for counter
+};
+
+
 int main() {
    TargetVddEnable::setOutput(PinDriveStrength_Low, PinSlewRate_Slow);
    PowerButton::setInput(PinPull_Up, PinAction_None, PinFilter_Passive);
 
-   PollTimer::defaultConfigure();
-   PollChannel::configure(TpmChannelMode_PwmLowTruePulses, TpmChannelAction_Interrupt);
+   PollTimer::configure(pollTimerInitValue);
+   PollChannel::configure(TpmChannelMode_OutputCompare, TpmChannelAction_Interrupt);
 
    MyAdc::defaultConfigure();
    TargetVddSample::setInput();

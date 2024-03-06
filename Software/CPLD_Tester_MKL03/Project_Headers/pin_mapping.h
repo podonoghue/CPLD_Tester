@@ -33,20 +33,20 @@ namespace USBDM {
 /* Template:_common_settings.xml */
 
    /**
-    * Enables mapping of all allocated pins during startup using mapAllPins() 
+    * Enables mapping of all allocated pins during startup using mapAllPins()
     * Not available on this MCU
     */
    static constexpr bool MapAllPinsOnStartup = false;
 
    /**
-    * Controls forcing all pins to be locked in mapAllPins() 
+    * Controls forcing all pins to be locked in mapAllPins()
     * Not available on this MCU
     */
    static constexpr uint32_t ForceLockedPins = 0;
    static constexpr uint32_t PinLock_Locked  = 0;
 
    /**
-    * Enables forcing unbonded pins to analogue function in mapAllPins() 
+    * Enables forcing unbonded pins to analogue function in mapAllPins()
     * Not available on this MCU
     */
    static constexpr bool ForceLockoutUnbondedPins = false;
@@ -65,7 +65,7 @@ namespace USBDM {
 #endif
 
    /* MCGFFCLK - Fixed frequency clock (input to FLL) */
-   extern volatile uint32_t SystemMcgffClock;
+   extern volatile uint32_t SystemMcgFFClock;
 
    /* MCGOUTCLK - Primary output from MCG, various sources */
    extern volatile uint32_t SystemMcgOutClock;
@@ -109,7 +109,7 @@ namespace USBDM {
     *
     * @return Smaller of a or b
     */
-   template<class T> 
+   template<class T>
    constexpr T min(const T a, const T b) {
       return (b < a) ? b : a;
    }
@@ -121,7 +121,7 @@ namespace USBDM {
     *
     * @return Larger of a or b
     */
-   template<class T> 
+   template<class T>
    constexpr T max(const T a, const T b) {
       return (b > a) ? b : a;
    }
@@ -522,12 +522,12 @@ public:
    /*
     * Template:pmc_mk
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = PMC_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<PMC_Type> pmc = baseAddress;
-
+   
    //! Frequency of Low Power Oscillator (LPO) Clock [~1kHz]
    static constexpr uint32_t system_low_power_clock = 1000UL;
 
@@ -601,32 +601,73 @@ public:
 
    };
 
+   /**
+    * Oscillator load capacitance
+    *
+    * Configures the oscillator load capacitance
+    */
+   enum OscCap {
+      OscCap_None = OSC_CR_SCP(0),  ///< 0 pF
+      OscCap_2pf  = OSC_CR_SCP(8),  ///< 2 pF
+      OscCap_4pf  = OSC_CR_SCP(4),  ///< 4 pF
+      OscCap_6pf  = OSC_CR_SCP(12), ///< 6 pF
+      OscCap_8pf  = OSC_CR_SCP(2),  ///< 8 pF
+      OscCap_10pf = OSC_CR_SCP(10), ///< 10 pF
+      OscCap_12pf = OSC_CR_SCP(6),  ///< 12 pF
+      OscCap_14pf = OSC_CR_SCP(14), ///< 14 pF
+      OscCap_16pf = OSC_CR_SCP(1),  ///< 16 pF
+      OscCap_18pf = OSC_CR_SCP(9),  ///< 18 pF
+      OscCap_20pf = OSC_CR_SCP(5),  ///< 20 pF
+      OscCap_22pf = OSC_CR_SCP(13), ///< 22 pF
+      OscCap_24pf = OSC_CR_SCP(3),  ///< 24 pF
+      OscCap_26pf = OSC_CR_SCP(11), ///< 26 pF
+      OscCap_28pf = OSC_CR_SCP(7),  ///< 28 pF
+      OscCap_30pf = OSC_CR_SCP(15), ///< 30 pF
+
+   };
+
+   /**
+    * External Reference Stop Enable
+    *
+    * Determines if external reference clock is enabled in Stop mode
+    */
+   enum OscExternalRef {
+      OscExternalRef_DisabledInStop = OSC_CR_EREFSTEN(0), ///< Disabled in Stop mode
+      OscExternalRef_EnabledInStop  = OSC_CR_EREFSTEN(1), ///< Enabled in Stop mode
+
+   };
+
 class Osc0Info {
 public:
    /*
     * Template:osc0_mk
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = OSC0_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<OSC_Type> osc = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 0;
+   
    //! Map all allocated pins on a peripheral when enabled
    static constexpr bool mapPinsOnEnable = false;
 
    //! Frequency of OSC Clock or Crystal
-   static constexpr uint32_t osc_clock = 0UL;
-
+   static constexpr uint32_t osc_clock = 
+      0;  // Frequency of OSC Clock or Crystal [OSCCLK]
+   
    //! Frequency of 32K OSC Clock or Crystal (if applicable)
-   static constexpr uint32_t osc32k_clock = 0UL;
-
+   static constexpr uint32_t osc32k_clock = 
+      0;  // Oscillator low range 32K clock [OSC32KCLK]
+   
    //! Oscillator control register
-   static constexpr uint32_t cr =
-      OSC_CR_ERCLKEN(0)  | // External Reference Enable
-      OSC_CR_EREFSTEN(0) | // External Reference Stop Enable
-      OSC_CR_SCP(2);       // Oscillator load capacitance
-
+   static constexpr uint32_t cr = 
+      OscErClkEn_Disabled | // External Reference Enable - Disabled
+      OscExternalRef_DisabledInStop | // External Reference Stop Enable - Disabled in Stop mode
+      OscCap_8pf;  // Oscillator load capacitance - 8 pF
+   
    /**
     * Get OSC clock (internal, assumed available)
     *
@@ -710,6 +751,122 @@ public:
  * This may include pin information, constants, register addresses, and default register values,
  * along with simple accessor functions.
  */
+   /**
+    * Enable RTC oscillator
+    *
+    * Enable OSC0 as 32kHz RTC oscillator
+    */
+   enum RtcOscEnable {
+      RtcOscEnable_Disabled = RTC_CR_OSCE(0), ///< Disabled
+      RtcOscEnable_Enabled  = RTC_CR_OSCE(1), ///< Enabled
+
+   };
+
+   /**
+    * Oscillator load capacitance
+    *
+    * Configures the oscillator load capacitance
+    */
+   enum RtcCap {
+      RtcCap_None = RTC_CR_SCP(0),  ///< 0 pF
+      RtcCap_2pf  = RTC_CR_SCP(8),  ///< 2 pF
+      RtcCap_4pf  = RTC_CR_SCP(4),  ///< 4 pF
+      RtcCap_6pf  = RTC_CR_SCP(12), ///< 6 pF
+      RtcCap_8pf  = RTC_CR_SCP(2),  ///< 8 pF
+      RtcCap_10pf = RTC_CR_SCP(10), ///< 10 pF
+      RtcCap_12pf = RTC_CR_SCP(6),  ///< 12 pF
+      RtcCap_14pf = RTC_CR_SCP(14), ///< 14 pF
+      RtcCap_16pf = RTC_CR_SCP(1),  ///< 16 pF
+      RtcCap_18pf = RTC_CR_SCP(9),  ///< 18 pF
+      RtcCap_20pf = RTC_CR_SCP(5),  ///< 20 pF
+      RtcCap_22pf = RTC_CR_SCP(13), ///< 22 pF
+      RtcCap_24pf = RTC_CR_SCP(3),  ///< 24 pF
+      RtcCap_26pf = RTC_CR_SCP(11), ///< 26 pF
+      RtcCap_28pf = RTC_CR_SCP(7),  ///< 28 pF
+      RtcCap_30pf = RTC_CR_SCP(15), ///< 30 pF
+
+   };
+
+   /**
+    * Update Mode
+    *
+    * Allows the SR[TCE] to be written even when the Status Register is locked.
+    * When set, the SR[TCE] can always be written if the SR[TIF] or SR[TOF] are set or if the SR[TCE] is clear
+    */
+   enum RtcTceUpdate {
+      RtcTceUpdate_Prevented = RTC_CR_UM(0), ///< SR[TCE] cannot be written when locked
+      RtcTceUpdate_Allowed   = RTC_CR_UM(1), ///< SR[TCE] can be written when locked under limited conditions
+
+   };
+
+   /**
+    * Supervisor access
+    *
+    * Determines if the RTC register access is available in non-supervisor mode 
+    * Non supported write accesses generate a bus error
+    */
+   enum RtcUserWriteAccess {
+      RtcUserWriteAccess_Prevented = RTC_CR_SUP(0), ///< Non-supervisor write accesses not supported
+      RtcUserWriteAccess_Allowed   = RTC_CR_SUP(1), ///< Non-supervisor write accesses supported
+
+   };
+
+   /**
+    * Wakeup Pin Enable
+    *
+    * Determines if the wakeup pin is asserted on RTC interrupt when powered down 
+    * The wakeup pin is optional and not available on all devices
+    */
+   enum RtcWakeupPin {
+      RtcWakeupPin_Disabled = RTC_CR_WPE(0), ///< Wakeup pin is disabled
+      RtcWakeupPin_Enabled  = RTC_CR_WPE(1), ///< Wakeup pin is enabled
+
+   };
+
+   /**
+    * Lock Register Lock
+    *
+    * Once cleared, this bit can only be set by VBAT POR or software reset
+    */
+   enum RtcLockReg {
+      RtcLockReg_Locked   = RTC_LR_LRL(0), ///< Locked
+      RtcLockReg_Unlocked = RTC_LR_LRL(1), ///< Unlocked
+
+   };
+
+   /**
+    * Status Register Lock
+    *
+    * Once cleared, this bit can only be set by VBAT POR or software reset
+    */
+   enum RtcStatusReg {
+      RtcStatusReg_Locked   = RTC_LR_SRL(0), ///< Locked
+      RtcStatusReg_Unlocked = RTC_LR_SRL(1), ///< Unlocked
+
+   };
+
+   /**
+    * Control Register Lock
+    *
+    * Once cleared, this bit can only be set by VBAT POR or software reset
+    */
+   enum RtcControlReg {
+      RtcControlReg_Locked   = RTC_LR_CRL(0), ///< Locked
+      RtcControlReg_Unlocked = RTC_LR_CRL(1), ///< Unlocked
+
+   };
+
+   /**
+    * Time Compensation Lock
+    *
+    * Once cleared, this bit can only be set by VBAT POR or software reset
+    */
+   enum RtcTimeCompensation {
+      RtcTimeCompensation_Locked   = RTC_LR_TCL(0), ///< Locked
+      RtcTimeCompensation_Unlocked = RTC_LR_TCL(1), ///< Unlocked
+
+   };
+
 class RtcInfo {
 public:
    /*
@@ -718,24 +875,24 @@ public:
    //! Map all allocated pins on a peripheral when enabled
    static constexpr bool mapPinsOnEnable = true;
 
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = RTC_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<RTC_Type> rtc = baseAddress;
-
+   
    //! Whether to configure RTC
    //! If disabled then no RTC registers are accessed.
    //! This is useful if RTC is not powered as register access will trap.
-   static constexpr bool EnableRtc = 0;
+   static constexpr bool ConfigureRtc = false;
    
    //! Oscillator control register
    static constexpr uint32_t cr = 
-      RTC_CR_OSCE(0) | // Enable RTC oscillator - Disabled
-      RTC_CR_UM(0) | // Update Mode - SR[TCE] cannot be written when locked
-      RTC_CR_SUP(0) | // Supervisor access - Non-supervisor write accesses not supported
-      RTC_CR_WPE(0) | // Wakeup Pin Enable - Wakeup pin is disabled
-      RTC_CR_SCP(2);  // Oscillator load capacitance - 8 pF
+      RtcOscEnable_Disabled | // Enable RTC oscillator - Disabled
+      RtcTceUpdate_Prevented | // Update Mode - SR[TCE] cannot be written when locked
+      RtcUserWriteAccess_Prevented | // Supervisor access - Non-supervisor write accesses not supported
+      RtcWakeupPin_Disabled | // Wakeup Pin Enable - Wakeup pin is disabled
+      RtcCap_8pf;  // Oscillator load capacitance - 8 pF
    
    //! RTC Time Compensation Register
    static constexpr uint32_t tcr = 
@@ -744,10 +901,10 @@ public:
    
    //! RTC Lock Register
    static constexpr uint32_t lr = 
-      RTC_LR_LRL(1) | // Lock Register Lock - Unlocked
-      RTC_LR_SRL(1) | // Status Register Lock - Unlocked
-      RTC_LR_CRL(1) | // Control Register Lock - Unlocked
-      RTC_LR_TCL(1);  // Time Compensation Lock - Unlocked
+      RtcLockReg_Unlocked | // Lock Register Lock - Unlocked
+      RtcStatusReg_Unlocked | // Status Register Lock - Unlocked
+      RtcControlReg_Unlocked | // Control Register Lock - Unlocked
+      RtcTimeCompensation_Unlocked;  // Time Compensation Lock - Unlocked
    
    /* Template_irqOptionSubstituted.xml */
 
@@ -767,7 +924,7 @@ public:
    static constexpr uint32_t coldStartTime =
           1672538401 + 10*60*60;
    
-   /** 
+   /**
     *  Enable clock to Rtc
     */
    static void enableClock() {
@@ -778,7 +935,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Rtc
     */
    static void disableClock() {
@@ -852,14 +1009,95 @@ public:
  * along with simple accessor functions.
  */
    /**
-    * OSC0 source control
+    * OSC0 mode
     *
-    * Determines whether an external clock or crystal is used
-    * and oscillator mode for OSC0
+    * Determines oscillator power mode and
+    * whether an external clock or crystal is used.
     */
    enum OscMode {
+      OscMode_NotConfigured      = 0,                ///< OSC0 Not configured
       OscMode_ExternalClock      = MCG_C2_EREFS0(0), ///< External clock
       OscMode_LowPowerOscillator = MCG_C2_EREFS0(1), ///< Low Power Oscillator
+      OscMode_RTC_Controlled     = 1-1,              ///< 32kHz Oscillator driven by RTC
+
+   };
+
+   /**
+    * High-frequency IRC Clock Enable [MCGPCLK]
+    *
+    * Enables the HIRC even when MCG_Lite is not working at HIRC mode
+    */
+   enum McgHircEnable {
+      McgHircEnable_AsNeeded = MCG_MC_HIRCEN(0), ///< Enabled as required by MCG mode
+      McgHircEnable_Always   = MCG_MC_HIRCEN(1), ///< Always enabled
+
+   };
+
+   /**
+    * Internal Reference [MCGIRCLK] Clock Source
+    *
+    * Clock Source for MCGIRCLK
+    */
+   enum McgIrClkSrc {
+      McgIrClkSrc_Slow = MCG_C2_IRCS(0), ///< Slow internal reference clock
+      McgIrClkSrc_Fast = MCG_C2_IRCS(1), ///< Fast internal reference clock
+
+   };
+
+   /**
+    * Internal Reference Clock Enable [MCGIRCLK]
+    *
+    * Enables the LIRC, even when MCG not using LIRC
+    */
+   enum McgIrClkEn {
+      McgIrClkEn_Disabled = MCG_C1_IRCLKEN(0), ///< Disabled when not used by MCG
+      McgIrClkEn_Enabled  = MCG_C1_IRCLKEN(1), ///< Always Enabled
+
+   };
+
+   /**
+    * Internal Reference Stop Enable [MCGIRCLK]
+    *
+    * Enables the LIRC in Stop mode (also requires IRCLKEN=1)
+    */
+   enum McgIrefs {
+      McgIrefs_DisabledInStop = MCG_C1_IREFSTEN(0), ///< IR disabled in STOP
+      McgIrefs_EnabledInStop  = MCG_C1_IREFSTEN(1), ///< IR enabled in STOP
+
+   };
+
+   /**
+    * Internal Clock Reference Divider[LIRC_DIV1]
+    *
+    * Selects the amount to divide down the selected internal reference clock
+    * The FIR clock is available for use as MCGOUTCLK and after further division as MCGIRCLK
+    */
+   enum McgLowFequencyInternalClockDivider1 {
+      McgLowFequencyInternalClockDivider1_DivBy1   = MCG_SC_FCRDIV(0), ///< /1
+      McgLowFequencyInternalClockDivider1_DivBy2   = MCG_SC_FCRDIV(1), ///< /2
+      McgLowFequencyInternalClockDivider1_DivBy4   = MCG_SC_FCRDIV(2), ///< /4
+      McgLowFequencyInternalClockDivider1_DivBy8   = MCG_SC_FCRDIV(3), ///< /8
+      McgLowFequencyInternalClockDivider1_DivBy16  = MCG_SC_FCRDIV(4), ///< /16
+      McgLowFequencyInternalClockDivider1_DivBy32  = MCG_SC_FCRDIV(5), ///< /32
+      McgLowFequencyInternalClockDivider1_DivBy64  = MCG_SC_FCRDIV(6), ///< /64
+      McgLowFequencyInternalClockDivider1_DivBy128 = MCG_SC_FCRDIV(7), ///< /128
+
+   };
+
+   /**
+    * Second Low-frequency Internal Reference Clock Divider
+    *
+    * Selects the factor value to further divide the LIRC source
+    */
+   enum McgLowFequencyInternalClockDivider2 {
+      McgLowFequencyInternalClockDivider2_DivBy1   = MCG_MC_LIRC_DIV2(0), ///< /1
+      McgLowFequencyInternalClockDivider2_DivBy2   = MCG_MC_LIRC_DIV2(1), ///< /2
+      McgLowFequencyInternalClockDivider2_DivBy4   = MCG_MC_LIRC_DIV2(2), ///< /4
+      McgLowFequencyInternalClockDivider2_DivBy8   = MCG_MC_LIRC_DIV2(3), ///< /8
+      McgLowFequencyInternalClockDivider2_DivBy16  = MCG_MC_LIRC_DIV2(4), ///< /16
+      McgLowFequencyInternalClockDivider2_DivBy32  = MCG_MC_LIRC_DIV2(5), ///< /32
+      McgLowFequencyInternalClockDivider2_DivBy64  = MCG_MC_LIRC_DIV2(6), ///< /64
+      McgLowFequencyInternalClockDivider2_DivBy128 = MCG_MC_LIRC_DIV2(7), ///< /128
 
    };
 
@@ -885,12 +1123,12 @@ public:
    /*
     * Template:mcg_lite_32k
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = MCG_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<MCG_Type> mcg = baseAddress;
-
+   
    //! Frequency of Slow Internal Reference Clock [~2MHz]
    static constexpr uint32_t system_slow_lirc_clock = 2000000UL;
 
@@ -1236,12 +1474,12 @@ public:
    /*
     * Template:sim_mkl03z4
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = SIM_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<SIM_Type> sim = baseAddress;
-
+   
    /**
     * Get Peripheral clock frequency
     *
@@ -1966,6 +2204,34 @@ public:
       }
    
       /**
+       * Constructor for TPM Clock source
+       *
+       * @tparam   Types
+       * @param    rest
+       *
+       * @param simTpmClockSource Clock source for the TPM counter clock
+       */
+      template <typename... Types>
+      constexpr Init(SimTpmClockSource simTpmClockSource, Types... rest) : Init(rest...) {
+   
+         sopt2 |= simTpmClockSource;
+      }
+   
+      /**
+       * Constructor for CLKOUT pin clock
+       *
+       * @tparam   Types
+       * @param    rest
+       *
+       * @param simClkoutSel Clock to output on the CLKOUT pin
+       */
+      template <typename... Types>
+      constexpr Init(SimClkoutSel simClkoutSel, Types... rest) : Init(rest...) {
+   
+         sopt2 |= simClkoutSel;
+      }
+   
+      /**
        * Constructor for ERCLK32K Clock Output
        *
        * @tparam   Types
@@ -1994,20 +2260,6 @@ public:
       }
    
       /**
-       * Constructor for TPM Clock source
-       *
-       * @tparam   Types
-       * @param    rest
-       *
-       * @param simTpmClockSource Clock source for the TPM counter clock
-       */
-      template <typename... Types>
-      constexpr Init(SimTpmClockSource simTpmClockSource, Types... rest) : Init(rest...) {
-   
-         sopt2 |= simTpmClockSource;
-      }
-   
-      /**
        * Constructor for RTC clock out source
        *
        * @tparam   Types
@@ -2019,20 +2271,6 @@ public:
       constexpr Init(SimRtcClkoutSel simRtcClkoutSel, Types... rest) : Init(rest...) {
    
          sopt2 |= simRtcClkoutSel;
-      }
-   
-      /**
-       * Constructor for CLKOUT pin clock
-       *
-       * @tparam   Types
-       * @param    rest
-       *
-       * @param simClkoutSel Clock to output on the CLKOUT pin
-       */
-      template <typename... Types>
-      constexpr Init(SimClkoutSel simClkoutSel, Types... rest) : Init(rest...) {
-   
-         sopt2 |= simClkoutSel;
       }
    
       /**
@@ -2681,12 +2919,15 @@ public:
    /*
     * Template:adc0_mkl
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = ADC0_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<ADC_Type> adc = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 0;
+   
    //! Map all allocated pins on a peripheral when enabled
    static constexpr bool mapPinsOnEnable = false;
 
@@ -2797,7 +3038,7 @@ public:
       0,  // ADC CV high value
    };
 
-   /** 
+   /**
     *  Enable clock to Adc0
     */
    static void enableClock() {
@@ -2808,7 +3049,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Adc0
     */
    static void disableClock() {
@@ -3472,12 +3713,15 @@ public:
    //! Default IRQ level
    static constexpr NvicPriority irqLevel =  NvicPriority_Normal;
 
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = CMP0_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<CMP_Type> cmp = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 0;
+   
    //! Pin number in Info table for comparator output if mapped to a pin
    static constexpr int outputPin  = 8;
 
@@ -3602,7 +3846,7 @@ public:
          }
       };
    
-   /** 
+   /**
     *  Enable clock to Cmp0
     */
    static void enableClock() {
@@ -3613,7 +3857,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Cmp0
     */
    static void disableClock() {
@@ -3810,12 +4054,12 @@ public:
    /*
     * Template:ftfa
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = FTFA_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<FTFA_Type> ftfa = baseAddress;
-
+   
    /* Template_irqOptionSubstituted.xml */
 
    //! IRQ numbers for hardware
@@ -3830,7 +4074,7 @@ public:
    //! Default IRQ level
    static constexpr NvicPriority irqLevel =  NvicPriority_NotInstalled;
 
-   /** 
+   /**
     *  Enable clock to Ftfa
     */
    static void enableClock() {
@@ -3841,7 +4085,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Ftfa
     */
    static void disableClock() {
@@ -3874,12 +4118,15 @@ public:
    /*
     * Template:i2c0_mkl03
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = I2C0_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<I2C_Type> i2c = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 0;
+   
    //! Pin number in Info table for SCL if mapped to a pin
    static constexpr int sclPin  = 0;
 
@@ -3912,7 +4159,7 @@ public:
       return SystemBusClock;
    }
 
-   /** 
+   /**
     *  Enable clock to I2c0
     */
    static void enableClock() {
@@ -3923,7 +4170,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to I2c0
     */
    static void disableClock() {
@@ -4031,12 +4278,12 @@ public:
    /*
     * Template:llwu_pe2_filt1
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = LLWU_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<LLWU_Type> llwu = baseAddress;
-
+   
    /**
     * Class used to do initialisation of LLWU
     *
@@ -4352,12 +4599,15 @@ public:
    /*
     * Template:lptmr0
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = LPTMR0_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<LPTMR_Type> lptmr = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 0;
+   
    //! Map all allocated pins on a peripheral when enabled
    static constexpr bool mapPinsOnEnable = false;
 
@@ -4910,7 +5160,7 @@ public:
 
    };
 
-   /** 
+   /**
     *  Enable clock to Lptmr0
     */
    static void enableClock() {
@@ -4921,7 +5171,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Lptmr0
     */
    static void disableClock() {
@@ -4983,12 +5233,15 @@ public:
    /*
     * Template:lpuart0_mkl03
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = LPUART0_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<LPUART_Type> lpuart = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 0;
+   
    //! Map all allocated pins on a peripheral when enabled
    static constexpr bool mapPinsOnEnable = true;
 
@@ -5009,7 +5262,7 @@ public:
    //! Default IRQ level
    static constexpr NvicPriority irqLevel =  NvicPriority_NotInstalled;
 
-   /** 
+   /**
     *  Enable clock to Lpuart0
     */
    static void enableClock() {
@@ -5020,7 +5273,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Lpuart0
     */
    static void disableClock() {
@@ -5049,8 +5302,8 @@ public:
     *
     * @param pccDiv2Clock Clock source selection
     *
-    * @note This peripheral uses the DIV2 peripheral clocks e.g. SOSCDIV2_CLK 
-    * @note The peripheral bus clock will be disabled before changing the 
+    * @note This peripheral uses the DIV2 peripheral clocks e.g. SOSCDIV2_CLK
+    * @note The peripheral bus clock will be disabled before changing the
             clock and is left disabled.
     */
    static void setClockSource(PccDiv2Clock pccDiv2Clock) {
@@ -5171,12 +5424,12 @@ public:
    /*
     * Template:rcm_mkl03z4
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = RCM_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<RCM_Type> rcm = baseAddress;
-
+   
    //! Reset Pin Filter Control Register
    static constexpr uint8_t rcm_rpfc = 
       RCM_RPFC_RSTFLTSS(0)|   // Reset pin filter select in stop mode
@@ -5343,12 +5596,12 @@ public:
    /*
     * Template:smc_lpopo_mkl03z4
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = SMC_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<SMC_Type> smc = baseAddress;
-
+   
    /**
     * Enable all power modes.
     * A power mode must be enabled before it can be entered.
@@ -5693,12 +5946,15 @@ public:
    /*
     * Template:spi0_mkl_8bit
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = SPI0_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<SPI_Type> spi = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 0;
+   
    //! Pin number in Info table for SCK if mapped to a pin
    static constexpr int sckPin  = 0;
 
@@ -5725,7 +5981,7 @@ public:
    //! Default IRQ level
    static constexpr NvicPriority irqLevel =  NvicPriority_Normal;
 
-   /** 
+   /**
     *  Enable clock to Spi0
     */
    static void enableClock() {
@@ -5736,7 +5992,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Spi0
     */
    static void disableClock() {
@@ -6254,12 +6510,15 @@ public:
    //! Number of channel event vectors implemented
    static constexpr unsigned NumChannelVectors = 1;
 
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = TPM0_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<TPM_Type> tpm = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 0;
+   
    /* Template_irqOption.xml */
 
    //! IRQ numbers for hardware
@@ -6342,12 +6601,12 @@ public:
     * This value is created from Configure.usbdmProject settings
     */
    static constexpr Init DefaultInitValue = {
-      TpmMode_FreeRunning , // Alignment and whether interval or free-running mode - Free-running (count up)
+      TpmMode_LeftAligned , // Alignment and whether interval or free-running mode - Left-aligned (count up)
       TpmOverflowAction_None , // Action on Counter overflow - No action
       NvicPriority_Normal , // IRQ level for this peripheral - Normal
       TpmClockSource_SystemTpmClock , // Clock Source - System TPM Clock
       TpmPrescale_DivBy4 , // Clock prescaler - Divide by 4
-      65535_ticks,  // End value for counter
+      59_ticks,  // End value for counter
    };
 
    /**
@@ -6443,7 +6702,7 @@ public:
       return E_NO_ERROR;
    }
 
-   /** 
+   /**
     *  Enable clock to Tpm0
     */
    static void enableClock() {
@@ -6454,7 +6713,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Tpm0
     */
    static void disableClock() {
@@ -6803,12 +7062,15 @@ public:
    //! Number of channel event vectors implemented
    static constexpr unsigned NumChannelVectors = 1;
 
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = TPM1_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<TPM_Type> tpm = baseAddress;
-
+   
+   //! Peripheral instance number
+   static constexpr unsigned instance = 1;
+   
    /* Template_irqOption.xml */
 
    //! IRQ numbers for hardware
@@ -6961,7 +7223,7 @@ public:
     */
    static ChannelCallbackFunction channelCallbacks[1];
 
-   /** 
+   /**
     *  Enable clock to Tpm1
     */
    static void enableClock() {
@@ -6972,7 +7234,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Tpm1
     */
    static void disableClock() {
@@ -7140,11 +7402,11 @@ public:
    class Init {
    
    public:
-      /**                               
-       * Copy Constructor                  
-       */                             
+      /**
+       * Copy Constructor
+       */
       constexpr Init(const Init &other) = delete;
-      
+   
       /**
        * Default Constructor
        */
@@ -7191,7 +7453,7 @@ public:
        */
       template <typename... Types>
       constexpr Init(VrefChop vrefChop, Types... rest) : Init(rest...) {
-      
+   
          trm = (trm&~VREF_TRM_CHOPEN_MASK) | vrefChop;
       }
    
@@ -7205,7 +7467,7 @@ public:
        */
       template <typename... Types>
       constexpr Init(VrefEnable vrefEnable, Types... rest) : Init(rest...) {
-      
+   
          sc = (sc&~VREF_SC_VREFEN_MASK) | vrefEnable;
       }
    
@@ -7219,7 +7481,7 @@ public:
        */
       template <typename... Types>
       constexpr Init(VrefIcomp vrefIcomp, Types... rest) : Init(rest...) {
-      
+   
          sc = (sc&~VREF_SC_ICOMPEN_MASK) | vrefIcomp;
       }
    
@@ -7233,7 +7495,7 @@ public:
        */
       template <typename... Types>
       constexpr Init(VrefBuffer vrefBuffer, Types... rest) : Init(rest...) {
-      
+   
          sc = (sc&~VREF_SC_MODE_LV_MASK) | vrefBuffer;
       }
    
@@ -7246,12 +7508,12 @@ public:
    /*
     * Template:vref_c
     */
-   //! Hardware base address as uint32_t 
+   //! Hardware base address as uint32_t
    static constexpr uint32_t baseAddress = VREF_BasePtr;
-
+   
    //! Hardware base pointer
    static constexpr HardwarePtr<VREF_Type> vref = baseAddress;
-
+   
    //! Pin number in Info table for VREF output if mapped to a pin
    static constexpr int outputPin  = 0;
 
@@ -7293,7 +7555,7 @@ public:
       VrefBuffer_HighPower,  // Buffer Mode selection - High power buffer mode enabled
    };
 
-   /** 
+   /**
     *  Enable clock to Vref
     */
    static void enableClock() {
@@ -7304,7 +7566,7 @@ public:
 #endif
    }
 
-   /** 
+   /**
     *  Disable clock to Vref
     */
    static void disableClock() {

@@ -65,6 +65,7 @@
    <item key="/MCG/mcg_mc_hircen[0]"                       value="true" />
    <item key="/MCG/mcg_mc_hircen[1]"                       value="true" />
    <item key="/MCG/mcg_mc_hircen[2]"                       value="true" />
+   <item key="/MCG/oscMode"                                value="0" />
    <item key="/MCG/system_lirc_clock[0]"                   value="8000000" />
    <item key="/MCG/system_lirc_div1_clock[0]"              value="8000000" />
    <item key="/OSC0/mapPinsOnEnable"                       value="false" />
@@ -73,7 +74,8 @@
    <item key="/SIM/sim_clkdiv1_outdiv1[0]"                 value="0" />
    <item key="/SIM/sim_sopt2_clkoutsel[0]"                 value="7" />
    <item key="/TPM0/irqHandlingMethod"                     value="$ClassMethod" />
-   <item key="/TPM0/tpm_mod"                               value="9999" />
+   <item key="/TPM0/tpm_mod"                               value="59" />
+   <item key="/TPM0/tpm_sc_mode"                           value="0,0" />
    <item key="/TPM0/tpm_sc_ps"                             value="2" />
    <item key="/TPM1/tpm_mod"                               value="249" />
    <item key="/TPM1/tpm_sc_ps"                             value="4" />

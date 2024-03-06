@@ -60,26 +60,26 @@ const ClockInfo Mcg::clockInfo[] = {
       SmcRunMode_Normal,  // Run mode - Normal RUN
 
       /// Control Register 1 - Excluding CLKS 
-      MCG_C1_IRCLKEN(1) | // Internal Reference Clock Enable [MCGIRCLK] - Always enabled
-      MCG_C1_IREFSTEN(0),  // Internal Reference Stop Enable [MCGIRCLK] - IR disabled in STOP
+      McgIrClkEn_Enabled | // Internal Reference Clock Enable [MCGIRCLK] - Always Enabled
+      McgIrefs_DisabledInStop,  // Internal Reference Stop Enable [MCGIRCLK] - IR disabled in STOP
 
       /// Control Register 2 - 
-      MCG_C2_EREFS0(1) | // External Reference Select - Oscillator
-      MCG_C2_IRCS(1),  // Internal Reference [MCGIRCLK] Clock Source - Fast internal reference clock
+      OscMode_NotConfigured | // OSC0 mode - OSC0 Not configured
+      McgIrClkSrc_Fast,  // Internal Reference [MCGIRCLK] Clock Source - Fast internal reference clock
 
       /// Status and Control Register 
-      MCG_SC_FCRDIV(0),  // Internal Clock Reference Divider[LIRC_DIV1] - /1
+      McgLowFequencyInternalClockDivider1_DivBy1,  // Internal Clock Reference Divider[LIRC_DIV1] - /1
 
       /// Miscellaneous Control Register - Excluding HIRCLPEN 
-      MCG_MC_HIRCEN(1) | // High-frequency IRC Clock Enable [MCGPCLK] - Always enabled
-      MCG_MC_LIRC_DIV2(0),  // Second Low-frequency Internal Reference Clock Divider - /1
+      McgHircEnable_Always | // High-frequency IRC Clock Enable [MCGPCLK] - Always enabled
+      McgLowFequencyInternalClockDivider2_DivBy1,  // Second Low-frequency Internal Reference Clock Divider - /1
 
    },
 
 };
 
 /** MCGFFCLK - Fixed frequency clock (input to FLL) */
-volatile uint32_t SystemMcgffClock;
+volatile uint32_t SystemMcgFFClock;
 
 /** MCGOUTCLK - Primary output from MCG, various sources */
 volatile uint32_t SystemMcgOutClock;
